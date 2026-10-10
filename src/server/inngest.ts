@@ -11,10 +11,12 @@ export const researchFunction = inngest.createFunction({
   id: "research-idea", triggers: { event: "hunchlane/research.created" },
   concurrency: [{ limit: 2 }, { limit: 1, key: "event.data.ownerId" }], retries: 1,
 }, async ({ event, step }) => {
+  const ownerId = event.data.ownerId;
+  if (typeof ownerId !== "string" || !ownerId.trim()) throw new NonRetriableError("Research owner is required");
   const runId = String(event.data.runId);
-  const run = await step.run("load-run", () => internalRun(runId));
+  const run = await step.run("load-run", () => internalRun(runId, ownerId));
   if (run.status === "complete") return { runId, complete: true };
-  const parent = run.parentId ? await step.run("load-parent", () => internalRun(run.parentId!)) : null;
+  const parent = run.parentId ? await step.run("load-parent", () => internalRun(run.parentId!, ownerId)) : null;
   const previous = parent?.report || null;
   try {
     let evidence:ResearchEvidence;

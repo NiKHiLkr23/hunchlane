@@ -3,7 +3,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { readFile,readdir } from "node:fs/promises";
 const harness=vi.hoisted(()=>({query:undefined as undefined|((sql:string,args:unknown[])=>Promise<unknown[]>)}));
 vi.mock("@neondatabase/serverless",()=>({neon:()=>async(strings:TemplateStringsArray,...args:unknown[])=>{const query=strings.reduce((s,part,i)=>s+part+(i<args.length?`$${i+1}`:""),"");return harness.query!(query,args);}}));
-import { createRun,ownedRun,listRuns,finishRun,createShare,sharedReport,revokeShares,claimOperation,saveResponseId,saveOperation,retryRun,failRun,reserveCrustSlot,db } from "@/server/store";
+import { createRun,ownedRun,internalRun,listRuns,finishRun,createShare,sharedReport,revokeShares,claimOperation,saveResponseId,saveOperation,retryRun,failRun,reserveCrustSlot,db } from "@/server/store";
 import { sampleReport } from "@/core/sample";
 let engine:PGlite;
 beforeAll(async()=>{process.env.DATABASE_URL="postgres://test";engine=new PGlite();harness.query=async(sql,args)=>(await engine.query(sql,args)).rows;const folder=new URL("../drizzle/",import.meta.url);for(const file of (await readdir(folder)).filter(f=>f.endsWith(".sql")).sort())await engine.exec(await readFile(new URL(file,folder),"utf8"));},30000);
@@ -11,6 +11,16 @@ beforeEach(async()=>{await engine.exec("TRUNCATE provider_operations, shares, ru
 afterAll(async()=>{await engine.close();});
 describe("persisted ownership and reservations (real SQL, embedded PostgreSQL)",()=>{
   it("isolates private reports and the library by owner",async()=>{await createRun("a","alice",sampleReport.brief,null);expect(await ownedRun("a","bob")).toBeNull();expect(await listRuns("bob")).toEqual([]);expect((await listRuns("alice"))[0].id).toBe("a");});
+  it("requires the same owner for background run and refinement-parent reads",async()=>{
+    await createRun("parent","user_alice",sampleReport.brief,null);
+    await finishRun("parent",sampleReport);
+    await createRun("refinement","user_alice",sampleReport.brief,"parent");
+    for(const id of ["parent","refinement"]){
+      expect((await internalRun(id,"user_alice")).id).toBe(id);
+      await expect(internalRun(id,"user_bob")).rejects.toThrow("RUN_NOT_FOUND");
+      await expect(internalRun(id,"")).rejects.toThrow("RUN_NOT_FOUND");
+    }
+  });
   it("deduplicates a client request without reserving twice",async()=>{await createRun("a","alice",sampleReport.brief,null);await createRun("a","alice",sampleReport.brief,null);const rows=await db()`select allocated_cents from budgets`;expect(rows[0].allocated_cents).toBe(75);});
   it("rolls back reservations when user quotas reject an insert",async()=>{await createRun("a","alice",sampleReport.brief,null);await expect(createRun("b","alice",sampleReport.brief,null)).rejects.toThrow();const rows=await db()`select allocated_cents from budgets`;expect(rows[0].allocated_cents).toBe(75);});
   it("keeps concurrent requests inside the global allowance",async()=>{await engine.exec("UPDATE budgets SET limit_cents=150");const results=await Promise.allSettled(Array.from({length:8},(_,i)=>createRun(`r${i}`,`owner${i}`,sampleReport.brief,null)));expect(results.filter(r=>r.status==="fulfilled")).toHaveLength(2);const rows=await db()`select allocated_cents from budgets`;expect(rows[0].allocated_cents).toBe(150);});

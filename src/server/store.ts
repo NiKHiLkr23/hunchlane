@@ -7,7 +7,12 @@ export function db() { if (!process.env.DATABASE_URL) throw new Error("DATABASE_
 type Row = Record<string, unknown>;
 function runFromRow(row: Row): RunState { return { id: String(row.id), brief: row.brief as IdeaBrief, status: row.status as RunState["status"], stage: row.stage as RunStage, createdAt: new Date(String(row.created_at)).toISOString(), error: row.error as string | null, parentId: row.parent_id as string | null, report: row.report as ResearchReport | null, dispatched: Boolean(row.dispatched), provider: row.provider === "crustdata" ? "crustdata" : "openai" }; }
 export async function ownedRun(id: string, owner: string) { const rows = await db()`select * from runs where id=${id} and owner_id=${owner}`; return rows[0] ? runFromRow(rows[0]) : null; }
-export async function internalRun(id: string) { const rows = await db()`select * from runs where id=${id}`; if (!rows[0]) throw new Error("RUN_NOT_FOUND"); return runFromRow(rows[0]); }
+export async function internalRun(id: string, owner: string) {
+  if (!owner) throw new Error("RUN_NOT_FOUND");
+  const run = await ownedRun(id, owner);
+  if (!run) throw new Error("RUN_NOT_FOUND");
+  return run;
+}
 export async function listRuns(owner: string) { const rows = await db()`select * from runs where owner_id=${owner} order by created_at desc limit 50`; return rows.map(runFromRow); }
 export async function createRun(id: string, owner: string, brief: IdeaBrief, parentId: string | null, provider: ResearchProvider = "openai") {
   const sql = db(), kind = parentId ? "refinement" : "full", reservation = RESERVATIONS[kind];
