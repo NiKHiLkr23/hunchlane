@@ -1,4 +1,4 @@
-# Hunchlane — Idea Studio
+# Hunchlane — Discovery Atlas
 
 See what exists. Find your angle.
 
@@ -6,16 +6,16 @@ Hunchlane helps beginners explore software, physical products, and services. The
 
 ## Identity and phase adoption
 
-The approved replacement identity is Idea Studio: bright white, cobalt actions, apricot emphasis, generous Manrope typography, and crisp layouts. Retain the Hunchlane name and branching-lane mark. Manrope is locally hosted in `src/app/fonts/` with its SIL Open Font License; no external font requests or decorative stock assets.
+Discovery Atlas is the user's requested alternative to Idea Studio, awaiting landing-page feedback. It uses ivory, navy and vermilion, editorial Newsreader headlines, Manrope controls, crisp rules, and connected research stops. Retain the Hunchlane name and branching-lane mark. Both font families are locally hosted in `src/app/fonts/` with their SIL Open Font Licenses; Newsreader comes from the official Google Fonts repository. No external font requests or decorative stock assets. The previous Idea Studio landing remains on branch `codex/idea-studio-landing` at `181ebd6` for comparison.
 
-Phase 1 adopts this identity on `/`, its responsive header, and footer. `src/app/studio.css` scopes the new components and token overrides to that surface. Other screens keep their existing paper/teal/system-sans/Georgia styling until their phase. The next phases are login/signup, signed-in home, new idea, sample/shared report presentation, and My ideas library. Present desktop/mobile evidence and collect user feedback after each phase before starting the next.
+Phase 1 trials this identity on `/`, its responsive header, and footer. `src/app/atlas.css` scopes the new components and token overrides to that surface. Other screens keep their existing paper/teal/system-sans/Georgia styling until their phase. The next phases are login/signup, signed-in home, new idea, sample/shared report presentation, and My ideas library. Present desktop/mobile evidence and collect user feedback after each phase before starting the next.
 
 ## Executable foundation
 
-- Canvas `#ffffff`, ink `#192438`, muted ink `#596477`, primary cobalt `#3154d9`, hover `#2542b3`, cobalt surface `#eef2ff`, apricot `#ffd8c3`, neutral surface `#f6f8fc`, divider `#dde2ec`.
-- Manrope variable type, locally loaded with `next/font/local`. Landing display 40–68px, section headings 27–34px, body 13–16px. Heading tracking never below -0.04em. Reading passages stay about 65 characters wide.
-- 4px spacing increments; 1120px inner content width. Landing hero pairs purpose and idea entry on desktop, then places entry immediately beneath the introduction on mobile. Section separation comes from spacing and dividers rather than a collection of identical cards.
-- Interactive targets at least 44px. Cobalt focus outlines, explicit labels, scoped selection/caret colors. Border for inputs, soft elevation for the mobile navigation disclosure. Decorative accents never communicate status alone.
+- Canvas `#f7f5ee`, paper `#fffdf8`, navy ink `#202f45`, muted ink `#5c6570`, primary vermilion `#b83d28`, hover `#97301f`, emphasis surface `#f8e5dc`, divider `#d4d4c9`.
+- Newsreader normal/italic variable display type and Manrope variable controls, locally loaded with `next/font/local`. Landing display 50–78px, section headings 32–46px, body 13–16px. Heading tracking never below -0.04em. Reading passages stay about 65 characters wide. Newsreader is loaded by the landing route only.
+- 4px spacing increments; 1120px inner content width. Landing hero pairs purpose and idea entry on desktop, then places entry immediately beneath the introduction on mobile. Flat 3px frames and thin rules support the field-guide character. The sample connects alternatives → a possible angle → a small experiment; a navy section explains the actual research sequence. Numbered stops express sequence, not fabricated progress.
+- Interactive targets at least 44px. Vermilion focus outlines, explicit labels, scoped selection/caret colors. Border for inputs, soft elevation for the mobile navigation disclosure. Decorative accents never communicate status alone.
 - Feedback 140ms, disclosure 180ms. Small button press feedback and link emphasis only; no entrance loops, simulated research progress, or animation-dependent actions. Reduced motion removes travel and transition delays.
 
 ## Behavior and evidence

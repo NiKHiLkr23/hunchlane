@@ -16,13 +16,13 @@ export function HeaderNavigation({ authConfigured }: { authConfigured: boolean }
 
   function closeMenu() { if (menu.current) menu.current.open = false; }
 
-  return <header className="studio-header">
-    <div className="studio-header-inner">
-      <Link className="brand studio-brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link>
-      <nav className="studio-desktop-nav" aria-label="Main navigation"><Link href="#how-it-works">How it works</Link><Link href="/sample">Sample report</Link></nav>
-      <div className="studio-header-actions">
+  return <header className="atlas-header">
+    <div className="atlas-header-inner">
+      <Link className="brand atlas-brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link>
+      <nav className="atlas-desktop-nav" aria-label="Main navigation"><Link href="#how-it-works">How it works</Link><Link href="/sample">Sample report</Link></nav>
+      <div className="atlas-header-actions">
         {account}
-        <details className="studio-mobile-menu" ref={menu} onKeyDown={event => {
+        <details className="atlas-mobile-menu" ref={menu} onKeyDown={event => {
           if (event.key === "Escape") { closeMenu(); menu.current?.querySelector("summary")?.focus(); }
         }}>
           <summary aria-label="Navigation menu"><Menu size={20}/></summary>

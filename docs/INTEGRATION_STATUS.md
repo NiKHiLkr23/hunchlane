@@ -4,7 +4,7 @@ This file distinguishes source implementation from live proof. Update only with 
 
 | Capability | Implemented | Live evidence |
 |---|---|---|
-| Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 12 desktop/mobile browser checks passed, production build passed after the Idea Studio landing redesign |
+| Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 12 desktop/mobile browser checks passed, production build passed after the Discovery Atlas landing trial |
 | Clerk sign-in and owner checks | Yes, provider inside body, async auth, Next.js proxy and explicit Clerk matcher | User signed in and created a complete live report on October 10; report/operations independently read with the Clerk owner predicate. Two-account browser verification pending |
 | Neon schema, versions, share snapshots, reservations | Yes | Remote migrations applied and budget row read back; embedded PostgreSQL tests passed; remote ownership/concurrency pending |
 | Inngest durable stages and response polling | Yes | Local workflow reached a saved complete report through six journaled provider operations. Restart/recovery verification pending |
@@ -55,3 +55,11 @@ Validation of the preventive fix: `pnpm check` passed 33 tests, `pnpm test:brows
 The approved replacement identity is implemented on the landing page: locally hosted Manrope, white/cobalt/apricot tokens, first-viewport idea entry, three category-aware example prompts, responsive keyboard-operable navigation, and a preview derived from the explicitly illustrative scheduling sample. Other screens retain their previous presentation until their scheduled phase.
 
 `pnpm check` passed 33 tests, `pnpm test:browser` passed 12 desktop/mobile cases, and `pnpm build` passed. Browser checks verify input-error recovery, all three example categories, draft transfer to `/new`, first-viewport entry, mobile menu activation/Escape/close-on-navigation, closing-link focus, reduced motion and long-input overflow. The landing navigation test observed no research POSTs. Desktop/mobile screenshots are local ignored artifacts. `.env.local` remained unchanged; no paid research calls or deployment were performed. User feedback on this phase is required before beginning the login screen, as requested.
+
+## Discovery Atlas phase 1 — alternate landing trial
+
+At the user's request, the landing page now trials Discovery Atlas: ivory/navy/vermilion, locally hosted Newsreader normal/italic headlines with retained licenses, Manrope controls, flat frames, connected sample findings, and a navy explanation of the research sequence. The prior Idea Studio implementation remains on `codex/idea-studio-landing` at `181ebd6`; the alternate is on `codex/discovery-atlas-landing`. Other screens retain their existing design.
+
+Final verification: `pnpm check` passed 33 tests, all 12 desktop/mobile browser checks passed, and `pnpm build` passed. Deterministic screenshots were inspected at 1280×720 and 390×844, plus a 320px focused long-input state, invalid input, and the open mobile menu. Tests cover repeated valid submissions, all three example categories, draft continuity, first-viewport entry, keyboard navigation and reduced motion. Repeated landing submits produced no research POSTs. Measured primary, button, muted-text and hypothesis foreground/background contrast ratios exceed 4.5:1. Browser-device emulation is verified; a physical-device test is not claimed.
+
+Desktop/mobile previews are ignored local artifacts at `artifacts/atlas-*.png`. `.env.local` was hash-checked unchanged. No paid research calls, database changes or deployment occurred. Landing feedback is still required before proceeding to login/signup.
