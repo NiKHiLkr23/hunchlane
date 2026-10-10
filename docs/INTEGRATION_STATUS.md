@@ -2,6 +2,17 @@
 
 This file distinguishes source implementation from live proof. Update only with observed results.
 
+## Teal and Depth phase 2 — custom Google login/signup
+
+October 10, 2026: the user approved the completed landing and requested a split authentication screen inspired by the supplied references, with only a custom Google button. Login/signup now share a sage illustrated panel and white account panel, locally hosted Manrope, compact mobile banner, draft preview, loading/error states, and a dedicated OAuth callback. Google's official gradient G and a small locally hosted Google Sans Medium subset retain asset attribution and the font license.
+
+- Current Clerk 7.9.14's `signIn.sso` and `HandleSSOCallback` are used for Google and new-user transfer. Native Clerk screens remain for required profile/security verification and session tasks. Ordinary entry has zero email/password inputs. No credentials, owner predicates, research APIs, database schemas, reservations or operation records were changed.
+- Configured clean-browser verification observed the custom button issuing one Clerk sign-in request and navigating to Google's account service. Navigation was stopped there; no Google credentials were entered and a complete account-authentication round trip is **not** claimed. New-user transfer, MFA and session-task completion still need account-level verification.
+- A deterministic Clerk failure fixture observed exactly one OAuth request after two immediate clicks, an enabled recovery button, restored keyboard focus and an unchanged local draft. Desktop 1280×900, mobile 390×844 and narrow 320×800 layouts were inspected. Sign-up matches login; keyboard focus and live reduced-motion changes remain usable. Verification output and screenshots are ignored under `artifacts/`.
+- The browser suite verifies existing v1 drafts across account switching, reload and return to `/new`; long/corrupt storage, unavailable configuration, safe callback recovery and external-return rejection. Direct account entry returns to `/library` until phase 3 introduces `/home`. Draft entry returns to `/new` and still requires an explicit research submission. Composer-step persistence remains phase 4.
+- `pnpm check`: 35 tests passed. `pnpm test:browser`: all 24 desktop/mobile checks passed. `pnpm build`: passed. Initial browser runs exposed development reloads while parallel workers compiled new routes; fixture setup now warms page routes before interactions, and navigation checks wait for the rendered sample and use its actual back link.
+- Final configured verification observed zero `POST /api/runs` requests. `.env.local` remains unchanged. No paid research, migration or deployment occurred. Present this phase for feedback before starting the signed-in home.
+
 | Capability | Implemented | Live evidence |
 |---|---|---|
 | Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 12 desktop/mobile browser checks passed, production build passed after restoring paper-and-teal with Idea Studio typography |

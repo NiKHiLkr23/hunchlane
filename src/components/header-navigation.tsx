@@ -12,6 +12,8 @@ export function HeaderNavigation({ authConfigured }: { authConfigured: boolean }
   const menu = useRef<HTMLDetailsElement>(null);
   const account = authConfigured ? <AuthActions/> : <Link href="/sign-in" className="nav-signin">Sign in <ArrowUpRight size={16}/></Link>;
 
+  if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname === "/sso-callback") return <header className="auth-header"><div className="auth-header-inner"><Link className="brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav aria-label="Main navigation"><Link href="/sample">Take a look around <ArrowUpRight size={15}/></Link></nav></div></header>;
+
   if (pathname !== "/") return <header className="site-header"><div className="header-inner"><Link className="brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav aria-label="Main navigation"><Link href="/sample">Sample report</Link><Link href="/library">My ideas</Link>{account}</nav></div></header>;
 
   function closeMenu() { if (menu.current) menu.current.open = false; }

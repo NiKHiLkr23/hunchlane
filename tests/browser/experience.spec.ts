@@ -94,7 +94,9 @@ test("the unfolding sample remains readable with accessible sources and live red
   await preview.getByRole("link",{name:"Open the sample report"}).click();
   await expect(page).toHaveURL(/\/sample$/);
   expect(paidRequests).toEqual([]);
-  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Find a time. Keep the friendship." })).toBeVisible();
+  await page.getByRole("link", { name: "← Back to Hunchlane", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
   await page.setViewportSize({width:320,height:800});
   await page.locator(".landing-closing").scrollIntoViewIfNeeded();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);

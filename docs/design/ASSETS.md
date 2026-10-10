@@ -1,5 +1,11 @@
 # Teal and Depth — original illustration prompts
 
+## Google authentication assets
+
+Phase 2 reuses the original idea-note artwork below. The only new brand asset is Google's official gradient G, downloaded unchanged from https://developers.google.com/static/identity/images/g-logo.png to `public/auth/google-g.png`. Its use follows https://developers.google.com/identity/branding-guidelines; the Google mark belongs to Google and is used only in the authentication button.
+
+`src/app/fonts/GoogleSans-Medium.ttf` is the official Google Fonts API's 500-weight subset for the button text `Continue with Google` and `Opening Google…` (5.9 KB). It is locally hosted and used only for Google's button. The source family is https://fonts.google.com/specimen/Google+Sans, with the upstream SIL Open Font License retained in `src/app/fonts/GoogleSans-OFL.txt` from https://github.com/googlefonts/googlesans/blob/main/OFL.txt. Hunchlane's typography continues to use Manrope. No remote font request occurs when rendering the app.
+
 ## Idea note v1
 
 Generated with the built-in imagegen tool on October 10, 2026. Final source: `public/illustrations/idea-note-v1.png`, 1254×1254 RGBA PNG. Transparency was inspected; the browser uses Next's responsive image optimizer. Original output is retained in the tool's generated-images directory. The source is a decorative asset; UI text is rendered in HTML.
