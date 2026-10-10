@@ -1,0 +1,13 @@
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_6caebb1977e94a5a90e82202f18074b6\",0]","question":"For this phase, should the conversation use guided questions and suggestions before the existing live research agent starts, or should AI also generate the intake questions? Live AI intake would need a separately approved allowance because the current pilot is consumed and this redesign excludes paid calls.","answer":"Live AI intake too; prepare its budget for approval"}]
+</send_user_message_question_reply>
+
+---
+
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_22491d444bd14901a8cdd560cc230e2a\",0]","question":"May I apply the prepared intake tables and reserve a separate $0.30 app allowance for one live AI conversation—at most three sponsored Claude calls, each capped at 800 output tokens? I’ll activate it only after confirming sponsor pricing and a provider spending cap. This is a new paid allowance; the earlier research pilot is consumed.","answer":"Approve after pricing and cap verification"}]
+</send_user_message_question_reply>
+
+---
+
+continue
