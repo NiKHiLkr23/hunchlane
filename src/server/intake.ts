@@ -7,7 +7,7 @@ import { observed } from './telemetry';
 import { IntakeReplySchema } from '@/core/idea-draft';
 import { INTAKE_LIMITS, INTAKE_RULES, type IntakeRequest } from '@/core/intake';
 export function intakeEnabled() {
-  return process.env.AI_INTAKE_ENABLED === '1' && Boolean(process.env.DATABASE_URL && process.env.LITELLM_API_KEY && process.env.NEATLOGS_API_KEY);
+  return Boolean(process.env.DATABASE_URL && process.env.LITELLM_API_KEY && process.env.NEATLOGS_API_KEY);
 }
 export async function savedIntake(id: string, owner: string, turn: number) {
   if (!owner) throw Error("UNAUTHENTICATED");

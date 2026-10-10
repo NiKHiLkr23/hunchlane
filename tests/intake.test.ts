@@ -46,7 +46,6 @@ beforeAll(async () => {
   await engine.exec(await readFile(new URL('../docs/INTAKE_SETUP.sql', import.meta.url), 'utf8'));
 }, 30000);
 beforeEach(async () => {
-  vi.stubEnv('AI_INTAKE_ENABLED', '0');
   vi.stubEnv('LITELLM_API_KEY', 'fixture-sponsored-key');
   harness.options.mockClear();
   await engine.exec("TRUNCATE intake_operations,idea_intakes;UPDATE budgets SET limit_cents=30,allocated_cents=0;");
@@ -71,12 +70,12 @@ beforeEach(async () => {
 afterEach(() => vi.unstubAllEnvs());
 afterAll(() => engine.close());
 it('uses the existing sponsored key without a dedicated-key or pricing-confirmation gate', () => {
-  vi.stubEnv('AI_INTAKE_ENABLED', '1');
   vi.stubEnv('AI_INTAKE_PRICING_CONFIRMED', '0');
   vi.stubEnv('NEATLOGS_API_KEY', 'fixture-telemetry-key');
   vi.stubEnv('AI_INTAKE_API_KEY', '');
   expect(intakeEnabled()).toBe(true);
-  vi.stubEnv('AI_INTAKE_ENABLED', '0');
+  vi.stubEnv('LITELLM_API_KEY', '');
+  expect(intakeEnabled()).toBe(false);
 });
 it('refuses a missing sponsored key before allocating budget or claiming an operation', async () => {
   vi.stubEnv('LITELLM_API_KEY', '');
@@ -85,8 +84,7 @@ it('refuses a missing sponsored key before allocating budget or claiming an oper
   expect((await engine.query('SELECT allocated_cents FROM budgets')).rows[0]).toMatchObject({allocated_cents: 0});
   expect((await engine.query('SELECT * FROM intake_operations')).rows).toHaveLength(0);
 });
-it('starts disabled and refuses unfunded intake without a provider request', async () => {
-  expect(intakeEnabled()).toBe(false);
+it('refuses unfunded intake without a provider request', async () => {
   await engine.exec('UPDATE budgets SET limit_cents=0');
   await expect(intakeTurn('alice', input)).rejects.toThrow('INTAKE_BUDGET_EXHAUSTED');
   expect(harness.create).not.toHaveBeenCalled();
