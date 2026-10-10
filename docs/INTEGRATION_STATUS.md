@@ -4,7 +4,7 @@ This file distinguishes source implementation from live proof. Update only with 
 
 | Capability | Implemented | Live evidence |
 |---|---|---|
-| Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 8 desktop/mobile browser checks passed, production build passed after citation-provenance fix |
+| Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 12 desktop/mobile browser checks passed, production build passed after the Idea Studio landing redesign |
 | Clerk sign-in and owner checks | Yes, provider inside body, async auth, Next.js proxy and explicit Clerk matcher | User signed in and created a complete live report on October 10; report/operations independently read with the Clerk owner predicate. Two-account browser verification pending |
 | Neon schema, versions, share snapshots, reservations | Yes | Remote migrations applied and budget row read back; embedded PostgreSQL tests passed; remote ownership/concurrency pending |
 | Inngest durable stages and response polling | Yes | Local workflow reached a saved complete report through six journaled provider operations. Restart/recovery verification pending |
@@ -49,3 +49,9 @@ The user supplied a completed report ID after testing the signed-in app. Read-on
 - The report's optional CFO.ai section correctly remains unavailable. Hunchlane's separate saved CFO.ai business plan is the required sponsor evidence.
 
 Validation of the preventive fix: `pnpm check` passed 33 tests, `pnpm test:browser` passed all eight desktop/mobile cases, and `pnpm build` passed.
+
+## Idea Studio phase 1 — landing page
+
+The approved replacement identity is implemented on the landing page: locally hosted Manrope, white/cobalt/apricot tokens, first-viewport idea entry, three category-aware example prompts, responsive keyboard-operable navigation, and a preview derived from the explicitly illustrative scheduling sample. Other screens retain their previous presentation until their scheduled phase.
+
+`pnpm check` passed 33 tests, `pnpm test:browser` passed 12 desktop/mobile cases, and `pnpm build` passed. Browser checks verify input-error recovery, all three example categories, draft transfer to `/new`, first-viewport entry, mobile menu activation/Escape/close-on-navigation, closing-link focus, reduced motion and long-input overflow. The landing navigation test observed no research POSTs. Desktop/mobile screenshots are local ignored artifacts. `.env.local` remained unchanged; no paid research calls or deployment were performed. User feedback on this phase is required before beginning the login screen, as requested.

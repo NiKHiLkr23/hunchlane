@@ -1,8 +1,51 @@
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, Search, Fingerprint, FlaskConical, Sparkles, Check } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, Lightbulb, Search, FlaskConical } from "lucide-react";
 import { IdeaComposer } from "@/components/idea-composer";
+import { sampleReport } from "@/core/sample";
+import "./studio.css";
+
 export default function Home() {
-  return <main id="main" className="home-page"><section className="hero"><div className="hero-copy"><div className="eyebrow"><span className="status-dot"/> FOR THAT IDEA YOU CAN’T STOP THINKING ABOUT</div><h1>See what<br/>exists.<br/><em>Find your angle.</em></h1><p className="hero-description">A little research can change your next move. Find what exists, see where your idea fits, and leave with something worth testing.</p><div className="hero-proof"><span><Check size={15}/> Real sources</span><span><Check size={15}/> Clear comparisons</span><span><Check size={15}/> A practical next step</span></div><Link href="/sample" className="note-link">See an example report <ArrowRight size={15}/></Link></div><div className="hero-note" aria-label="An example of what your report contains"><div className="note-top"><span className="note-tag">THE RESEARCH BRIEF</span><ArrowUpRight size={18}/></div><span className="hand-note">From “what if…” to “what’s next?”</span><h2>A meal kit.<br/>Just for one.</h2><div className="note-divider"/><div className="note-finding"><span className="note-icon"><Search size={18}/></span><div><strong>What’s out there?</strong><p>Existing products and close alternatives.</p></div></div><div className="note-finding"><span className="note-icon"><Fingerprint size={18}/></span><div><strong>Where’s your opening?</strong><p>Possible angles, with evidence to question.</p></div></div><div className="note-finding"><span className="note-icon"><FlaskConical size={18}/></span><div><strong>What should you try first?</strong><p>One small experiment before a big bet.</p></div></div><Link href="/sample" className="note-link">Peek inside a sample <ArrowRight size={15}/></Link><div className="note-stamp" aria-hidden="true">FOLLOW<br/>THE HUNCH ↗</div></div></section><IdeaComposer compact/>
-    <section className="how-section" id="how-it-works"><div className="section-intro"><span className="eyebrow">A CLEARER START</span><h2>You don’t need a business plan.<br/>You need a better next question.</h2></div><div className="how-grid">{[{n:"01",title:"Bring your hunch",description:"An app, a product, a service, a neighborhood shop. Tell us the idea in your own words."},{n:"02",title:"Look around",description:"We search for alternatives and check the strongest matches. Every factual finding points back to a source."},{n:"03",title:"Find a way forward",description:"Get possible angles, the questions still open, and a small experiment to learn what matters."}].map(s=><article key={s.n}><span className="how-number">{s.n}</span><h3>{s.title}</h3><p>{s.description}</p></article>)}</div></section><section className="honest-note"><Sparkles size={22}/><div><h3>A starting point, not a crystal ball.</h3><p>Finding a competitor doesn’t end your idea. Finding none doesn’t prove it’s new. Hunchlane helps you ask better questions, with the evidence in front of you.</p></div></section>
+  return <main id="main" className="studio-landing">
+    <section className="studio-hero" aria-labelledby="studio-title">
+      <div className="studio-hero-copy">
+        <h1 id="studio-title">Give your idea<br/>{" "}a clearer<br/>{" "}<span>next step.</span></h1>
+        <p>Explore existing alternatives, see the evidence, and find something worth testing—whether it’s an app, a product, or a service.</p>
+        <Link href="/sample" className="studio-text-link">See what a report looks like <ArrowRight size={18}/></Link>
+        <div className="studio-hero-note"><span className="studio-note-dot" aria-hidden="true"/>An idea doesn’t need to be polished to be worth exploring.</div>
+      </div>
+      <div id="start-your-idea" className="studio-entry"><IdeaComposer compact/></div>
+    </section>
+
+    <section className="studio-preview-section" aria-labelledby="preview-title">
+      <div className="studio-section-heading"><h2 id="preview-title">A little context.<br/>{" "}A more useful next move.</h2><p>Here’s what exploring a hunch can look like.</p></div>
+      <article className="studio-preview">
+        <div className="studio-preview-intro">
+          <span className="studio-sample-label">Illustrative sample</span>
+          <h3>{sampleReport.title}</h3>
+          <p>{sampleReport.brief.idea}</p>
+          <Link href="/sample" className="studio-text-link">Open the sample report <ArrowUpRight size={18}/></Link>
+        </div>
+        <div className="studio-preview-findings">
+          <div className="studio-preview-finding"><Search size={20}/><div><h4>There are alternatives to learn from</h4><p>{sampleReport.competitors.map(competitor => competitor.name).join(" · ")}</p></div></div>
+          <div className="studio-preview-finding"><Lightbulb size={20}/><div><h4>A possible angle</h4><p>{sampleReport.angles[0].title} <span className="studio-hypothesis">Hypothesis</span></p></div></div>
+          <div className="studio-preview-finding"><FlaskConical size={20}/><div><h4>A small next experiment</h4><p>{sampleReport.experiment.title}</p></div></div>
+          <p className="studio-preview-disclaimer">This sample explains the format. It is not live research.</p>
+        </div>
+      </article>
+    </section>
+
+    <section id="how-it-works" className="studio-how" aria-labelledby="how-title">
+      <div className="studio-section-heading"><h2 id="how-title">From “what if”<br/>{" "}to something you can test.</h2><p>Bring the idea. We’ll help you look around.</p></div>
+      <ol className="studio-how-steps">
+        <li><span className="studio-step-number">1</span><div><h3>Tell us the hunch</h3><p>Describe it in your own words. Add a little context about who it helps and what makes it different.</p></div></li>
+        <li><span className="studio-step-number">2</span><div><h3>See what exists</h3><p>Explore alternatives and source-backed comparisons, with search limitations kept visible.</p></div></li>
+        <li><span className="studio-step-number">3</span><div><h3>Choose a small next step</h3><p>Leave with possible angles, open questions, and an experiment you can try before making a bigger bet.</p></div></li>
+      </ol>
+    </section>
+
+    <section className="studio-closing" aria-labelledby="closing-title">
+      <div><h2 id="closing-title">Keep the curiosity.<br/>{" "}Question the evidence.</h2><p>Finding a competitor doesn’t end your idea. Finding none doesn’t prove it’s new. Research gives you context—not a guarantee that an idea will work.</p><ul><li><Check size={16}/>Citations you can check</li><li><Check size={16}/>Hypotheses you can question</li><li><Check size={16}/>Assumptions you can change</li></ul></div>
+      <a href="#idea" className="button studio-primary">Explore my idea <ArrowRight size={18}/></a>
+    </section>
   </main>;
 }
