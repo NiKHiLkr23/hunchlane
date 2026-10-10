@@ -19,7 +19,11 @@ The configurations retain read-only repository tokens. Their prompts prohibit re
 
 ## First Trail
 
-[Verify Hunchlane Entire workflow](https://entire.io/gh/NiKHiLkr23/hunchlane/trails/1) was created successfully with ID `01M4K02J705TVMXQR4Y9XGJM0C`, branch `codex/entire-workflow`, and base `codex/hunchlane`. Runner evaluation completion still needs verification after this documentation change is pushed.
+[Verify Hunchlane Entire workflow](https://entire.io/gh/NiKHiLkr23/hunchlane/trails/1) was created successfully with ID `01M4K02J705TVMXQR4Y9XGJM0C`, branch `codex/entire-workflow`, and base `codex/hunchlane`.
+
+After pushing documentation commit `a9a29d4ac09f566d1d5001c55f5f53ebe98d16ed`, `entire trail show --json` reported `trail-review` completed against that exact head: the findings gate passed, `reviewed_head` was true, and review was no longer in flight. `entire trail finding --json` returned zero findings at every severity. The branch was up to date with its base. Human approval remained required; no merge was performed. No CI checks were reported.
+
+The individual Runner-results endpoint returned `repo not in this region (locate it via /me's jurisdiction)` despite working Trail CLI reads. Completion of confidence, risk, drift, security and summary is therefore unverified. Check these in the Trail's Entire UI before presenting all-six completion as evidence. The attempted CI-PR API call was not reached after the preceding read failed; no GitHub PR URL was verified.
 
 For example, a future live-research change can use a Trail to collect review findings about citations and uncertain charges. Pushes update its evaluations; fix concrete findings, run relevant local checks, and inspect fresh results before human review and merge.
 
