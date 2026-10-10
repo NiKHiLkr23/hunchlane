@@ -1,0 +1,13 @@
+import { pgTable, text, integer, jsonb, timestamp, boolean, uniqueIndex, index } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+export const budgets = pgTable("budgets", { id: text("id").primaryKey(), limit: integer("limit_cents").notNull(), allocated: integer("allocated_cents").notNull().default(0), creditLimit: integer("credit_limit_milli").notNull().default(0), creditAllocated: integer("credit_allocated_milli").notNull().default(0), crustNextCall: timestamp("crust_next_call_at",{withTimezone:true}) });
+export const runs = pgTable("runs", {
+  id: text("id").primaryKey(), owner: text("owner_id").notNull(), kind: text("kind").notNull(), brief: jsonb("brief").notNull(),
+  parentId: text("parent_id"), status: text("status").notNull().default("queued"), stage: text("stage").notNull().default("queued"),
+  report: jsonb("report"), error: text("error"), dispatched: boolean("dispatched").notNull().default(false), provider: text("provider").notNull().default("openai"),
+  creditReservation: integer("credit_reservation_milli").notNull().default(0), creditActual: integer("credit_actual_milli").notNull().default(0),
+  reservation: integer("reservation_cents").notNull(), actual: integer("actual_cents").notNull().default(0), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, t => [uniqueIndex("one_allowance_per_user_kind").on(t.owner, t.kind), uniqueIndex("one_active_run_per_user").on(t.owner).where(sql`${t.status} in ('queued','running')`), index("runs_owner").on(t.owner)]);
+export const operations = pgTable("provider_operations", { runId: text("run_id").notNull().references(() => runs.id), phase: text("phase").notNull(), state: text("state").notNull(), responseId: text("response_id"), result: jsonb("result"), cost: integer("cost_cents").notNull().default(0), credits: integer("credit_milli").notNull().default(0), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow() }, t => [uniqueIndex("one_operation_per_phase").on(t.runId, t.phase)]);
+export const shares = pgTable("shares", { tokenHash: text("token_hash").primaryKey(), runId: text("run_id").notNull().references(() => runs.id), owner: text("owner_id").notNull(), snapshot: jsonb("snapshot").notNull(), revoked: boolean("revoked").notNull().default(false), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow() });
+export const credentials = pgTable("credentials", { id: text("id").primaryKey(), encrypted: text("encrypted").notNull(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() });

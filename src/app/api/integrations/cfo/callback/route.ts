@@ -1,0 +1,3 @@
+import { requireOwner } from "@/server/auth";
+import { completeCfoAuthorization } from "@/server/cfo-oauth";
+export async function GET(request:Request){try{const owner=await requireOwner();if(owner!==process.env.CFO_OPERATOR_USER_ID)throw new Error("UNAUTHORIZED_OPERATOR");const params=new URL(request.url).searchParams;const code=params.get("code"),state=params.get("state");if(!code||!state)throw new Error("MISSING_OAUTH_RESULT");await completeCfoAuthorization(owner,state,code);return Response.redirect(new URL("/setup?cfo=connected",request.url));}catch{return Response.redirect(new URL("/setup?cfo=failed",request.url));}}

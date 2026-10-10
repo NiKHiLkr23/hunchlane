@@ -1,0 +1,3 @@
+import { describe,it,expect } from "vitest";
+import { encrypt,decrypt } from "@/server/credential-vault";
+describe("OAuth token vault",()=>{it("encrypts secrets and detects tampering",()=>{process.env.CREDENTIALS_ENCRYPTION_KEY="ab".repeat(32);const encrypted=encrypt({refresh_token:"private-token"});expect(encrypted).not.toContain("private-token");expect(decrypt(encrypted)).toEqual({refresh_token:"private-token"});const parts=encrypted.split(".");const tag=Buffer.from(parts[1],"base64url");tag[0]^=1;parts[1]=tag.toString("base64url");expect(()=>decrypt(parts.join("."))).toThrow();});it("requires a strong configured key",()=>{process.env.CREDENTIALS_ENCRYPTION_KEY="short";expect(()=>encrypt({a:1})).toThrow("NOT_CONFIGURED");});});

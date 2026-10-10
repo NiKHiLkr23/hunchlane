@@ -1,0 +1,17 @@
+# CFO.ai connection and remaining model gate
+
+The official connection instructions are https://docs.cfo.ai/agent-instructions and https://docs.cfo.ai/integrations/mcp-server. Account creation, browser sign-in and billing setup are completed by the user. Never request a password, verification code, payment details or an OAuth token in chat.
+
+1. Use a dedicated Hunchlane workspace, separate from personal or company finance data. Confirm the sponsor's limits and permission for app-operated, isolated per-report modeling.
+2. Configure `DATABASE_URL`, `NEXT_PUBLIC_APP_URL` and `CFO_OPERATOR_USER_ID` (the Clerk ID for the operator). Run `pnpm vault:init` to create the encryption key in ignored `.env.local`. Keep that same key in production's secret environment; rotating it without migrating records makes saved credentials unreadable.
+3. Sign into Hunchlane as that operator, open `/setup`, and complete CFO.ai browser authorization. OAuth uses PKCE, a ten-minute owner-bound random state, and AES-256-GCM encryption of persisted client information/tokens. `/setup` reports connection and model verification separately.
+4. Run `pnpm cfo:probe`. It performs read-only tool/workspace inspection and saves the private server contract to ignored `.cfo/server-contract.json`.
+5. Read server initialization instructions. Use the exposed `inspect_skills` schema to list skills and read the actual `build-model` instructions. Inspect existing Pages, Tables, Dimensions and Scenarios before creating model logic.
+6. Implement a recipe **from that live schema**, with namespaced page, table and Variable identifiers containing `{{runId}}`. Every write must use inspected references or deterministic run-specific names, never an invented ID. Validate create/readback behavior, lost-write reconciliation and isolation across two independent report runs.
+7. The current adapter expects a normalized result with `modelUrl`, `receipt` and three twelve-month `scenarios`. Native CFO.ai MCP readback may have another shape: implement a schema-specific normalizer using actual inspected receipts before enabling modeling. Do not pretend native tool output already has this contract.
+8. Independently compare each month (units, revenue, costs, result, optional cash), annual totals and break-even with `src/core/finance.ts`. Test all three business categories, zero sales, negative contribution, missing capital and one currency. Test token refresh across parallel serverless workers; serialize refresh if the vendor rotates refresh tokens.
+9. Only after those checks, set `CFO_ORG_ID`, `CFO_MODEL_RECIPE_PATH`, and `CFO_INTEGRATION_VERIFIED=true`. The default is unavailable, never fabricated numbers. The report's separate local assumption explorer is labelled local.
+
+The recipe format is a gated development contract in `src/server/cfo.ts`: version 1, `verified: true`, workspace ID, a read of the build-model skill, read-only preflight actions, isolated model actions and an `inspect_table_blocks` result action. The research model cannot choose arbitrary MCP tools. Formula text is generated from a reviewed template and numeric inputs only.
+
+Also create a separate **Hunchlane business plan** in CFO.ai: explicit free/demo allowance, potential report pricing, OpenAI research cost, sponsor-funded composition cost after credits expire, hosting/database costs, conversion assumptions and twelve-month conservative/base/optimistic scenarios. Record sourced numbers separately from assumptions. Do not claim a paid model or financial viability from this plan alone.

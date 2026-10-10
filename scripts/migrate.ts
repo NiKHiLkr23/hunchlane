@@ -1,0 +1,14 @@
+import nextEnv from "@next/env";
+const { loadEnvConfig } = nextEnv;
+import { drizzle } from "drizzle-orm/neon-http";
+import { migrate } from "drizzle-orm/neon-http/migrator";
+import { neon } from "@neondatabase/serverless";
+import { crustCreditBudget } from "../src/server/research-provider";
+loadEnvConfig(process.cwd());
+if (!process.env.DATABASE_URL) throw new Error("Add DATABASE_URL to .env.local first.");
+const client = neon(process.env.DATABASE_URL);
+await migrate(drizzle(client), { migrationsFolder: "./drizzle" });
+const limit = Number(process.env.RESEARCH_BUDGET_CENTS || 1500);
+if (!Number.isSafeInteger(limit) || limit < 0 || limit > 2500) throw new Error("Budget must be between 0 and the approved 2500 cents.");
+await client`insert into budgets(id,limit_cents,credit_limit_milli) values('research',${limit},${crustCreditBudget()*1000}) on conflict do nothing`;
+console.log("Schema migrated. Budget initialized only if new; existing allocations preserved.");

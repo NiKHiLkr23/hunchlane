@@ -1,0 +1,59 @@
+# Hunchlane
+
+**See what exists. Find your angle.**
+
+A research desk for a first business or product idea. Describe an idea, answer up to two clarifying questions, and receive a saved report of existing alternatives, cited evidence, possible angles and a small next experiment. Software, physical products and services are supported.
+
+## Run locally
+
+Requires Node 22+ and pnpm 10. Start the sample interface with no accounts:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+Open http://localhost:3100. `/sample` is deterministic illustrative content; it is never substituted for a live research run. Missing auth/database credentials do not enable a production bypass.
+
+For live research, copy `.env.example` to `.env.local`, configure Clerk, Neon, Neatlogs and Inngest, plus either OpenAI or both Crustdata and LiteLLM, then:
+
+```sh
+pnpm integrations:check
+pnpm db:migrate
+pnpm jobs:dev
+```
+
+Keep `pnpm dev` running in another terminal. Set `INNGEST_DEV=1` locally. The job command enables the official runner's required binary install script, binds to localhost, and persists local queue state; open http://localhost:8288 to inspect it. On Vercel remove the dev variable, set Inngest event/signing keys and sync `/api/inngest` in Inngest Cloud. Update `NEXT_PUBLIC_APP_URL` and Clerk's allowed origins/redirects for the deployed hostname.
+
+The sponsored Nova/Claude connection uses `LITELLM_API_KEY` and `LITELLM_MODEL`. Its fixed endpoint and model allowlist come from https://neatlogs.com/hackathon/models. With Crustdata configured, it plans searches, selects evidence pages, and composes reports using Chat Completions. With OpenAI research selected, it composes reports from OpenAI's retrieved evidence. Without the sponsor key, OpenAI also composes the report.
+
+For Crustdata, set `CRUSTDATA_API_KEY`, `LITELLM_API_KEY`, and an operator-approved `CRUSTDATA_CREDIT_BUDGET` from your claimed allocation. The email offers 5,000 credits per team; an offer is not proof of a credited balance. Start with a small pilot allowance, such as 100 credits, after verifying the account. Run `pnpm crust:check` (free account reads), `pnpm db:migrate`, and `pnpm budget:configure`. The last command applies the configured limits without resetting allocations. `RESEARCH_PROVIDER=auto` selects Crustdata when both keys and a minimum five-credit allowance are configured; otherwise it selects OpenAI. Explicit values `crustdata` or `openai` select one provider. A failed provider never silently switches to another paid service.
+
+Crustdata Web Search and Web Fetch use the documented `2025-11-01` API, Bearer authentication, and normal retrieval mode. Full reports reserve five credits (two searches and up to three fetched pages); refinements reserve four. Free preflight verifies the account balance, endpoint access, one-credit rates and at least 10 requests/minute. Paid requests are spaced across workers with a persisted seven-second queue. Receipts are matched by URL rather than response order; failed fetches stay visible as evidence limitations. Search snippets are not treated as full-page verification. See https://docs.crustdata.com/web-docs/search/reference and https://docs.crustdata.com/web-docs/fetch/introduction.
+
+`pnpm sponsored:check` performs one tiny JSON connection check with a private system-run reservation, cached operation receipt and Neatlogs instrumentation. Re-running reuses the receipt instead of spending again. It passed against the configured sponsor key; it does not verify research quality. Its conservative 75-cent app reservation stays allocated, and sponsor-funded usage is separate from the personal OpenAI ledger.
+
+## Architecture
+
+`src/core` contains provider-independent schemas, evidence validation, budget constants and financial arithmetic. `src/server` contains owner-scoped Neon queries, encrypted OAuth credentials, provider operation receipts, the research adapters and Inngest workflow. Client components call APIs; no database or provider secrets are public.
+
+Research proceeds through discovery → verification → composition → CFO modeling → saved report. Background OpenAI response IDs survive application restarts. Inngest polls durably rather than tying research to an open browser request. An uncertain provider creation stops for reconciliation, never blindly creates another request. Failed core research remains recoverable. CFO failures produce an explicit unavailable financial section and keep the research report.
+
+Each user receives one full report and one refinement during the hackathon. A conditional PostgreSQL budget-row update and unique run constraints gate allocations atomically. Reservations remain charged after failure to account conservatively for unknown usage. Actual OpenAI usage is recorded separately; over-reservation usage freezes new allocations. Hosted search and input billing still need live validation and vendor-side limits: the app ledger alone cannot guarantee a provider invoice cap. Set an OpenAI project budget before public access. Public shares store immutable report snapshots behind random hashed tokens; all links can be revoked by the owner.
+
+## Hackathon integrations
+
+- **Neatlogs:** server-side workflow traces grouped by run/session ID at `https://ingest.neatlogs.com`; wrapped OpenAI and sponsor model calls, stage outcomes and errors. The configured key passed the Doctor export/readback/finalization probe. A real research workflow trace remains to be verified.
+- **Entire:** CLI and Graph are enabled for this independent repository. Follow `.entire/graph-agent.md` during code exploration. Captured Codex hooks require approval in the Hunchlane project and a fresh session; a Git commit alone is not a session checkpoint. See `docs/HACKATHON.md`.
+- **CFO.ai:** the organizer email requires Hunchlane's own business plan (pricing, costs, revenue and runway), included in the submission. Prepare it using `docs/HUNCHLANE_BUSINESS_PLAN.md`. The optional per-user financial adapter has OAuth/PKCE, an encrypted vault and contract inspection; schema-specific model construction and normalization remain pending. Its unavailable state does not substitute for the required business plan. See `docs/CFO_SETUP.md`; do not bypass the verified gate.
+- **Crustdata:** Web Search/Fetch research adapter and credit reservations implemented. Live account access, retrieval quality and billed credits still require the configured key.
+
+## Verify
+
+```sh
+pnpm check
+pnpm test:browser
+pnpm build
+```
+
+SQL behavior tests execute migrations and store queries in isolated embedded PostgreSQL (PGlite). They are not substitutes for remote Neon concurrency and failure testing. Browser tests cover draft preservation, report sections, citations, local financial assumptions, keyboard tabs, mobile overflow, reduced motion and unauthenticated access. Live provider quality, actual cost, OAuth renewal and Vercel/Inngest recovery checks require configured accounts.

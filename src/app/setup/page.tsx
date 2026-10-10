@@ -1,0 +1,5 @@
+import { requireOwner } from "@/server/auth";
+import { notFound } from "next/navigation";
+import { CfoConnect } from "@/components/cfo-connect";
+export const dynamic="force-dynamic";
+export default async function SetupPage({searchParams}:{searchParams:Promise<{cfo?:string}>}){let owner:string;try{owner=await requireOwner();}catch{notFound();}if(owner!==process.env.CFO_OPERATOR_USER_ID)notFound();const {cfo}=await searchParams;return <main id="main" className="narrow-page"><div className="page-intro"><h1>Project integrations</h1><p>Operator setup for the dedicated hackathon workspace.</p></div><section className="empty-state"><h2>CFO.ai</h2><p>{cfo==="connected"?"OAuth completed and workspace access inspected. Financial model isolation and the recipe still need validation.":cfo==="failed"?"Authorization could not be verified. Try again; no success has been assumed.":"Sign in with CFO.ai and authorize Hunchlane’s MCP connection. Use a dedicated workspace. No tokens need to be pasted into chat."}</p><CfoConnect/></section></main>;}

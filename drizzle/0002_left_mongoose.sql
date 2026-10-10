@@ -1,0 +1,1 @@
+ALTER TABLE "budgets" ADD COLUMN "crust_next_call_at" timestamp with time zone;
