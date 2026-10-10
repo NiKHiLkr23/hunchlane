@@ -70,6 +70,47 @@ test("hero motion can be interrupted without losing an editable idea",async({pag
   await expect(idea).toHaveValue(/repairs everyday/);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
 });
+test("the unfolding sample remains readable with accessible sources and live reduced motion",async({page})=>{
+  const paidRequests:string[]=[];
+  page.on("request",request=>{if(request.url().endsWith("/api/runs")&&request.method()==="POST")paidRequests.push(request.url());});
+  await page.emulateMedia({reducedMotion:"no-preference"});
+  await page.goto("/");
+  const preview=page.getByRole("article",{name:"Find a time. Keep the friendship."});
+  await preview.scrollIntoViewIfNeeded();
+  await expect(preview.getByText("Illustrative sample",{exact:true})).toBeVisible();
+  await expect(preview.getByText(/It is not live research/)).toBeVisible();
+  const source=preview.getByRole("link",{name:"Doodle — official website, opens a new tab",exact:true});
+  await expect(source).toHaveAttribute("href","https://doodle.com/");
+  await source.focus();
+  await expect(source).toBeFocused();
+  expect(await source.evaluate(element=>getComputedStyle(element).outlineStyle)).not.toBe("none");
+  await page.emulateMedia({reducedMotion:"reduce"});
+  await expect(source).toBeFocused();
+  expect(await preview.locator(".report-panel").evaluateAll(elements=>elements.every(element=>getComputedStyle(element).opacity==="1"&&getComputedStyle(element).transform==="none"))).toBe(true);
+  await expect(preview.getByRole("heading",{name:"Keep the questions open"})).toBeVisible();
+  await expect(preview.getByRole("heading",{name:"Try a small experiment"})).toBeVisible();
+  await page.emulateMedia({reducedMotion:"no-preference"});
+  await expect(source).toBeFocused();
+  await preview.getByRole("link",{name:"Open the sample report"}).click();
+  await expect(page).toHaveURL(/\/sample$/);
+  expect(paidRequests).toEqual([]);
+  await page.goto("/");
+  await page.setViewportSize({width:320,height:800});
+  await page.locator(".landing-closing").scrollIntoViewIfNeeded();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+  await page.screenshot({path:`artifacts/teal-landing-complete-narrow-${test.info().project.name}.png`,fullPage:true,animations:"disabled"});
+});
+test("the report preview is complete when enhancement scripts are unavailable",async({browser})=>{
+  const context=await browser.newContext({javaScriptEnabled:false,reducedMotion:"reduce"});
+  const page=await context.newPage();
+  await page.goto("http://localhost:3110/");
+  const preview=page.getByRole("article",{name:"Find a time. Keep the friendship."});
+  await expect(preview.getByRole("heading",{name:"Learn from what exists"})).toBeVisible();
+  await expect(preview.getByRole("heading",{name:"Keep the questions open"})).toBeVisible();
+  await expect(preview.getByRole("heading",{name:"Try a small experiment"})).toBeVisible();
+  await expect(preview.getByRole("link",{name:"Open the sample report"})).toHaveAttribute("href","/sample");
+  await context.close();
+});
 test("an idea survives navigation and missing account setup",async({page})=>{
   await page.goto("/");await expect(page.getByRole("heading",{level:1})).toContainText("Give your idea");await page.getByRole("textbox",{name:"What’s your idea?"}).fill("A reusable meal kit designed for people cooking for one.");await page.getByRole("button",{name:"Explore my idea"}).click();await expect(page).toHaveURL(/\/new$/);await expect(page.getByRole("textbox",{name:"Tell us what you have in mind."})).toHaveValue(/meal kit/);await page.getByRole("radio",{name:"Physical product"}).check();await page.getByRole("button",{name:"Explore my idea"}).click();await expect(page.getByRole("heading",{name:"Let’s make the search useful."})).toBeVisible();await page.getByRole("button",{name:"I’m not sure yet"}).first().click();await page.getByRole("button",{name:"Sign in to research"}).click();await expect(page.getByRole("alert").filter({hasText:"Sign-in and live research"})).toContainText("Sign-in and live research");await page.reload();await expect(page.getByRole("textbox",{name:"Tell us what you have in mind."})).toHaveValue(/meal kit/);
 });

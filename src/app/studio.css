@@ -74,42 +74,10 @@ body:has(.studio-landing) .skip-link:focus-visible { outline-color: var(--studio
 .studio-landing .example-row button:hover { border-color: var(--studio-teal); color: var(--studio-teal); }
 .studio-example-type { font-size: 9px; font-weight: 600; color: var(--studio-muted); }
 .studio-landing .error-message { margin-top: 12px; color: #a63c31; font-size: 12px; }
-.studio-section-heading { display: flex; justify-content: space-between; gap: 32px; align-items: flex-end; margin-bottom: 28px; }
-.studio-section-heading h2 { font-size: 34px; font-weight: 650; line-height: 1.2; letter-spacing: -.035em; text-wrap: balance; }
-.studio-section-heading > p { color: var(--studio-muted); font-size: 13px; margin: 0 0 4px; max-width: 270px; }
-.studio-preview-section { border-top: 1px solid var(--studio-line); padding: 52px 0 64px; }
-.studio-preview { display: grid; grid-template-columns: 1fr 1.1fr; background: var(--studio-teal-light); border: 1px solid #d4dfd0; border-radius: 9px; overflow: hidden; }
-.studio-preview-intro { padding: 36px; }
-.studio-sample-label { display: inline-flex; padding: 5px 9px; border-radius: 4px; background: var(--studio-paper); color: var(--studio-teal); font-size: 11px; font-weight: 700; }
-.studio-preview-intro h3 { font-size: 28px; font-weight: 650; letter-spacing: -.03em; line-height: 1.25; margin: 20px 0 16px; max-width: 300px; }
-.studio-preview-intro > p { font-size: 13px; color: #455d4d; line-height: 1.8; max-width: 360px; margin-bottom: 20px; }
-.studio-preview-findings { padding: 28px 36px; border-left: 1px solid #d0ddcd; }
-.studio-preview-finding { display: flex; gap: 16px; padding: 16px 0; }
-.studio-preview-finding + .studio-preview-finding { border-top: 1px solid #d0ddcd; }
-.studio-preview-finding > svg { color: var(--studio-teal); margin-top: 2px; }
-.studio-preview-finding h4 { font-size: 13px; font-weight: 750; line-height: 1.5; margin: 0 0 7px; }
-.studio-preview-finding p { color: #455d4d; font-size: 12px; line-height: 1.7; margin: 0; }
-.studio-hypothesis { display: inline-block; margin-left: 5px; font-size: 10px; color: #775036; background: #ffdfc7; padding: 1px 5px; border-radius: 3px; }
-.studio-preview-disclaimer { font-size: 10px; color: #455d4d; margin: 14px 0 0; }
-.studio-how { padding: 0 0 72px; scroll-margin-top: 28px; }
-.studio-how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; list-style: none; padding: 0; margin: 32px 0 0; }
-.studio-how-steps li { display: flex; align-items: flex-start; gap: 14px; border-top: 1px solid var(--studio-line); padding-top: 24px; }
-.studio-step-number { display: flex; justify-content: center; align-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: var(--studio-teal-light); color: var(--studio-teal); font-size: 12px; font-weight: 700; }
-.studio-how-steps h3 { font-size: 15px; line-height: 1.6; font-weight: 750; margin: 0 0 10px; }
-.studio-how-steps p { font-size: 13px; color: var(--studio-muted); line-height: 1.8; margin: 0; }
-.studio-closing { display: flex; align-items: center; gap: 72px; justify-content: space-between; padding: 44px; border-radius: 9px; background: #fbf0df; border: 1px solid #e9d7b9; margin-bottom: 32px; }
-.studio-closing h2 { font-size: 32px; letter-spacing: -.035em; line-height: 1.25; font-weight: 650; }
-.studio-closing p { font-size: 13px; color: #725846; line-height: 1.8; max-width: 640px; margin: 20px 0; }
-.studio-closing ul { display: flex; flex-wrap: wrap; gap: 10px 20px; list-style: none; padding: 0; margin: 0; }
-.studio-closing li { display: flex; align-items: center; gap: 7px; color: #725846; font-size: 11px; }
-.studio-closing > a { flex-shrink: 0; width: auto; }
 body:has(.studio-landing) .site-footer { max-width: 1120px; padding-top: 24px; margin-top: 40px; color: var(--studio-muted); border-color: var(--studio-line); font-family: var(--font-studio), sans-serif; font-size: 11px; }
 @media (max-width: 1000px) {
   .studio-hero { gap: 36px; padding: 56px 0 64px; }
   .studio-hero h1 { font-size: 52px; }
-  .studio-section-heading h2 { font-size: 30px; }
-  .studio-preview-intro, .studio-preview-findings { padding: 28px; }
-  .studio-closing { gap: 32px; padding: 32px; }
 }
 @media (max-width: 760px) {
   .studio-landing { padding: 0 24px; }
@@ -122,15 +90,6 @@ body:has(.studio-landing) .site-footer { max-width: 1120px; padding-top: 24px; m
   .studio-hero h1 { font-size: 48px; line-height: 1.1; }
   .studio-hero-copy > p { font-size: 14px; line-height: 1.75; margin: 18px 0 6px; max-width: 500px; }
   .studio-hero-note { display: none; }
-  .studio-section-heading { display: block; margin-bottom: 24px; }
-  .studio-section-heading > p { margin-top: 14px; max-width: none; }
-  .studio-preview { grid-template-columns: 1fr; }
-  .studio-preview-intro h3 { max-width: none; }
-  .studio-preview-findings { border-left: 0; border-top: 1px solid #d0ddcd; }
-  .studio-how-steps { grid-template-columns: 1fr; gap: 20px; margin-top: 28px; }
-  .studio-how-steps li { padding-top: 20px; }
-  .studio-closing { flex-direction: column; align-items: flex-start; gap: 28px; }
-  .studio-closing > a { width: 100%; }
 }
 @media (max-width: 440px) {
   .studio-landing { padding: 0 20px; }
@@ -154,15 +113,6 @@ body:has(.studio-landing) .site-footer { max-width: 1120px; padding-top: 24px; m
   .studio-landing .privacy-note { font-size: 10px; }
   .studio-landing .example-row { padding: 14px 20px 20px; }
   .studio-landing .example-row button { padding: 9px 10px; font-size: 10px; }
-  .studio-section-heading h2 { font-size: 27px; }
-  .studio-preview-section { padding: 36px 0 44px; }
-  .studio-preview-intro, .studio-preview-findings { padding: 24px; }
-  .studio-preview-intro h3 { font-size: 25px; }
-  .studio-preview-intro > p, .studio-preview-finding p { font-size: 13px; }
-  .studio-preview-disclaimer { font-size: 11px; }
-  .studio-how { padding-bottom: 44px; }
-  .studio-closing { padding: 28px 24px; margin-bottom: 0; }
-  .studio-closing h2 { font-size: 27px; }
   body:has(.studio-landing) .site-footer { margin-top: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {

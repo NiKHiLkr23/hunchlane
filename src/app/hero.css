@@ -1,4 +1,4 @@
-/* Phase 1 review: centered hero. Lower sections retain their existing layout. */
+/* Teal and Depth: centered landing hero and immediate idea entry. */
 body:has(.dimensional-hero) { background: #f5f6f4; }
 body:has(.dimensional-hero) .studio-header { background: #fff; border-color: #e8ece6; }
 body:has(.dimensional-hero) .studio-header-inner { height: 76px; }
