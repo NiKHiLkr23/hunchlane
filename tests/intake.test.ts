@@ -1,8 +1,9 @@
-import { beforeAll, beforeEach, afterAll, it, expect, vi } from 'vitest';
+import { beforeAll, beforeEach, afterEach, afterAll, it, expect, vi } from 'vitest';
 import { PGlite } from '@electric-sql/pglite';
 import { readFile } from 'node:fs/promises';
 const harness = vi.hoisted(() => ({
   query: null as null | ((sql: string, args: unknown[]) => Promise<unknown[]>),
+  options: vi.fn(),
   create: vi.fn()
 }));
 vi.mock('@neondatabase/serverless', () => ({
@@ -10,6 +11,7 @@ vi.mock('@neondatabase/serverless', () => ({
 }));
 vi.mock('openai', () => ({
   default: class {
+    constructor(options: unknown) { harness.options(options); }
     chat = {
       completions: {
         create: harness.create
@@ -43,6 +45,10 @@ beforeAll(async () => {
   await engine.exec(await readFile(new URL('../docs/INTAKE_SETUP.sql', import.meta.url), 'utf8'));
 }, 30000);
 beforeEach(async () => {
+  vi.stubEnv('AI_INTAKE_ENABLED', '0');
+  vi.stubEnv('AI_INTAKE_PRICING_CONFIRMED', '0');
+  vi.stubEnv('AI_INTAKE_API_KEY', 'fixture-intake-key');
+  harness.options.mockClear();
   await engine.exec("TRUNCATE intake_operations,idea_intakes;UPDATE budgets SET limit_cents=30,allocated_cents=0;");
   harness.create.mockReset().mockResolvedValue({
     choices: [{
@@ -62,7 +68,26 @@ beforeEach(async () => {
     }
   });
 });
+afterEach(() => vi.unstubAllEnvs());
 afterAll(() => engine.close());
+it('requires a dedicated key even when the research key and activation flags exist', () => {
+  vi.stubEnv('AI_INTAKE_ENABLED', '1');
+  vi.stubEnv('AI_INTAKE_PRICING_CONFIRMED', '1');
+  vi.stubEnv('NEATLOGS_API_KEY', 'fixture-telemetry-key');
+  vi.stubEnv('LITELLM_API_KEY', 'fixture-research-key');
+  vi.stubEnv('AI_INTAKE_API_KEY', '');
+  expect(intakeEnabled()).toBe(false);
+  vi.stubEnv('AI_INTAKE_API_KEY', 'fixture-intake-key');
+  expect(intakeEnabled()).toBe(true);
+  vi.stubEnv('AI_INTAKE_ENABLED', '0');
+});
+it('refuses a missing intake key before allocating budget or claiming an operation', async () => {
+  vi.stubEnv('AI_INTAKE_API_KEY', '');
+  await expect(intakeTurn('alice', input)).rejects.toThrow('INTAKE_NOT_CONFIGURED');
+  expect(harness.create).not.toHaveBeenCalled();
+  expect((await engine.query('SELECT allocated_cents FROM budgets')).rows[0]).toMatchObject({allocated_cents: 0});
+  expect((await engine.query('SELECT * FROM intake_operations')).rows).toHaveLength(0);
+});
 it('starts disabled and refuses unfunded intake without a provider request', async () => {
   expect(intakeEnabled()).toBe(false);
   await engine.exec('UPDATE budgets SET limit_cents=0');
@@ -73,6 +98,7 @@ it('reserves once, recovers the same reply, and keeps it private', async () => {
   const reply = await intakeTurn('alice', input);
   expect(await intakeTurn('alice', input)).toEqual(reply);
   expect(harness.create).toHaveBeenCalledTimes(1);
+  expect(harness.options).toHaveBeenCalledWith(expect.objectContaining({apiKey:'fixture-intake-key',maxRetries:0}));
   expect(await savedIntake(input.id, 'bob', 0)).toBeUndefined();
   expect((await engine.query('SELECT allocated_cents FROM budgets')).rows[0]).toMatchObject({
     allocated_cents: 30

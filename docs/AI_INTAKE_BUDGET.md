@@ -1,6 +1,6 @@
-# Live AI intake pilot — prepared, awaiting approval
+# Live AI intake pilot — conditionally approved, provider cap pending
 
-No paid intake call has been made. `.env.local` is unchanged. The live endpoint is disabled unless both `AI_INTAKE_ENABLED=1` and `AI_INTAKE_PRICING_CONFIRMED=1` are set by the operator. The prepared SQL has not been applied to Neon.
+No paid intake call has been made. `.env.local` is unchanged. The live endpoint requires a dedicated `AI_INTAKE_API_KEY` and both `AI_INTAKE_ENABLED=1` and `AI_INTAKE_PRICING_CONFIRMED=1`. It never falls back to the research key. The prepared SQL has not been applied to Neon. The operator approved the pilot only after pricing and provider-cap verification.
 
 ## Proposed allowance
 
@@ -10,7 +10,31 @@ At Anthropic's published $3 input / $15 output per million tokens, an example 4,
 
 ## Approval and activation
 
-The operator must approve one 30-cent intake pilot separately from the consumed five-credit research pilot. Confirm the sponsored key's applicable prices and whether it can enforce a 30-cent cap (a shared key may already cover other workflows). If it cannot, resolve the cap before activation. Then apply `docs/INTAKE_SETUP.sql`, fund only the `intake` row to 30 cents using the commented conditional update, and enable the two process flags. Do not reset allocations or change `.env.local` automatically.
+The separate 30-cent pilot is conditionally approved. Confirm the dedicated sponsored key's applicable prices and budget controls before activation. Then apply `docs/INTAKE_SETUP.sql`, fund only the `intake` row to 30 cents using the commented conditional update, and enable the two process flags. Do not reset allocations or change `.env.local` automatically.
+
+### Observed sponsor metadata — October 11, 2026
+
+Free authenticated `GET /model/info` returned Sonnet 4.6 prices of $3.30 per million input tokens and $16.50 per million output tokens. Cache-write/read input prices are $4.125/$0.33 per million. These are the proxy's reported accounting rates, not independent evidence of external billing fees. At the reported ordinary rates, 4,000 input + 800 output tokens costs $0.0264 per call ($0.0792 for three); the 16,000 input-token planning scenario costs $0.066 per call ($0.198 for three). Prompt bytes still are not exact token counts.
+
+Free `GET /key/info` returned a shared $20 maximum budget, $0.09768 spend, a reset duration, and no per-model budget. It did not establish an isolated 30-cent cap. The key reports a team but no user owner; `/user/info` returned 404. One attempt to create a dedicated Sonnet-only key within that same team (max budget $0.30, no budget reset, concurrency 1, expiry 24 hours) returned HTTP 401 `auth_error`. No key was created or persisted; no inference was requested, and no shared budget was changed. Sanitized evidence is saved in ignored `artifacts/verification/intake-provider-metadata.json` and `intake-key-creation.json`.
+
+### Exact remaining sponsor step
+
+Ask the Aivar/LiteLLM sponsor administrator to create a dedicated key named `hunchlane-intake-pilot`, restricted to `claude-sonnet-4.6`, with `max_budget=0.30`, no `budget_duration` reset, `max_parallel_requests=1`, and a 24-hour expiry. The proxy's `/key/generate` endpoint is present, but the current sponsor credential was denied. The administrator can use that endpoint or their Virtual Keys dashboard. Request confirmation of the applicable accounting rates and budget behavior. LiteLLM documents that requests fail after the key crosses its budget; this is a request-admission threshold, not proof that an in-flight response cannot overshoot. The app's separate prompt/output/call bounds remain necessary. Sources: [virtual keys](https://docs.litellm.ai/docs/proxy/virtual_keys), [budget behavior](https://docs.litellm.ai/docs/proxy/users).
+
+Do not paste the issued credential into chat or Git. Save it locally without terminal echo, for this temporary pilot:
+
+```sh
+(
+  umask 077
+  set -o noclobber
+  read -rs 'intake_pilot_key?Paste the intake-only key (hidden): '
+  print -rn -- "$intake_pilot_key" > /tmp/hunchlane-intake-api-key
+  unset intake_pilot_key
+)
+```
+
+The operator can then load that private file into the server's `AI_INTAKE_API_KEY` process environment, without editing `.env.local`. Verify the issued key's price/model access, budget, spend, expiry, reset and concurrency metadata before funding or enabling. No further pilot approval is needed if the original conditions and limits are satisfied. A live conversation and Neatlogs trace readback remain unverified.
 
 Each session belongs to a Clerk owner. A turn is atomically claimed and journaled before sending. Concurrent requests, changed reuse of an ID/turn, unknown responses and unfinished operations stop. GET can recover an already-completed reply without resending. No automatic requests occur on reload or login. Research still requires its separate explicit Start research action and existing reservation journal.
 

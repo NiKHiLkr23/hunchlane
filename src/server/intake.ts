@@ -7,7 +7,7 @@ import { observed } from './telemetry';
 import { IntakeReplySchema } from '@/core/idea-draft';
 import { INTAKE_LIMITS, INTAKE_RULES, type IntakeRequest } from '@/core/intake';
 export function intakeEnabled() {
-  return process.env.AI_INTAKE_ENABLED === '1' && process.env.AI_INTAKE_PRICING_CONFIRMED === '1' && Boolean(process.env.DATABASE_URL && process.env.LITELLM_API_KEY && process.env.NEATLOGS_API_KEY);
+  return process.env.AI_INTAKE_ENABLED === '1' && process.env.AI_INTAKE_PRICING_CONFIRMED === '1' && Boolean(process.env.DATABASE_URL && process.env.AI_INTAKE_API_KEY && process.env.NEATLOGS_API_KEY);
 }
 export async function savedIntake(id: string, owner: string, turn: number) {
   if (!owner) throw Error("UNAUTHENTICATED");
@@ -28,6 +28,8 @@ export async function intakeTurn(owner: string, input: IntakeRequest) {
     if (existing.state === 'complete') return IntakeReplySchema.parse(existing.result);
     throw Error('RECONCILIATION_REQUIRED');
   }
+  const apiKey = process.env.AI_INTAKE_API_KEY;
+  if (!apiKey) throw Error('INTAKE_NOT_CONFIGURED');
   const session = await sql`select id,next_turn from idea_intakes where id=${input.id} and owner_id=${owner}`;
   if (!session[0]) {
     if (input.turn !== 0) throw Error('INTAKE_CONFLICT');
@@ -43,7 +45,7 @@ export async function intakeTurn(owner: string, input: IntakeRequest) {
   return observed(input.id, 'idea-intake', async () => {
     const client = wrapOpenAI(new OpenAI({
       baseURL: 'https://litellm.vision.aivar.app/v1',
-      apiKey: process.env.LITELLM_API_KEY,
+      apiKey,
       maxRetries: 0,
       timeout: 45000
     }));
