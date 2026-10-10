@@ -35,7 +35,7 @@ test("account states stay usable on narrow screens with long or corrupt local dr
   const idea = "A".repeat(3000);
   await page.evaluate(value => localStorage.setItem("hunchlane.idea-draft.v1", JSON.stringify({ idea: value, category: "physical", answers: {} })), idea);
   await page.goto("/sign-in?redirect_url=https%3A%2F%2Fevil.example");
-  await expect(page.getByRole("link", { name: "Create an account", exact: true })).toHaveAttribute("href", "/sign-up?redirect_url=%2Flibrary");
+  await expect(page.getByRole("link", { name: "Create an account", exact: true })).toHaveAttribute("href", "/sign-up?redirect_url=%2Fhome");
   await expect(page.getByRole("complementary", { name: "Your local draft" })).toContainText(idea);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 320, height: 800 });

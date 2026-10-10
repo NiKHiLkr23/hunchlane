@@ -3,13 +3,23 @@ import { PGlite } from "@electric-sql/pglite";
 import { readFile,readdir } from "node:fs/promises";
 const harness=vi.hoisted(()=>({query:undefined as undefined|((sql:string,args:unknown[])=>Promise<unknown[]>)}));
 vi.mock("@neondatabase/serverless",()=>({neon:()=>async(strings:TemplateStringsArray,...args:unknown[])=>{const query=strings.reduce((s,part,i)=>s+part+(i<args.length?`$${i+1}`:""),"");return harness.query!(query,args);}}));
-import { createRun,ownedRun,internalRun,listRuns,finishRun,createShare,sharedReport,revokeShares,claimOperation,saveResponseId,saveOperation,retryRun,failRun,reserveCrustSlot,db } from "@/server/store";
+import { createRun,ownedRun,internalRun,listRuns,listHomeRuns,finishRun,createShare,sharedReport,revokeShares,claimOperation,saveResponseId,saveOperation,retryRun,failRun,reserveCrustSlot,db } from "@/server/store";
 import { sampleReport } from "@/core/sample";
 let engine:PGlite;
 beforeAll(async()=>{process.env.DATABASE_URL="postgres://test";engine=new PGlite();harness.query=async(sql,args)=>(await engine.query(sql,args)).rows;const folder=new URL("../drizzle/",import.meta.url);for(const file of (await readdir(folder)).filter(f=>f.endsWith(".sql")).sort())await engine.exec(await readFile(new URL(file,folder),"utf8"));},30000);
 beforeEach(async()=>{await engine.exec("TRUNCATE provider_operations, shares, runs, budgets, credentials CASCADE; INSERT INTO budgets (id,limit_cents) VALUES ('research',1500);");});
 afterAll(async()=>{await engine.close();});
 describe("persisted ownership and reservations (real SQL, embedded PostgreSQL)",()=>{
+  it("loads only the owner's home summaries without report bodies or journal data",async()=>{
+    await createRun("a","alice",sampleReport.brief,null);await finishRun("a",sampleReport);
+    await createRun("b","bob",sampleReport.brief,null);
+    const summaries=await listHomeRuns("alice");
+    expect(summaries).toHaveLength(1);
+    expect(summaries[0]).toMatchObject({id:"a",idea:sampleReport.brief.idea,category:sampleReport.brief.category,title:sampleReport.title,hasReport:true,status:"complete",stage:"complete"});
+    expect(summaries[0]).not.toHaveProperty("report");expect(summaries[0]).not.toHaveProperty("brief");
+    expect((await listHomeRuns("bob")).map(run=>run.id)).toEqual(["b"]);
+    await expect(listHomeRuns("")).rejects.toThrow("UNAUTHENTICATED");
+  });
   it("isolates private reports and the library by owner",async()=>{await createRun("a","alice",sampleReport.brief,null);expect(await ownedRun("a","bob")).toBeNull();expect(await listRuns("bob")).toEqual([]);expect((await listRuns("alice"))[0].id).toBe("a");});
   it("requires the same owner for background run and refinement-parent reads",async()=>{
     await createRun("parent","user_alice",sampleReport.brief,null);

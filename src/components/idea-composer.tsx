@@ -12,12 +12,12 @@ const examples = [
   { label: "Meal kits for one", type: "Product", category: "physical", idea: "A meal kit for people cooking for one" },
   { label: "Coworking for night owls", type: "Service", category: "service", idea: "A quiet coworking space for night owls" },
 ] as const;
-export function IdeaComposer({ compact = false, signedIn = false, authConfigured = false }: { compact?: boolean; signedIn?: boolean; authConfigured?: boolean }) {
+export function IdeaComposer({ compact = false, signedIn = false, authConfigured = false, fresh = false }: { compact?: boolean; signedIn?: boolean; authConfigured?: boolean; fresh?: boolean }) {
   const router = useRouter();
   const [brief,setBrief] = useState<IdeaBrief>(initial), [step,setStep] = useState<"describe"|"clarify">("describe"), [error,setError] = useState(""), [busy,setBusy] = useState(false);
   const [requestId,setRequestId] = useState<string | null>(null);
   const ideaInput = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => { try { const saved=localStorage.getItem(DRAFT_KEY); if (saved) { const parsed = IdeaBriefSchema.safeParse(JSON.parse(saved)); if(parsed.success) setBrief(parsed.data); } } catch {} },[]);
+  useEffect(() => { if (fresh) return; try { const saved=localStorage.getItem(DRAFT_KEY); if (saved) { const parsed = IdeaBriefSchema.safeParse(JSON.parse(saved)); if(parsed.success) setBrief(parsed.data); } } catch {} },[fresh]);
   function update<K extends keyof IdeaBrief>(key: K,value: IdeaBrief[K]) { setBrief(old => ({ ...old,[key]:value })); setRequestId(null); setError(""); }
   function saveDraft(value = brief) { try { localStorage.setItem(DRAFT_KEY,JSON.stringify(value)); } catch {} }
   function describe(event: React.FormEvent) {

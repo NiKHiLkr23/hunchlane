@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 import { ArrowRight, ArrowUpRight, Check, FileCheck2, Search, FlaskConical } from "lucide-react";
 import { IdeaComposer } from "@/components/idea-composer";
@@ -10,7 +12,8 @@ import "./studio.css";
 import "./hero.css";
 import "./landing-details.css";
 
-export default function Home() {
+export default async function Home() {
+  if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY && (await auth()).userId) redirect("/home");
   return <main id="main" className="studio-landing">
     <HeroMotion>
       <div className="hero-decoration" aria-hidden="true">

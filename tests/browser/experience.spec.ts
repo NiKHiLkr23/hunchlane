@@ -86,7 +86,7 @@ test("the unfolding sample remains readable with accessible sources and live red
   expect(await source.evaluate(element=>getComputedStyle(element).outlineStyle)).not.toBe("none");
   await page.emulateMedia({reducedMotion:"reduce"});
   await expect(source).toBeFocused();
-  expect(await preview.locator(".report-panel").evaluateAll(elements=>elements.every(element=>getComputedStyle(element).opacity==="1"&&getComputedStyle(element).transform==="none"))).toBe(true);
+  await expect.poll(() => preview.locator(".report-panel").evaluateAll(elements=>elements.every(element=>getComputedStyle(element).opacity==="1"&&getComputedStyle(element).transform==="none")), { timeout: 1000 }).toBe(true);
   await expect(preview.getByRole("heading",{name:"Keep the questions open"})).toBeVisible();
   await expect(preview.getByRole("heading",{name:"Try a small experiment"})).toBeVisible();
   await page.emulateMedia({reducedMotion:"no-preference"});

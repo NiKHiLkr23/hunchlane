@@ -10,9 +10,11 @@ import { AuthActions } from "./auth-actions";
 export function HeaderNavigation({ authConfigured }: { authConfigured: boolean }) {
   const pathname = usePathname();
   const menu = useRef<HTMLDetailsElement>(null);
-  const account = authConfigured ? <AuthActions/> : <Link href="/sign-in" className="nav-signin">Sign in <ArrowUpRight size={16}/></Link>;
+  const account = authConfigured ? <AuthActions largeTarget={pathname === "/home"}/> : <Link href="/sign-in" className="nav-signin">Sign in <ArrowUpRight size={16}/></Link>;
 
   if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname === "/sso-callback") return <header className="auth-header"><div className="auth-header-inner"><Link className="brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav aria-label="Main navigation"><Link href="/sample">Take a look around <ArrowUpRight size={15}/></Link></nav></div></header>;
+
+  if (pathname === "/home" || pathname === "/dev/home-preview") return <header className="desk-header"><div className="desk-header-inner"><Link className="brand" href="/home" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav className="desk-nav" aria-label="Main navigation"><Link href="/home" aria-current="page">Home</Link><Link href="/library">My ideas</Link><Link href="/sample">Sample report</Link></nav><div className="desk-account">{account}<details className="desk-menu" ref={menu} onKeyDown={event => { if (event.key === "Escape") { closeMenu(); menu.current?.querySelector("summary")?.focus(); } }}><summary aria-label="Navigation menu"><Menu size={20}/></summary><nav aria-label="Mobile navigation"><Link href="/home" onClick={closeMenu}>Home</Link><Link href="/library" onClick={closeMenu}>My ideas</Link><Link href="/sample" onClick={closeMenu}>Sample report</Link></nav></details></div></div></header>;
 
   if (pathname !== "/") return <header className="site-header"><div className="header-inner"><Link className="brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav aria-label="Main navigation"><Link href="/sample">Sample report</Link><Link href="/library">My ideas</Link>{account}</nav></div></header>;
 
