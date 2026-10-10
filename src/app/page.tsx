@@ -1,20 +1,39 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Check, Lightbulb, Search, FlaskConical } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, ArrowUpRight, Check, FileCheck2, Lightbulb, Search, FlaskConical } from "lucide-react";
 import { IdeaComposer } from "@/components/idea-composer";
+import { HeroMotion } from "@/components/hero-motion";
+import { LaneMark } from "@/components/brand";
 import { sampleReport } from "@/core/sample";
 import "./studio.css";
+import "./hero.css";
 
 export default function Home() {
   return <main id="main" className="studio-landing">
-    <section className="studio-hero" aria-labelledby="studio-title">
+    <HeroMotion>
+      <div className="hero-decoration" aria-hidden="true">
+        <div className="hero-drift-item hero-note-scene">
+          <div className="hero-float hero-idea-object"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 96px, 230px" preload/></div>
+          <div className="hero-float hero-idea-card"><span className="hero-card-kicker">A little what if…</span><p>Make plans with friends.<br/>Actually make them happen.</p><span className="hero-note-line"/></div>
+        </div>
+        <div className="hero-drift-item hero-alternatives-scene">
+          <div className="hero-float hero-mini-card hero-alternatives-card"><span className="hero-card-kicker">Sample alternatives</span><h2>A few familiar names</h2><div className="hero-mini-alternatives">{sampleReport.competitors.map(competitor => <span key={competitor.name}><i>{competitor.name[0]}</i>{competitor.name}</span>)}</div></div>
+        </div>
+        <div className="hero-drift-item hero-evidence-scene">
+          <div className="hero-float hero-mini-card hero-evidence-card"><span className="hero-icon-tile"><FileCheck2 size={27}/></span><div><span className="hero-card-kicker">Keep evidence close</span><p>Follow the source.</p><span className="hero-evidence-line"/><span className="hero-evidence-line short"/></div></div>
+        </div>
+        <div className="hero-drift-item hero-experiment-scene">
+          <div className="hero-float hero-experiment-card"><span className="hero-icon-tile"><ArrowUpRight size={25}/></span><div><span className="hero-card-kicker">The next move</span><p>Start small. Learn something.</p></div></div>
+        </div>
+      </div>
       <div className="studio-hero-copy">
-        <h1 id="studio-title">Give your idea<br/>{" "}a clearer<br/>{" "}<span>next step.</span></h1>
+        <div className="hero-brand-tile" aria-hidden="true"><LaneMark/></div>
+        <h1 id="studio-title">Give your idea<br/>{" "}a clearer <span>next step.</span></h1>
         <p>Explore existing alternatives, see the evidence, and find something worth testing—whether it’s an app, a product, or a service.</p>
-        <Link href="/sample" className="studio-text-link">See what a report looks like <ArrowRight size={18}/></Link>
-        <div className="studio-hero-note"><span className="studio-note-dot" aria-hidden="true"/>An idea doesn’t need to be polished to be worth exploring.</div>
       </div>
       <div id="start-your-idea" className="studio-entry"><IdeaComposer compact/></div>
-    </section>
+      <Link href="/sample" className="studio-text-link hero-sample-link">See what a report looks like <ArrowRight size={16}/></Link>
+    </HeroMotion>
 
     <section className="studio-preview-section" aria-labelledby="preview-title">
       <div className="studio-section-heading"><h2 id="preview-title">A little context.<br/>{" "}A more useful next move.</h2><p>Here’s what exploring a hunch can look like.</p></div>
