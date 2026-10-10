@@ -4,19 +4,19 @@ This file distinguishes source implementation from live proof. Update only with 
 
 | Capability | Implemented | Live evidence |
 |---|---|---|
-| Next.js interface and sample | Yes | October 10: `pnpm check` passed (32 tests), all 8 desktop/mobile browser checks passed, production build passed after background-owner fix |
-| Clerk sign-in and owner checks | Yes, provider inside body, async auth, Next.js proxy and explicit Clerk matcher | Sign-in screen rendered and backend key passed read-only SDK check; first-user and two-account verification pending |
+| Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 8 desktop/mobile browser checks passed, production build passed after citation-provenance fix |
+| Clerk sign-in and owner checks | Yes, provider inside body, async auth, Next.js proxy and explicit Clerk matcher | User signed in and created a complete live report on October 10; report/operations independently read with the Clerk owner predicate. Two-account browser verification pending |
 | Neon schema, versions, share snapshots, reservations | Yes | Remote migrations applied and budget row read back; embedded PostgreSQL tests passed; remote ownership/concurrency pending |
-| Inngest durable stages and response polling | Yes | Local persisted dev runner running; Hunchlane synced with one function. Actual job lifecycle/restart verification pending |
+| Inngest durable stages and response polling | Yes | Local workflow reached a saved complete report through six journaled provider operations. Restart/recovery verification pending |
 | OpenAI web search and structured report | Yes | API credentials and live citation/cost evaluation pending |
-| Sponsored Nova/Claude planning and composition | Yes, fixed endpoint and model allowlist | One bounded, journaled Claude JSON connection check passed with Neatlogs instrumentation; full planning/composition quality pending |
-| Neatlogs wrapper and run trace grouping | Yes, startup initialization and correct region | Doctor probe passed: export, authenticated readback, finalization, hierarchy and four spans. Real workflow pending |
+| Sponsored Nova/Claude planning and composition | Yes, fixed endpoint and model allowlist | Live planning, page selection and composition completed with Claude Sonnet 4.6; authenticated Neatlogs readback recorded 16,481 tokens. Semantic quality caveats and preventive fix below |
+| Neatlogs wrapper and run trace grouping | Yes, startup initialization and correct region | Real workflow readback: six successful traces, nine spans, three Claude child spans, correct shared session ID and parent edges; no trace errors. Model pricing is unpriced, so zero displayed cost is not a verified invoice |
 | Entire Graph | Enabled and queried | Local graph output observed |
 | Entire Runners and Trails | Six tailored Runner configs committed on the default branch | GitHub-linked CLI login and enabled toggles verified; Trail 1 created. Review completed on `a9a29d4` with zero findings. Five other Runner completions remain unverified due to a result-API region error; see ENTIRE_WORKFLOW.md |
 | Entire captured checkpoint | Approved hooks active in this Hunchlane chat | Checkpoint `01M4JWWNZ0D5V0E5KMETZY804F` links commit `149e48aa1dfc9927c53758c4f72153853aa298ac` to session `01a125c7-e20d-7a31-8b7c-12219e382c59`; exact checkpoint ref verified on GitHub. Entire web import/reviewer access still pending |
 | CFO.ai OAuth and gated adapter | OAuth/vault and contract probe implemented | Browser authorization, native model normalization/isolation/renewal pending |
 | CFO.ai Hunchlane business plan (required) | Actual model created in CFO.ai from the prepared inputs | Saved Page, monthly/annual tables, six scenarios and XLSX attachment observed. Five scenarios' summary values match independent arithmetic; No sales correctly reaches negative cash in month 5. Direct doubled-cost verification and local export inspection pending; see HUNCHLANE_BUSINESS_PLAN.md for real links |
-| Crustdata web research | Search/Fetch, free preflight, credit ledger and request spacing implemented | October 10 free preflight passed: 5,200 credits, both endpoints enabled at one credit, rate-limit contract passed. User approved one five-credit pilot; persisted allowance verified. Paid retrieval, citations and billing still pending |
+| Crustdata web research | Search/Fetch, free preflight, credit ledger and request spacing implemented | User-created live report completed: two searches plus three fetched pages, five journaled credits. Free account balance decreased from 5,200 to 5,195. All 16 source URLs/excerpts matched existing provider receipts; semantic claim limitations below |
 
 ## Verified Git and capture evidence — October 10, 2026
 
@@ -34,4 +34,18 @@ No app or Inngest listener was present on ports 3100/8288 at the initial process
 
 No deployment, domain purchase or social post was performed. CFO.ai login/setup was completed by the user; no billing action was performed by this agent.
 
-Workflow tracing now emits only run ID, phase and trace ID for authenticated Neatlogs correlation. This is preparation, not proof of a live workflow. After this change, `pnpm check` passed 32 tests, `pnpm test:browser` passed all 8 checks and `pnpm build` passed. The local app and persisted Inngest runner are available on 3100/8288; the real report awaits the user's Clerk sign-in. No paid Crustdata pilot request has been sent.
+Workflow tracing emits only run ID, phase and trace ID for authenticated Neatlogs correlation. The initial correlation change passed 32 unit tests, 8 browser checks and the production build.
+
+## First live research verification — October 10, 2026
+
+The user supplied a completed report ID after testing the signed-in app. Read-only verification used the actual Clerk owner in all run/provider-operation queries. Private report content and raw trace responses remain in ignored local `artifacts/verification/`; they were not published or committed.
+
+- Saved status/stage: complete; provider: Crustdata; version: 1; 16 sources and 5 alternatives. The report's source URLs and excerpts match the search/page operation receipts exactly, and citation-ID/competitor-host validation passes.
+- Six operation records are complete: planning, two searches, page selection, fetch and composition. No uncertain/creating record remains. The full-run reservation is 75 cents and five credits; journaled usage is five credits. Sponsor usage has zero personal OpenAI ledger cost, which is not a statement that model usage is free.
+- Free Crustdata account readback: 5,195 credits, exactly five below the pre-pilot read. No additional paid calls were made during verification. The pilot allowance is consumed; further research requires a separately authorized allowance.
+- Authenticated existing-trace readback verified six successes with nine unique spans and three Claude Sonnet 4.6 child calls. All share the report ID as session ID, parent edges point to the correct workflow span and error counts are zero. Tokens: 273 planning, 2,114 selection and 14,094 composition. Neatlogs reports model pricing as `unpriced`; no vendor dollar total is verified. Trace success satisfies the installed Doctor reader's completion convention; the response does not provide a separate finalizationStatus field.
+- Quality issue: one listing-based pricing statement claimed page verification using only a search preview. The report also mixes competitor observations with market-saturation/user-churn interpretations. Three competitors' official pages were fetched; other sources remain previews. Receipt-valid citations do not prove every claim is semantically supported.
+- Preventive fix: future Crustdata sources retain `search_preview` or `page_text` provenance. Validation rejects explicit page-verification wording supported solely by previews, and composition instructions make preview coverage and unsupported interpretations explicit. Offline replay of the stored pilot detects the offending claim without spending again. The original report and receipts are preserved; no regenerated report is claimed.
+- The report's optional CFO.ai section correctly remains unavailable. Hunchlane's separate saved CFO.ai business plan is the required sponsor evidence.
+
+Validation of the preventive fix: `pnpm check` passed 33 tests, `pnpm test:browser` passed all eight desktop/mobile cases, and `pnpm build` passed.
