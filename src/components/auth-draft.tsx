@@ -3,17 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
-import { IdeaBriefSchema, type IdeaBrief } from "@/core/types";
+import { type IdeaBrief } from "@/core/types";
+
+import { readIdeaDraft } from "@/lib/idea-draft";
 
 export function AuthDraft() {
   const [draft, setDraft] = useState<IdeaBrief | null>(null);
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("hunchlane.idea-draft.v1");
-      if (!saved) return;
-      const parsed = IdeaBriefSchema.safeParse(JSON.parse(saved));
-      if (parsed.success) setDraft(parsed.data);
-    } catch { /* Storage can be unavailable; authentication still works. */ }
+    const saved=readIdeaDraft();
+    if(saved?.brief.idea.trim()) setDraft(saved.brief);
   }, []);
   if (!draft) return null;
   return <aside className="auth-draft" aria-label="Your local draft">

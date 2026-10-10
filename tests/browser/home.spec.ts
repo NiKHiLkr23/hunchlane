@@ -25,12 +25,14 @@ test("home prioritizes active research and offers a separate preserved device dr
   await page.waitForLoadState("networkidle");
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("hunchlane.idea-draft.v1")!))).toEqual(draft);
   await page.getByRole("textbox", { name: "Tell us what you have in mind." }).fill("Too short");
+  await page.reload();
+  await expect(page.getByRole("textbox", { name: "Tell us what you have in mind." })).toHaveValue("Too short");
   await page.getByRole("button", { name: "Explore my idea", exact: true }).click();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("hunchlane.idea-draft.v1")!))).toEqual(draft);
   await page.getByRole("textbox", { name: "Tell us what you have in mind." }).fill("An app for neighbours to lend each other tools");
   await page.getByRole("button", { name: "Explore my idea", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Let’s make the search useful." })).toBeVisible();
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("hunchlane.idea-draft.v1")!).idea)).toBe("An app for neighbours to lend each other tools");
+  await expect(page.getByRole("heading", { name: "Let’s shape your idea." })).toBeVisible();
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("hunchlane.idea-draft.v2")!).brief.idea)).toBe("An app for neighbours to lend each other tools");
   expect(research).toEqual([]);
 });
 
@@ -40,6 +42,7 @@ test("home resumes a draft before a report and handles empty, paused and connect
   await expect(page.getByText("Saved on this device", { exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Continue draft", exact: true }).click();
   await expect(page.getByRole("textbox", { name: "Tell us what you have in mind." })).toHaveValue(draft.idea);
+  await page.getByRole("button",{name:"Explore my idea",exact:true}).click();
   await expect(page.getByRole("radio", { name: "Physical product", exact: true })).toBeChecked();
   // Removing the init script requires a fresh page/context for the remaining states.
   const clean = await page.context().browser()!.newContext({ viewport: page.viewportSize()!, reducedMotion: "reduce" });

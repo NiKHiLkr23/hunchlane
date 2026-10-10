@@ -19,7 +19,7 @@ test("landing validates input and carries each example category without starting
     await page.getByRole("button",{name:"Explore my idea",exact:true}).evaluate((button:HTMLButtonElement)=>{button.click();button.click();});
     await expect(page).toHaveURL(/\/new$/);
     await expect(page.getByRole("radio",{name:category,exact:true})).toBeChecked();
-    await expect(page.getByRole("textbox",{name:"Tell us what you have in mind."})).toHaveValue(new RegExp(content));
+    await expect(page.getByRole("region",{name:"Idea conversation"})).toContainText(new RegExp(content));
   }
   expect(paidRequests).toEqual([]);
 });
@@ -114,7 +114,9 @@ test("the report preview is complete when enhancement scripts are unavailable",a
   await context.close();
 });
 test("an idea survives navigation and missing account setup",async({page})=>{
-  await page.goto("/");await expect(page.getByRole("heading",{level:1})).toContainText("Give your idea");await page.getByRole("textbox",{name:"What’s your idea?"}).fill("A reusable meal kit designed for people cooking for one.");await page.getByRole("button",{name:"Explore my idea"}).click();await expect(page).toHaveURL(/\/new$/);await expect(page.getByRole("textbox",{name:"Tell us what you have in mind."})).toHaveValue(/meal kit/);await page.getByRole("radio",{name:"Physical product"}).check();await page.getByRole("button",{name:"Explore my idea"}).click();await expect(page.getByRole("heading",{name:"Let’s make the search useful."})).toBeVisible();await page.getByRole("button",{name:"I’m not sure yet"}).first().click();await page.getByRole("button",{name:"Sign in to research"}).click();await expect(page.getByRole("alert").filter({hasText:"Sign-in and live research"})).toContainText("Sign-in and live research");await page.reload();await expect(page.getByRole("textbox",{name:"Tell us what you have in mind."})).toHaveValue(/meal kit/);
+  await page.goto("/");await page.getByRole("textbox",{name:"What’s your idea?"}).fill("A reusable meal kit designed for people cooking for one.");await page.getByRole("button",{name:"Explore my idea",exact:true}).click();await expect(page).toHaveURL(/\/new$/);
+  await expect(page.getByRole("region",{name:"Idea conversation"})).toContainText("meal kit");await page.getByRole("radio",{name:"Physical product"}).check();await page.getByRole("textbox",{name:"Your answer"}).fill("Delivered locally for people living alone");await page.getByRole("button",{name:"Review with what I have"}).click();
+  await expect(page.getByRole("region",{name:"Research brief"})).toContainText("Delivered locally");await page.getByRole("button",{name:"Sign in to research"}).click();await expect(page.locator("main").getByRole("alert")).toContainText("Sign-in is being connected");await page.reload();await expect(page.getByRole("region",{name:"Research brief"})).toContainText("meal kit");
 });
 test("report sections expose citations and editable assumptions",async({page})=>{
   await page.goto("/sample");await expect(page.getByText("Illustrative content, not live research.",{exact:false})).toBeVisible();await page.getByRole("tab",{name:/What exists/}).click();await expect(page.getByRole("heading",{name:"Doodle"})).toBeVisible();await expect(page.getByRole("link",{name:"Source 1: Doodle — official website"}).first()).toHaveAttribute("href","https://doodle.com/");await page.getByRole("tab",{name:"Your angle"}).click();await expect(page.getByRole("heading",{name:"Help the plan actually happen"})).toBeVisible();await page.getByRole("tab",{name:"The numbers"}).click();await expect(page.getByText("CFO.AI MODEL NOT AVAILABLE",{exact:true})).toBeVisible();await page.getByRole("spinbutton",{name:"Monthly price",exact:true}).fill("0");await expect(page.getByText("No break-even at this price",{exact:true})).toBeVisible();await page.getByRole("tab",{name:"Sources",exact:true}).click();await expect(page.getByText("What this search covers",{exact:true})).toBeVisible();

@@ -2,7 +2,7 @@
 
 **See what exists. Find your angle.**
 
-A research desk for a first business or product idea. Describe an idea, answer up to two clarifying questions, and receive a saved report of existing alternatives, cited evidence, possible angles and a small next experiment. Software, physical products and services are supported.
+A research desk for a first business or product idea. Describe an idea, clarify it through a short conversation, explicitly start research, and receive a saved report of existing alternatives, cited evidence, possible angles and a small next experiment. Software, physical products and services are supported.
 
 ## Run locally
 
@@ -32,6 +32,8 @@ For Crustdata, set `CRUSTDATA_API_KEY`, `LITELLM_API_KEY`, and an operator-appro
 Crustdata Web Search and Web Fetch use the documented `2025-11-01` API, Bearer authentication, and normal retrieval mode. Full reports reserve five credits (two searches and up to three fetched pages); refinements reserve four. Free preflight verifies the account balance, endpoint access, one-credit rates and at least 10 requests/minute. Paid requests are spaced across workers with a persisted seven-second queue. Receipts are matched by URL rather than response order; failed fetches stay visible as evidence limitations. Search snippets are not treated as full-page verification. See https://docs.crustdata.com/web-docs/search/reference and https://docs.crustdata.com/web-docs/fetch/introduction.
 
 `pnpm sponsored:check` performs one tiny JSON connection check with a private system-run reservation, cached operation receipt and Neatlogs instrumentation. Re-running reuses the receipt instead of spending again. It passed against the configured sponsor key; it does not verify research quality. Its conservative 75-cent app reservation stays allocated, and sponsor-funded usage is separate from the personal OpenAI ledger.
+
+Live conversational intake is prepared but disabled pending a separate operator-approved budget. See [AI intake budget](docs/AI_INTAKE_BUDGET.md). It does not borrow research reservations or Crustdata credits. Drafts are saved on this device, with legacy draft compatibility.
 
 ## Architecture
 

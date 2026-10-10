@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, ArrowUpRight, Plus, FileText, GitBranch, AlertCircle, RefreshCw, Search, PencilLine, LockKeyhole } from "lucide-react";
 import { Button } from "./ui/button";
-import { IdeaBriefSchema, type IdeaBrief } from "@/core/types";
+import { type IdeaBrief } from "@/core/types";
 import { homeNext, homeCategories, homeStages, homeRunHref, type HomeRun } from "@/core/home";
 import "@/app/home/home.css";
+
+import { readIdeaDraft, clearFreshDraft } from "@/lib/idea-draft";
 
 export function HomeDashboard({ runs, connectionError = false, loading = false, onRetry }: {
   runs: HomeRun[]; connectionError?: boolean; loading?: boolean; onRetry?: () => void;
@@ -16,11 +18,8 @@ export function HomeDashboard({ runs, connectionError = false, loading = false, 
   const [draftLoaded, setDraftLoaded] = useState(false);
   useEffect(() => {
     function readDraft() {
-      let next: IdeaBrief | null = null;
-      try {
-        const saved = localStorage.getItem("hunchlane.idea-draft.v1");
-        if (saved) { const parsed = IdeaBriefSchema.safeParse(JSON.parse(saved)); if (parsed.success) next = parsed.data; }
-      } catch { /* A device draft is optional; private server work remains available. */ }
+      const saved=readIdeaDraft();
+      const next=saved?.brief.idea.trim() ? saved.brief : null;
       setDraft(next); setDraftLoaded(true);
     }
     readDraft();
@@ -39,7 +38,7 @@ export function HomeDashboard({ runs, connectionError = false, loading = false, 
   const href = nextRun ? homeRunHref(nextRun) : next.kind === "draft" ? "/new" : "/new?fresh=1";
 
   return <main id="main" className="idea-desk">
-    <div className="desk-intro"><div><span className="desk-eyebrow">A LITTLE CURIOSITY GOES A LONG WAY</span><h1>Your idea desk<span>.</span></h1><p>A place for your hunches, and what you find out next.</p></div><Button asChild><Link href="/new?fresh=1"><Plus size={18}/>New idea</Link></Button></div>
+    <div className="desk-intro"><div><span className="desk-eyebrow">A LITTLE CURIOSITY GOES A LONG WAY</span><h1>Your idea desk<span>.</span></h1><p>A place for your hunches, and what you find out next.</p></div><Button asChild><Link href="/new?fresh=1" onClick={clearFreshDraft}><Plus size={18}/>New idea</Link></Button></div>
 
     <div className="desk-top-grid">
       <section className={`desk-next${connectionError ? " desk-connection" : ""}`} aria-labelledby="next-heading" aria-busy={pending}>
@@ -54,7 +53,7 @@ export function HomeDashboard({ runs, connectionError = false, loading = false, 
           <h2 id="next-heading">{heading}</h2>
           <p>{description}</p>
           {next.kind === "active" && <div className="desk-stage"><span aria-hidden="true"/>{homeStages[next.run.stage]}<small>Last saved update · open progress for the latest</small></div>}
-          <div className="desk-next-actions"><Button asChild><Link href={href}>{action}<ArrowRight size={16}/></Link></Button>{next.kind === "report" && <span className="desk-meta">{homeCategories[next.run.category]}</span>}</div>
+          <div className="desk-next-actions"><Button asChild><Link href={href} onClick={href.includes("fresh=1")?clearFreshDraft:undefined}>{action}<ArrowRight size={16}/></Link></Button>{next.kind === "report" && <span className="desk-meta">{homeCategories[next.run.category]}</span>}</div>
           {next.kind === "active" && draft && <Link className="desk-secondary-draft" href="/new">You also have a draft saved on this device <ArrowUpRight size={14}/></Link>}
         </>}
       </section>

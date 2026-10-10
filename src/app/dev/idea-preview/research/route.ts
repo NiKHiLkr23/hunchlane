@@ -1,0 +1,1 @@
+export async function POST(){if(process.env.NODE_ENV!=='development'||process.env.HUNCHLANE_UI_PREVIEW!=='1')return new Response(null,{status:404});return Response.json({error:'This design preview does not start research.',safeToRetry:true},{status:429});}

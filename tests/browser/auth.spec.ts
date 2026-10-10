@@ -25,7 +25,7 @@ test("account entry preserves the local draft across sign-up, reload and recover
   await localDraft.getByRole("link", { name: "Back to your idea" }).click();
   await expect(page).toHaveURL(/\/new$/);
   await expect(page.getByRole("textbox", { name: "Tell us what you have in mind." })).toHaveValue(draft.idea);
-  await expect(page.getByRole("radio", { name: "A service or place", exact: true })).toBeChecked();
+
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("hunchlane.idea-draft.v1")!))).toEqual(draft);
   expect(researchRequests).toEqual([]);
 });

@@ -1,0 +1,1 @@
+export function POST(){if(process.env.NODE_ENV!=='development'||process.env.HUNCHLANE_UI_PREVIEW!=='1')return new Response(null,{status:404});return Response.json({error:'Preview only. No research was resumed.'},{status:409});}

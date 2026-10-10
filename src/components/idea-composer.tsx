@@ -5,7 +5,8 @@ import { ArrowRight, ArrowUpRight, Globe2, LockKeyhole, LoaderCircle } from "luc
 import { Button } from "./ui/button";
 import { IdeaBriefSchema, clarify, type IdeaBrief } from "@/core/types";
 import { FinancialAssumptions } from "./financial-assumptions";
-const DRAFT_KEY = "hunchlane.idea-draft.v1";
+import { newDraft } from "@/core/idea-draft";
+import { readIdeaDraft, saveIdeaDraft } from "@/lib/idea-draft";
 const initial: IdeaBrief = { idea: "", category: "software", audience: "", location: "", answers: {} };
 const examples = [
   { label: "Plans with friends", type: "App", category: "software", idea: "An app that finds a time everyone in a friend group can meet" },
@@ -17,12 +18,12 @@ export function IdeaComposer({ compact = false, signedIn = false, authConfigured
   const [brief,setBrief] = useState<IdeaBrief>(initial), [step,setStep] = useState<"describe"|"clarify">("describe"), [error,setError] = useState(""), [busy,setBusy] = useState(false);
   const [requestId,setRequestId] = useState<string | null>(null);
   const ideaInput = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => { if (fresh) return; try { const saved=localStorage.getItem(DRAFT_KEY); if (saved) { const parsed = IdeaBriefSchema.safeParse(JSON.parse(saved)); if(parsed.success) setBrief(parsed.data); } } catch {} },[fresh]);
+  useEffect(() => { if (fresh) return; const saved=readIdeaDraft(); if(saved) setBrief(saved.brief); },[fresh]);
   function update<K extends keyof IdeaBrief>(key: K,value: IdeaBrief[K]) { setBrief(old => ({ ...old,[key]:value })); setRequestId(null); setError(""); }
-  function saveDraft(value = brief) { try { localStorage.setItem(DRAFT_KEY,JSON.stringify(value)); } catch {} }
+  function saveDraft(value = brief) { return saveIdeaDraft({...newDraft(),brief:value,step:"context",messages:[{role:"user",text:value.idea}]}); }
   function describe(event: React.FormEvent) {
     event.preventDefault(); const parsed=IdeaBriefSchema.safeParse(brief); if(!parsed.success) { setError(parsed.error.issues[0].message); ideaInput.current?.focus(); return; }
-    saveDraft(parsed.data);
+    if (!saveDraft(parsed.data)) { setError("Your browser could not save this draft. Allow local storage before continuing."); return; }
     if (compact) { router.push("/new"); return; }
     setStep("clarify"); setError("");
   }
@@ -34,7 +35,7 @@ export function IdeaComposer({ compact = false, signedIn = false, authConfigured
     try {
       const response = await fetch("/api/runs", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ id,brief }) });
       const data = await response.json(); if (!response.ok) throw new Error(data.error || "Research could not start.");
-      localStorage.removeItem(DRAFT_KEY); router.push(`/research/${data.id}`);
+       router.push(`/research/${data.id}`);
     } catch (e) { setError(e instanceof Error ? e.message : "Research could not start. Your idea is saved."); } finally { setBusy(false); }
   }
   return <section className={compact ? "composer compact-composer" : "composer workbench"} aria-label="Describe your idea">
