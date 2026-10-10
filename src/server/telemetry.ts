@@ -13,6 +13,11 @@ export async function openaiClient() {
 }
 export async function observed<T>(runId: string, phase: string, fn: () => Promise<T>): Promise<T> {
   await initializeTelemetry();
-  try { return await trace({ kind: "WORKFLOW", name: phase, sessionId: runId, captureInput: false, captureOutput: false }, async span => { span.setAttribute("hunchlane.run_id", runId); return fn(); }); }
+  try { return await trace({ kind: "WORKFLOW", name: phase, sessionId: runId, captureInput: false, captureOutput: false }, async span => {
+    span.setAttribute("hunchlane.run_id", runId);
+    // Correlate provider receipts with authenticated Neatlogs readback without logging prompts or credentials.
+    console.info(JSON.stringify({ event: "hunchlane.trace", runId, phase, traceId: span.spanContext().traceId }));
+    return fn();
+  }); }
   finally { if (ready) await flush().catch(() => undefined); }
 }
