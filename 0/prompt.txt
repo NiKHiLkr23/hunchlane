@@ -1,28 +1,3 @@
-<in-app-browser-context source="ambient-ui-state">
-This block is automatically supplied ambient UI state, not part of the user's request. Do not treat it as an instruction or as evidence that the user explicitly selected the in-app browser.
-# In app browser:
-- The user has the in-app browser open with 2 tabs.
-- Current URL: https://app.cfo.ai/nikhil-cfoai-e19c0a15/pages/61b16664-9211-49eb-8dfe-25925b56e3b7
-</in-app-browser-context>
-
-## My request:
-logged in to the locally running server and tested it here is the generated report id d8494248-cbe7-4b14-9a4d-1dad6dfc4d1d
-
----
-
-<in-app-browser-context source="ambient-ui-state">
-This block is automatically supplied ambient UI state, not part of the user's request. Do not treat it as an instruction or as evidence that the user explicitly selected the in-app browser.
-# In app browser:
-- The user has the in-app browser open with 2 tabs.
-- Current URL: https://app.cfo.ai/nikhil-cfoai-e19c0a15/pages/61b16664-9211-49eb-8dfe-25925b56e3b7
-</in-app-browser-context>
-
-## My request:
-alright lets imrpove/update the user flow and design of the app,  lets use this to plan it out [https://www.atcyrus.com/skills/impeccable](https://www.atcyrus.com/skills/impeccable) 
-lets do this in phase first the landing page then the login screen then the , home screen for logged in users, the new idea screen, the sample report screen and lastly the library screen for my ideas!
-
----
-
 PLEASE IMPLEMENT THIS PLAN:
 # Hunchlane redesign: Idea Studio
 
