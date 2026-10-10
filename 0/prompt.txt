@@ -1,0 +1,16 @@
+lets just work with what we have. no need to create a capped key or add anysort of restriction for the live AI
+
+---
+
+what are the next steps ?
+
+---
+
+alright close any server that is running and list down the steps to deploy so that I can start testing things live
+
+---
+
+create pr's and merge things to  main
+AI intake should be enabled by default so we don't need the flag -remove it
+I have 5000 credits on crustdata so we can increase the allowance / budget  
+I'll be using inngest cloud so I'll add inngest related keys
