@@ -1,0 +1,86 @@
+<in-app-browser-context source="ambient-ui-state">
+This block is automatically supplied ambient UI state, not part of the user's request. Do not treat it as an instruction or as evidence that the user explicitly selected the in-app browser.
+# In app browser:
+- The user has the in-app browser open with 2 tabs.
+- Current URL: https://app.cfo.ai/nikhil-cfoai-e19c0a15/pages/61b16664-9211-49eb-8dfe-25925b56e3b7
+</in-app-browser-context>
+
+## My request:
+logged in to the locally running server and tested it here is the generated report id d8494248-cbe7-4b14-9a4d-1dad6dfc4d1d
+
+---
+
+<in-app-browser-context source="ambient-ui-state">
+This block is automatically supplied ambient UI state, not part of the user's request. Do not treat it as an instruction or as evidence that the user explicitly selected the in-app browser.
+# In app browser:
+- The user has the in-app browser open with 2 tabs.
+- Current URL: https://app.cfo.ai/nikhil-cfoai-e19c0a15/pages/61b16664-9211-49eb-8dfe-25925b56e3b7
+</in-app-browser-context>
+
+## My request:
+alright lets imrpove/update the user flow and design of the app,  lets use this to plan it out [https://www.atcyrus.com/skills/impeccable](https://www.atcyrus.com/skills/impeccable) 
+lets do this in phase first the landing page then the login screen then the , home screen for logged in users, the new idea screen, the sample report screen and lastly the library screen for my ideas!
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# Hunchlane redesign: Idea Studio
+
+## Direction and flow
+
+Replace the current paper-and-teal identity with **Idea Studio**: bright white, cobalt actions, apricot accents, generous sans-serif typography, and inviting idea entry. The experience should give beginners confidence to explore while keeping evidence and uncertainty visible.
+
+Use [Impeccable’s planning and review guidance](https://github.com/pbakaus/impeccable) alongside UI Craft. Retain Hunchlane’s name and branching mark.
+
+**First visit:** landing → describe idea → add context → sign in → review preserved draft → explicitly start research.
+
+**Return visit:** signed-in home → continue research, resume a draft, or open a recent report.
+
+Implement one phase at a time. Present desktop and mobile results for your feedback before starting the next screen.
+
+## Six phases
+
+| Phase | Screen | Planned experience |
+|---|---|---|
+| **1** | **Landing page** | Put idea entry in the first viewport. Explain the outcome plainly, offer examples across all three idea categories, and show a clearly labeled sample preview. |
+| **2** | **Login screen** | Give Clerk authentication a branded setting. Explain why an account is useful, preserve the visitor’s draft, and return them to their intended step. Include matching signup and loading states. |
+| **3** | **Signed-in home** | Add `/home`. Prioritize active research, then a local draft, then the latest report. Show recent work and a clear “New idea” action. Include first-use and connection-error states. |
+| **4** | **New idea screen** | Use three clear steps: **Describe → Context → Review**. Keep clarification questions approachable and financial assumptions optional. Preserve the current step across login and reload. |
+| **5** | **Sample report** | Improve reading hierarchy, comparisons, source navigation, and the next experiment. Keep illustrative labeling prominent. Apply the same presentation to real reports through the existing shared report component. |
+| **6** | **My ideas library** | Show scannable idea rows with category, date, status, and versions. Group refinements with their original idea. Add search and status filters over the loaded collection, plus clear empty and error states. |
+
+## Phase 1: landing-page specification
+
+- **Header:** Hunchlane mark, “How it works,” “Sample report,” and “Sign in.” Use a compact accessible menu on narrow screens.
+- **Headline:** “Give your idea a clearer next step.”
+- **Supporting copy:** “Explore existing alternatives, see the evidence, and find something worth testing—whether it’s an app, a product, or a service.”
+- **Primary action:** an idea textarea and **“Explore my idea”** button, beside the headline on desktop and immediately below it on mobile.
+- **Helper copy:** “Start with a sentence. Sign in before research begins.”
+- **Examples:** software, physical product, and service prompts. Selecting one fills the draft and sets the matching category.
+- **Below the entry:** a preview derived from the existing scheduling sample, labeled **“Illustrative sample.”** Then a short explanation of alternatives, possible angles, and a small experiment.
+- **Closing section:** explain research limitations in plain language and repeat the idea-entry action.
+
+Submitting valid input preserves the draft and opens `/new`; it does not start research. Keep existing validation limits and error recovery.
+
+Introduce locally hosted **Manrope**, with its license retained. Use cobalt for primary actions and links, apricot for restrained emphasis, and readable neutral surfaces. Scope the new landing layout so later screens can be redesigned in their scheduled phases.
+
+## Interfaces and continuity
+
+- Keep existing research APIs, report schemas, owner checks, reservations, and operation journals.
+- Add `/home` in phase 3. Direct sign-in defaults there; a draft-related sign-in returns to `/new`. Signed-in visits to `/` redirect home once that route exists.
+- In phase 4, introduce a versioned local draft containing the brief and current step, with backward compatibility for existing drafts. Label local drafts as saved **on this device**.
+- Login never automatically submits research. The preserved review step requires an explicit **“Start research”** action.
+- In phase 5, distinguish **“Page read”** from **“Search preview”** when receipt provenance exists. Samples remain illustrative; older reports receive no invented provenance.
+- Update `DESIGN.md` with the selected system and phase adoption. No database migration is required.
+
+## Acceptance and phase handoff
+
+For each phase:
+
+- Inspect desktop and mobile layouts, keyboard navigation, visible focus, reduced motion, long content, and relevant loading/error/empty states.
+- Verify draft preservation, navigation, and repeated-submit protection where applicable.
+- Run `pnpm check`, `pnpm test:browser`, and `pnpm build`.
+- Use deterministic fixtures for visual checks; no additional paid research calls are needed.
+- Present the completed screen and any remaining limitations, then collect feedback before the next phase.
+
+Keep `.env.local` intact. Commit completed phases normally so Entire captures the session; retain the approved hooks. Deployment remains a separate authorized step.
