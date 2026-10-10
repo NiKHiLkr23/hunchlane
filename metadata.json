@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4KNAFQWMZFY93WZQPYMD415",
+  "strategy": "manual-commit",
+  "branch": "codex/teal-motion-landing",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "DESIGN.md",
+    "README.md",
+    "docs/AI_INTAKE_BUDGET.md",
+    "docs/INTAKE_SETUP.sql",
+    "docs/INTEGRATION_STATUS.md",
+    "playwright.config.ts",
+    "src/app/api/intake/route.ts",
+    "src/app/dev/idea-preview/intake/route.ts",
+    "src/app/dev/idea-preview/page.tsx",
+    "src/app/dev/idea-preview/research/route.ts",
+    "src/app/dev/research-preview/fixture.ts",
+    "src/app/dev/research-preview/page.tsx",
+    "src/app/dev/research-preview/retry/route.ts",
+    "src/app/dev/research-preview/state/route.ts",
+    "src/app/new/conversation.css",
+    "src/app/new/page.tsx",
+    "src/app/research/[id]/page.tsx",
+    "src/components/auth-draft.tsx",
+    "src/components/header-navigation.tsx",
+    "src/components/home-dashboard.tsx",
+    "src/components/idea-composer.tsx",
+    "src/components/idea-conversation.tsx",
+    "src/components/run-progress.tsx",
+    "src/core/idea-draft.ts",
+    "src/core/intake.ts",
+    "src/lib/idea-draft.ts",
+    "src/server/intake.ts",
+    "tests/browser/auth.spec.ts",
+    "tests/browser/experience.spec.ts",
+    "tests/browser/home.spec.ts",
+    "tests/browser/idea.spec.ts",
+    "tests/browser/setup.ts",
+    "tests/idea-draft.test.ts",
+    "tests/intake.test.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 224775,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10927744,
+    "output_tokens": 70889,
+    "api_call_count": 73
+  }
+}
