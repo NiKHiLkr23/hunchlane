@@ -1,0 +1,43 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4KJCJ5ZPVMPRSDFXFV8GEND",
+  "strategy": "manual-commit",
+  "branch": "codex/teal-motion-landing",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/app/dev/home-preview/page.tsx",
+    "src/app/home/error.tsx",
+    "src/app/home/home.css",
+    "src/app/home/loading.tsx",
+    "src/app/home/page.tsx",
+    "src/app/new/page.tsx",
+    "src/app/page.tsx",
+    "src/components/auth-actions.tsx",
+    "src/components/header-navigation.tsx",
+    "src/components/home-dashboard.tsx",
+    "src/components/idea-composer.tsx",
+    "src/core/home.ts",
+    "src/lib/auth-navigation.ts",
+    "src/server/store.ts",
+    "tests/browser/home.spec.ts",
+    "tests/browser/setup.ts",
+    "tests/home.test.ts",
+    "tests/store.test.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 157619,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6913664,
+    "output_tokens": 37028,
+    "api_call_count": 60
+  }
+}
