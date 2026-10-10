@@ -1,6 +1,6 @@
 import { describe,it,expect } from "vitest";
 import { modelScenarios,verifyFinancials } from "@/core/finance";
-import { FinancialInputsSchema,IdeaBriefSchema,clarify } from "@/core/types";
+import { FinancialInputsSchema,IdeaBriefSchema,clarify,type EvidenceSource } from "@/core/types";
 import { validateEvidence,safeWebUrl } from "@/core/evidence";
 import { sampleReport } from "@/core/sample";
 import { canReserve,estimateCents } from "@/core/budget";
@@ -15,6 +15,7 @@ describe("financial arithmetic",()=>{
   it("verifies all scenarios and annual totals",()=>{const remote=modelScenarios(base);expect(verifyFinancials(base,remote)).toEqual(remote);remote[0].annualRevenue+=5;expect(()=>verifyFinancials(base,remote)).toThrow("totals mismatch");});
 });
 describe("evidence",()=>{
+  it("rejects page verification claims supported only by search previews",()=>{const report=structuredClone(sampleReport);report.summary.text="Free. Verified from the official listing.";report.summary.sourceIds=[report.sources[0].id];const sources:EvidenceSource[]=report.sources.map(source=>({...source,evidenceLevel:"search_preview"}));expect(()=>validateEvidence(report,sources)).toThrow("search preview");sources[0]={...sources[0],evidenceLevel:"page_text"};expect(validateEvidence(report,sources)).toBe(report);report.summary.text="Pricing not verified from the official listing; the preview suggests a free option.";expect(validateEvidence(report,sources.map(source=>({...source,evidenceLevel:"search_preview" as const})))).toBe(report);});
   it("rejects source IDs that never came back from search",()=>{const report=structuredClone(sampleReport);report.summary.sourceIds=["invented"];expect(()=>validateEvidence(report,report.sources)).toThrow("not retrieved");});
   it("requires citations for observations but permits explicit hypotheses",()=>{const report=structuredClone(sampleReport);report.summary.sourceIds=[];expect(()=>validateEvidence(report,report.sources)).toThrow("must have a source");report.summary.nature="hypothesis";expect(validateEvidence(report,report.sources)).toBe(report);});
   it("refuses an unsupported competitor host and inconsistent verdict",()=>{const report=structuredClone(sampleReport);report.competitors[0].url="https://made-up.example/";expect(()=>validateEvidence(report,report.sources)).toThrow("not retrieved");report.competitors=[];expect(()=>validateEvidence(report,report.sources)).toThrow("no close match");});

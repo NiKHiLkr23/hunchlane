@@ -31,6 +31,6 @@ export function parsePages(value:unknown,requested:string[]):PageReceipt[]{
 export function crustEvidence(searches:SearchReceipt[],pages:PageReceipt[],requested:string[]):ResearchEvidence{
   const sources=new Map<string,EvidenceSource>();for(const search of searches)for(const source of search.sources)sources.set(source.url,source);
   const pageByUrl=new Map(pages.map(p=>[p.url,p]));
-  const receipts=[...sources.values()].map((source,i)=>{const page=pageByUrl.get(source.url);return {...source,id:`s${i+1}`,title:page?.title||source.title,retrievedAt:page?.retrievedAt||source.retrievedAt,excerpt:page?.text.slice(0,900)||source.excerpt};});
+  const receipts=[...sources.values()].map((source,i)=>{const page=pageByUrl.get(source.url);return {...source,id:`s${i+1}`,title:page?.title||source.title,retrievedAt:page?.retrievedAt||source.retrievedAt,excerpt:page?.text.slice(0,900)||source.excerpt,evidenceLevel:page ? "page_text" as const : "search_preview" as const};});
   return {sources:receipts,text:JSON.stringify({queries:searches.map(s=>s.query),coverage:"Search snippets are previews. Only pages with fetchedText were read. Pricing or availability absent from fetched text is unverified. Search cannot prove novelty.",failedFetches:requested.filter(url=>!pageByUrl.has(url)),receipts:receipts.map(source=>({...source,fetchedText:pageByUrl.get(source.url)?.text||null}))})};
 }
