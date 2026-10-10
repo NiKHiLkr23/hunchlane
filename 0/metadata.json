@@ -1,0 +1,67 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4KF20A6HFYSSAZ46ZYGH39F",
+  "session_id": "01a125c7-e20d-7a31-8b7c-12219e382c59",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-10T17:51:38.935478Z",
+  "branch": "codex/teal-motion-landing",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "DESIGN.md",
+    "docs/INTEGRATION_STATUS.md",
+    "docs/design/ASSETS.md",
+    "src/app/hero.css",
+    "src/app/landing-details.css",
+    "src/app/page.tsx",
+    "src/components/landing-motion.tsx",
+    "tests/browser/experience.spec.ts"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "a0c9245acb39",
+  "checkpoint_transcript_start": 2707,
+  "transcript_lines_at_start": 2707,
+  "compact_transcript_start": 344,
+  "token_usage": {
+    "input_tokens": 222813,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3682944,
+    "output_tokens": 25197,
+    "api_call_count": 38
+  },
+  "session_metrics": {
+    "turn_count": 11
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-10T17:51:38.592894Z",
+    "agent_lines": 0,
+    "agent_removed": 6,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 30,
+    "total_committed": 20,
+    "total_lines_changed": 86,
+    "agent_percentage": 6.976744186046512,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 374,
+      "user_lines_removed": 30,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "docs/design/ASSETS.md": 32,
+        "src/app/landing-details.css": 147,
+        "src/app/page.tsx": 77,
+        "src/components/landing-motion.tsx": 77,
+        "tests/browser/experience.spec.ts": 41
+      },
+      "user_removed_per_file": {
+        "docs/design/ASSETS.md": 2,
+        "src/app/page.tsx": 28
+      }
+    }
+  ]
+}

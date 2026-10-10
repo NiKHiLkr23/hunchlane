@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4KF20A6HFYSSAZ46ZYGH39F",
+  "strategy": "manual-commit",
+  "branch": "codex/teal-motion-landing",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "DESIGN.md",
+    "docs/INTEGRATION_STATUS.md",
+    "docs/design/ASSETS.md",
+    "src/app/hero.css",
+    "src/app/landing-details.css",
+    "src/app/page.tsx",
+    "src/components/landing-motion.tsx",
+    "tests/browser/experience.spec.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 222813,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3682944,
+    "output_tokens": 25197,
+    "api_call_count": 38
+  }
+}
