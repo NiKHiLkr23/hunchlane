@@ -1,0 +1,62 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4KDTAYRQ1WHBMZR891HJ9T3",
+  "session_id": "01a125c7-e20d-7a31-8b7c-12219e382c59",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-10T17:29:55.95774Z",
+  "branch": "codex/teal-motion-landing",
+  "checkpoints_count": 3,
+  "save_step_count": 2,
+  "files_touched": [
+    "DESIGN.md",
+    "docs/INTEGRATION_STATUS.md",
+    "docs/design/ASSETS.md",
+    "src/app/hero.css",
+    "src/app/page.tsx",
+    "src/components/hero-motion.tsx",
+    "tests/browser/experience.spec.ts"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "e6a506309f45",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 1378641,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 41579392,
+    "output_tokens": 162502,
+    "api_call_count": 332,
+    "subagent_tokens_complete": true
+  },
+  "session_metrics": {
+    "turn_count": 10
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-10T17:29:55.660632Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 254,
+    "human_modified": 16,
+    "human_removed": 0,
+    "total_committed": 254,
+    "total_lines_changed": 270,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
