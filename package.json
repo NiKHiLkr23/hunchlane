@@ -17,6 +17,8 @@
     "integrations:check": "tsx scripts/check-integrations.ts",
     "crust:check": "tsx scripts/crust-check.ts",
     "sponsored:check": "tsx scripts/sponsored-check.ts",
+    "intake:setup": "tsx scripts/intake-setup.ts",
+    "intake:check": "tsx scripts/intake-check.ts",
     "budget:configure": "tsx scripts/configure-budget.ts",
     "cfo:probe": "tsx scripts/cfo-probe.ts",
     "vault:init": "tsx scripts/init-vault.ts"

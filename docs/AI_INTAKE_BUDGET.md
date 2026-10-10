@@ -1,43 +1,27 @@
-# Live AI intake pilot — conditionally approved, provider cap pending
+# Live AI intake — existing sponsored access
 
-No paid intake call has been made. `.env.local` is unchanged. The live endpoint requires a dedicated `AI_INTAKE_API_KEY` and both `AI_INTAKE_ENABLED=1` and `AI_INTAKE_PRICING_CONFIRMED=1`. It never falls back to the research key. The prepared SQL has not been applied to Neon. The operator approved the pilot only after pricing and provider-cap verification.
+On October 11, 2026 the operator authorized using the existing sponsor key without a dedicated capped key or a separate pilot restriction. This supersedes the earlier conditional 30-cent pilot and sponsor-administrator setup requirement. No new key or provider cap is created.
 
-## Proposed allowance
+## Setup
 
-One conversation, at most three sponsored `claude-sonnet-4.6` calls, 800 output tokens per call, at most 16,000 UTF-8 bytes of complete prompt including instructions/schema per call. No web tools, Crustdata credits, or research run reservations. A separate persisted 30-cent reservation is allocated upfront from `budgets.id='intake'`. It is never released automatically after an uncertain call. The whole pilot consumes at most three provider requests, with SDK retries disabled.
+Run `pnpm intake:setup` to apply the separate intake session and operation tables. It does not reset or increase any existing budget, reservation or Crustdata allowance. Start the server with `AI_INTAKE_ENABLED=1` in its process environment; `.env.local` remains intact. Intake uses the same server-only `LITELLM_API_KEY` as research. No `AI_INTAKE_API_KEY` or pricing-confirmation flag is needed.
 
-At Anthropic's published $3 input / $15 output per million tokens, an example 4,000 input + 800 output tokens costs $0.024 per call, $0.072 for three. A conservative 16,000 input-token planning scenario costs $0.06 per call, $0.18 for three. Prompt bytes are a size bound, not an exact token count. The 30 cents is an app reservation, **not proof of a provider-enforced dollar cap**. The sponsor proxy's pricing/fees and a provider-side spending cap must be confirmed before activation. Source: https://www.anthropic.com/news/claude-sonnet-4-6 . Actual returned token usage is saved in the intake operation journal; no invented charge is recorded.
+Each new conversation reserves 30 cents from the existing shared `budgets.id='research'` allowance. This is the existing app accounting mechanism, not an additional pilot cap or a provider invoice guarantee. Research keeps its own run reservations and journals. Intake consumes no Crustdata credits. The provider's existing $20 key budget remains unchanged.
 
-## Approval and activation
+## Conversation and recovery
 
-The separate 30-cent pilot is conditionally approved. Confirm the dedicated sponsored key's applicable prices and budget controls before activation. Then apply `docs/INTAKE_SETUP.sql`, fund only the `intake` row to 30 cents using the commented conditional update, and enable the two process flags. Do not reset allocations or change `.env.local` automatically.
+The existing conversational design asks one useful question at a time, offers up to three suggestions, accepts personal answers or uncertainty, and leads to review after two answers. Normal request sizing remains three Claude Sonnet 4.6 calls, 800 output tokens per call and 16,000 UTF-8 prompt bytes. These existing bounds support concise intake; they are not a newly configured provider spending cap. Research requires a separate explicit Start research action.
 
-### Observed sponsor metadata — October 11, 2026
+Every session has an owner. A turn is atomically claimed and journaled before a paid request. Concurrent reuse, changed request identity and uncertain operations stop for reconciliation. SDK retries are disabled. GET recovers a completed reply without paying again. Login and reload never start a model call.
 
-Free authenticated `GET /model/info` returned Sonnet 4.6 prices of $3.30 per million input tokens and $16.50 per million output tokens. Cache-write/read input prices are $4.125/$0.33 per million. These are the proxy's reported accounting rates, not independent evidence of external billing fees. At the reported ordinary rates, 4,000 input + 800 output tokens costs $0.0264 per call ($0.0792 for three); the 16,000 input-token planning scenario costs $0.066 per call ($0.198 for three). Prompt bytes still are not exact token counts.
+AI suggestions are unverified possibilities. No web searches, citations, demand validation or novelty claims occur during intake. Only accepted user answers enter the research brief. Development previews remain labeled fixtures with isolated device storage, and return 404 in production.
 
-Free `GET /key/info` returned a shared $20 maximum budget, $0.09768 spend, a reset duration, and no per-model budget. It did not establish an isolated 30-cent cap. The key reports a team but no user owner; `/user/info` returned 404. One attempt to create a dedicated Sonnet-only key within that same team (max budget $0.30, no budget reset, concurrency 1, expiry 24 hours) returned HTTP 401 `auth_error`. No key was created or persisted; no inference was requested, and no shared budget was changed. Sanitized evidence is saved in ignored `artifacts/verification/intake-provider-metadata.json` and `intake-key-creation.json`.
+## Observed sponsor rates
 
-### Exact remaining sponsor step
+Authenticated free metadata reported Sonnet 4.6 accounting rates of $3.30/$16.50 per million ordinary input/output tokens, plus $4.125/$0.33 cache-write/read input rates. These are reported accounting rates, not independent proof of external billing fees. At ordinary rates, a 4,000-input/800-output call is $0.0264; a 16,000-input/800-output planning scenario is $0.066. Prompt bytes are not exact token counts.
 
-Ask the Aivar/LiteLLM sponsor administrator to create a dedicated key named `hunchlane-intake-pilot`, restricted to `claude-sonnet-4.6`, with `max_budget=0.30`, no `budget_duration` reset, `max_parallel_requests=1`, and a 24-hour expiry. The proxy's `/key/generate` endpoint is present, but the current sponsor credential was denied. The administrator can use that endpoint or their Virtual Keys dashboard. Request confirmation of the applicable accounting rates and budget behavior. LiteLLM documents that requests fail after the key crosses its budget; this is a request-admission threshold, not proof that an in-flight response cannot overshoot. The app's separate prompt/output/call bounds remain necessary. Sources: [virtual keys](https://docs.litellm.ai/docs/proxy/virtual_keys), [budget behavior](https://docs.litellm.ai/docs/proxy/users).
+The earlier shared key readback reported a $20 budget and $0.09768 spend. Creating a separate key returned HTTP 401; this is now historical evidence, not an activation blocker. The user explicitly chose the existing access.
 
-Do not paste the issued credential into chat or Git. Save it locally without terminal echo, for this temporary pilot:
+## Verification commands
 
-```sh
-(
-  umask 077
-  set -o noclobber
-  read -rs 'intake_pilot_key?Paste the intake-only key (hidden): '
-  print -rn -- "$intake_pilot_key" > /tmp/hunchlane-intake-api-key
-  unset intake_pilot_key
-)
-```
-
-The operator can then load that private file into the server's `AI_INTAKE_API_KEY` process environment, without editing `.env.local`. Verify the issued key's price/model access, budget, spend, expiry, reset and concurrency metadata before funding or enabling. No further pilot approval is needed if the original conditions and limits are satisfied. A live conversation and Neatlogs trace readback remain unverified.
-
-Each session belongs to a Clerk owner. A turn is atomically claimed and journaled before sending. Concurrent requests, changed reuse of an ID/turn, unknown responses and unfinished operations stop. GET can recover an already-completed reply without resending. No automatic requests occur on reload or login. Research still requires its separate explicit Start research action and existing reservation journal.
-
-The provider receives the idea and accepted conversation text. AI suggestions are unverified possibilities; no search claims or citations are generated during intake. User answers are included in the eventual research brief; unaccepted AI suggestions are excluded. The separate development gallery uses labeled fixtures, never credentials, and returns 404 in production.
-
-Preview conversations use an isolated local-storage namespace through the same draft helpers, so fixture replies never overwrite a real draft or appear in the live intake.
+`pnpm intake:check` makes one private operator connection check about Hunchlane itself, using a persisted reservation and operation receipt. Re-running recovers the same completed turn; an uncertain operation stops without a new call. This command can spend on its first run. It does not authenticate a Clerk browser user or start research. Evidence is written only to ignored `artifacts/verification/` files. A signed-in browser conversation still needs user verification.

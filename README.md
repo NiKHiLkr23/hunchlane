@@ -33,7 +33,7 @@ Crustdata Web Search and Web Fetch use the documented `2025-11-01` API, Bearer a
 
 `pnpm sponsored:check` performs one tiny JSON connection check with a private system-run reservation, cached operation receipt and Neatlogs instrumentation. Re-running reuses the receipt instead of spending again. It passed against the configured sponsor key; it does not verify research quality. Its conservative 75-cent app reservation stays allocated, and sponsor-funded usage is separate from the personal OpenAI ledger.
 
-Live conversational intake is prepared but disabled pending a separate operator-approved budget. See [AI intake budget](docs/AI_INTAKE_BUDGET.md). It does not borrow research reservations or Crustdata credits. Drafts are saved on this device, with legacy draft compatibility.
+Live conversational intake uses the existing sponsored key and shared app allowance. Apply its journal tables with `pnpm intake:setup`, then set `AI_INTAKE_ENABLED=1` in the server process. No dedicated key, separate pilot budget or pricing-confirmation flag is required. Intake reserves its own conversation allowance before calling Claude; it consumes no Crustdata credits and never automatically retries uncertain operations. See [AI intake setup](docs/AI_INTAKE_BUDGET.md). Drafts are saved on this device, with legacy draft compatibility.
 
 ## Architecture
 
