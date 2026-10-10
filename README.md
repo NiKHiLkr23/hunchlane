@@ -2,7 +2,7 @@
 
 **See what exists. Find your angle.**
 
-A research desk for a first business or product idea. Describe an idea, answer up to two clarifying questions, and receive a saved report of existing alternatives, cited evidence, possible angles and a small next experiment. Software, physical products and services are supported.
+A research desk for a first business or product idea. Describe an idea, clarify it through a short conversation, explicitly start research, and receive a saved report of existing alternatives, cited evidence, possible angles and a small next experiment. Software, physical products and services are supported.
 
 ## Run locally
 
@@ -27,11 +27,13 @@ Keep `pnpm dev` running in another terminal. Set `INNGEST_DEV=1` locally. The jo
 
 The sponsored Nova/Claude connection uses `LITELLM_API_KEY` and `LITELLM_MODEL`. Its fixed endpoint and model allowlist come from https://neatlogs.com/hackathon/models. With Crustdata configured, it plans searches, selects evidence pages, and composes reports using Chat Completions. With OpenAI research selected, it composes reports from OpenAI's retrieved evidence. Without the sponsor key, OpenAI also composes the report.
 
-For Crustdata, set `CRUSTDATA_API_KEY`, `LITELLM_API_KEY`, and an operator-approved `CRUSTDATA_CREDIT_BUDGET` from your claimed allocation. The email offers 5,000 credits per team; an offer is not proof of a credited balance. Start with a small pilot allowance, such as 100 credits, after verifying the account. Run `pnpm crust:check` (free account reads), `pnpm db:migrate`, and `pnpm budget:configure`. The last command applies the configured limits without resetting allocations. `RESEARCH_PROVIDER=auto` selects Crustdata when both keys and a minimum five-credit allowance are configured; otherwise it selects OpenAI. Explicit values `crustdata` or `openai` select one provider. A failed provider never silently switches to another paid service.
+For Crustdata, set `CRUSTDATA_API_KEY`, `LITELLM_API_KEY`, and an operator-approved `CRUSTDATA_CREDIT_BUDGET` from your claimed allocation. The email offers 5,000 credits per team; an offer is not proof of a credited balance. This operator has approved a 5,000-credit total allowance, reflected in `.env.example`; verify your own account before applying it. Run `pnpm crust:check` (free account reads), `pnpm db:migrate`, and `pnpm budget:configure`. The last command applies the configured limits without resetting allocations. `RESEARCH_PROVIDER=auto` selects Crustdata when both keys and a minimum five-credit allowance are configured; otherwise it selects OpenAI. Explicit values `crustdata` or `openai` select one provider. A failed provider never silently switches to another paid service.
 
 Crustdata Web Search and Web Fetch use the documented `2025-11-01` API, Bearer authentication, and normal retrieval mode. Full reports reserve five credits (two searches and up to three fetched pages); refinements reserve four. Free preflight verifies the account balance, endpoint access, one-credit rates and at least 10 requests/minute. Paid requests are spaced across workers with a persisted seven-second queue. Receipts are matched by URL rather than response order; failed fetches stay visible as evidence limitations. Search snippets are not treated as full-page verification. See https://docs.crustdata.com/web-docs/search/reference and https://docs.crustdata.com/web-docs/fetch/introduction.
 
 `pnpm sponsored:check` performs one tiny JSON connection check with a private system-run reservation, cached operation receipt and Neatlogs instrumentation. Re-running reuses the receipt instead of spending again. It passed against the configured sponsor key; it does not verify research quality. Its conservative 75-cent app reservation stays allocated, and sponsor-funded usage is separate from the personal OpenAI ledger.
+
+Live conversational intake uses the existing sponsored key and shared app allowance. Apply its journal tables with `pnpm intake:setup`; intake is available automatically when its database, sponsored key and telemetry are configured. No dedicated key, separate pilot budget or pricing-confirmation flag is required. Intake reserves its own conversation allowance before calling Claude; it consumes no Crustdata credits and never automatically retries uncertain operations. See [AI intake setup](docs/AI_INTAKE_BUDGET.md). Drafts are saved on this device, with legacy draft compatibility.
 
 ## Architecture
 

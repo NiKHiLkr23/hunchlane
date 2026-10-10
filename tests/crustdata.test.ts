@@ -14,6 +14,7 @@ describe("Crustdata evidence boundaries",()=>{
     expect(pages[0].retrievedAt).toBe(new Date(1791586800000).toISOString());
     const evidence=crustEvidence([parseSearch(search)],pages,requested);
     expect(evidence.sources[1].excerpt).toBe("Current product features.");expect(JSON.parse(evidence.text).failedFetches).toEqual([requested[0]]);
+    expect(evidence.sources.map(source=>source.evidenceLevel)).toEqual(["search_preview","page_text"]);
   });
   it("requires an explicit credit allowance and both sponsor keys for automatic selection",()=>{
     vi.stubEnv("RESEARCH_PROVIDER","auto");vi.stubEnv("CRUSTDATA_API_KEY","test");vi.stubEnv("LITELLM_API_KEY","test");vi.stubEnv("CRUSTDATA_CREDIT_BUDGET","0");vi.stubEnv("OPENAI_API_KEY","");

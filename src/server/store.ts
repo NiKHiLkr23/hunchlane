@@ -3,6 +3,7 @@ import { createHash, randomBytes } from "node:crypto";
 import type { IdeaBrief, ResearchReport, RunStage, RunState } from "@/core/types";
 import { RESERVATIONS } from "@/core/budget";
 import { CRUST_CREDITS, type ResearchProvider } from "./research-provider";
+import type { HomeRun } from "@/core/home";
 export function db() { if (!process.env.DATABASE_URL) throw new Error("DATABASE_NOT_CONFIGURED"); return neon(process.env.DATABASE_URL); }
 type Row = Record<string, unknown>;
 function runFromRow(row: Row): RunState { return { id: String(row.id), brief: row.brief as IdeaBrief, status: row.status as RunState["status"], stage: row.stage as RunStage, createdAt: new Date(String(row.created_at)).toISOString(), error: row.error as string | null, parentId: row.parent_id as string | null, report: row.report as ResearchReport | null, dispatched: Boolean(row.dispatched), provider: row.provider === "crustdata" ? "crustdata" : "openai" }; }
@@ -14,6 +15,18 @@ export async function internalRun(id: string, owner: string) {
   return run;
 }
 export async function listRuns(owner: string) { const rows = await db()`select * from runs where owner_id=${owner} order by created_at desc limit 50`; return rows.map(runFromRow); }
+export async function listHomeRuns(owner: string): Promise<HomeRun[]> {
+  if (!owner) throw new Error("UNAUTHENTICATED");
+  const rows = await db()`select id, brief->>'idea' as idea, brief->>'category' as category,
+    status, stage, created_at, parent_id, report->>'title' as title, (report is not null) as has_report
+    from runs where owner_id=${owner} order by created_at desc limit 50`;
+  return rows.map(row => ({
+    id: String(row.id), idea: String(row.idea), category: row.category as HomeRun["category"],
+    status: row.status as HomeRun["status"], stage: row.stage as RunStage,
+    createdAt: new Date(String(row.created_at)).toISOString(), parentId: row.parent_id as string | null,
+    title: row.title as string | null, hasReport: Boolean(row.has_report),
+  }));
+}
 export async function createRun(id: string, owner: string, brief: IdeaBrief, parentId: string | null, provider: ResearchProvider = "openai") {
   const sql = db(), kind = parentId ? "refinement" : "full", reservation = RESERVATIONS[kind];
   const credits = provider === "crustdata" ? CRUST_CREDITS[kind] * 1000 : 0;

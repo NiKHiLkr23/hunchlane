@@ -8,7 +8,7 @@ export const IdeaBriefSchema = z.object({
   answers: z.record(z.string(), z.string().max(500)).default({}),
 });
 export type IdeaBrief = z.infer<typeof IdeaBriefSchema>;
-export const SourceSchema = z.object({ id: z.string(), url: z.string().url(), title: z.string(), retrievedAt: z.string(), kind: z.enum(["official", "discussion", "other"]), excerpt: z.string().max(900) });
+export const SourceSchema = z.object({ id: z.string(), url: z.string().url(), title: z.string(), retrievedAt: z.string(), kind: z.enum(["official", "discussion", "other"]), excerpt: z.string().max(900), evidenceLevel: z.enum(["search_preview", "page_text"]).optional() });
 export type EvidenceSource = z.infer<typeof SourceSchema>;
 const ClaimSchema = z.object({ text: z.string().max(1500), sourceIds: z.array(z.string()), nature: z.enum(["observation", "hypothesis"] ) });
 export const CompetitorSchema = z.object({ name: z.string(), url: z.string().url(), match: z.enum(["close", "adjacent"]), description: ClaimSchema, overlap: ClaimSchema, difference: ClaimSchema, pricing: ClaimSchema });

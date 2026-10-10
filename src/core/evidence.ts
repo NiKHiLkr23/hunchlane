@@ -9,6 +9,9 @@ export function validateEvidence(report: ResearchContent, sources: EvidenceSourc
   for (const claim of claims) {
     if (claim.sourceIds.some(id => !ids.has(id))) throw new Error("A claim cites a source that was not retrieved.");
     if (claim.nature === "observation" && !claim.sourceIds.length) throw new Error("An observation must have a source.");
+    const cited = sources.filter(source => claim.sourceIds.includes(source.id));
+    const verificationText = claim.text.replace(/\b(?:not|never)\s+(?:(?:fully|independently)\s+)?verified\b/gi, "unverified");
+    if (/\b(?:verified (?:from|against|on|using)|(?:fully|independently) verified)\b/i.test(verificationText) && cited.length && cited.every(source => source.evidenceLevel === "search_preview")) throw new Error("A search preview cannot establish page verification.");
   }
   for (const competitor of report.competitors) {
     if (!safeWebUrl(competitor.url) || !urls.has(new URL(competitor.url).hostname.replace(/^www\./, ""))) throw new Error("Competitor website was not retrieved.");
