@@ -26,8 +26,8 @@ test("landing validates input and carries each example category without starting
 test("landing entry stays in the first viewport and navigation works by keyboard",async({page})=>{
   await page.goto("/");
   await page.evaluate(()=>document.fonts.ready);
-  await page.screenshot({path:`artifacts/atlas-${test.info().project.name}.png`});
-  await page.screenshot({path:`artifacts/atlas-full-${test.info().project.name}.png`,fullPage:true});
+  await page.screenshot({path:`artifacts/paper-teal-${test.info().project.name}.png`});
+  await page.screenshot({path:`artifacts/paper-teal-full-${test.info().project.name}.png`,fullPage:true});
   const entry=await page.getByRole("button",{name:"Explore my idea",exact:true}).boundingBox();
   expect(entry).not.toBeNull();
   expect(entry!.y+entry!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
@@ -53,7 +53,7 @@ test("landing entry stays in the first viewport and navigation works by keyboard
   await page.setViewportSize({width:320,height:800});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
   await expect(page.getByRole("textbox",{name:"What’s your idea?"})).toBeFocused();
-  await page.screenshot({path:`artifacts/atlas-narrow-${test.info().project.name}.png`});
+  await page.screenshot({path:`artifacts/paper-teal-narrow-${test.info().project.name}.png`});
 });
 test("an idea survives navigation and missing account setup",async({page})=>{
   await page.goto("/");await expect(page.getByRole("heading",{level:1})).toContainText("Give your idea");await page.getByRole("textbox",{name:"What’s your idea?"}).fill("A reusable meal kit designed for people cooking for one.");await page.getByRole("button",{name:"Explore my idea"}).click();await expect(page).toHaveURL(/\/new$/);await expect(page.getByRole("textbox",{name:"Tell us what you have in mind."})).toHaveValue(/meal kit/);await page.getByRole("radio",{name:"Physical product"}).check();await page.getByRole("button",{name:"Explore my idea"}).click();await expect(page.getByRole("heading",{name:"Let’s make the search useful."})).toBeVisible();await page.getByRole("button",{name:"I’m not sure yet"}).first().click();await page.getByRole("button",{name:"Sign in to research"}).click();await expect(page.getByRole("alert").filter({hasText:"Sign-in and live research"})).toContainText("Sign-in and live research");await page.reload();await expect(page.getByRole("textbox",{name:"Tell us what you have in mind."})).toHaveValue(/meal kit/);

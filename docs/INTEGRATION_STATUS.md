@@ -4,7 +4,7 @@ This file distinguishes source implementation from live proof. Update only with 
 
 | Capability | Implemented | Live evidence |
 |---|---|---|
-| Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 12 desktop/mobile browser checks passed, production build passed after the Discovery Atlas landing trial |
+| Next.js interface and sample | Yes | October 10: `pnpm check` passed (33 tests), all 12 desktop/mobile browser checks passed, production build passed after restoring paper-and-teal with Idea Studio typography |
 | Clerk sign-in and owner checks | Yes, provider inside body, async auth, Next.js proxy and explicit Clerk matcher | User signed in and created a complete live report on October 10; report/operations independently read with the Clerk owner predicate. Two-account browser verification pending |
 | Neon schema, versions, share snapshots, reservations | Yes | Remote migrations applied and budget row read back; embedded PostgreSQL tests passed; remote ownership/concurrency pending |
 | Inngest durable stages and response polling | Yes | Local workflow reached a saved complete report through six journaled provider operations. Restart/recovery verification pending |
@@ -63,3 +63,11 @@ At the user's request, the landing page now trials Discovery Atlas: ivory/navy/v
 Final verification: `pnpm check` passed 33 tests, all 12 desktop/mobile browser checks passed, and `pnpm build` passed. Deterministic screenshots were inspected at 1280×720 and 390×844, plus a 320px focused long-input state, invalid input, and the open mobile menu. Tests cover repeated valid submissions, all three example categories, draft continuity, first-viewport entry, keyboard navigation and reduced motion. Repeated landing submits produced no research POSTs. Measured primary, button, muted-text and hypothesis foreground/background contrast ratios exceed 4.5:1. Browser-device emulation is verified; a physical-device test is not claimed.
 
 Desktop/mobile previews are ignored local artifacts at `artifacts/atlas-*.png`. `.env.local` was hash-checked unchanged. No paid research calls, database changes or deployment occurred. Landing feedback is still required before proceeding to login/signup.
+
+## Paper-and-teal phase 1 — selected visual direction
+
+The user requested the original paper-and-teal look with Idea Studio's font and hero treatment. The landing now uses locally hosted Manrope, warm paper surfaces, teal actions, sage sample surfaces, and the three-line “Give your idea / a clearer / next step.” headline with a teal final phrase and apricot underline. `DESIGN.md` records this direction. The Atlas alternative is preserved on its branch; its stylesheet and unused Newsreader assets are removed from the current version. Existing research behavior and later screens are unchanged.
+
+`pnpm check` passed 33 tests, all 12 desktop/mobile browser checks passed, and `pnpm build` passed. Desktop (1280×720), mobile (390×844), full-page layouts, a 320px focused long-input state, validation errors and open mobile navigation were inspected using deterministic fixtures. Checks retain draft continuity, all example categories, repeated-submit behavior, keyboard navigation, first-viewport entry and reduced motion. The landing produced no research POSTs. Foreground/background contrast for checked text pairs exceeds 4.5:1, including teal over the apricot underline. Physical-device testing is not claimed.
+
+Previews are ignored local artifacts at `artifacts/paper-teal-*.png`. `.env.local` was hash-checked unchanged. No paid calls, database changes, deployment or social posting occurred. This remains the landing phase; collect feedback before login/signup.
