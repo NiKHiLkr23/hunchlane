@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NDPXQJA0JAS3R39V14H660",
+  "strategy": "manual-commit",
+  "branch": "codex/landing-style-polish",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "DESIGN.md",
+    "src/app/hero.css",
+    "src/app/landing-details.css",
+    "src/app/page.tsx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 150398,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2549760,
+    "output_tokens": 1883,
+    "api_call_count": 21
+  }
+}
