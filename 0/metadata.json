@@ -1,0 +1,72 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PD4GVE1CD533812TCQJ0PW",
+  "session_id": "01a12ba2-e429-7b72-9f6d-cddb475a5c5e",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T21:15:41.653689Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 1,
+  "files_touched": [
+    ".env.example",
+    "DESIGN.md",
+    "docs/CONTINUOUS_AGENT.md",
+    "playwright.config.ts",
+    "src/app/api/runs/route.ts",
+    "src/app/dev/idea-preview/page.tsx",
+    "src/app/new/page.tsx",
+    "src/app/new/refine/[id]/page.tsx",
+    "src/app/page.tsx",
+    "src/components/idea-composer.tsx",
+    "src/components/idea-conversation.tsx",
+    "src/components/refine-form.tsx",
+    "src/server/agent-store.ts",
+    "src/server/inngest.ts",
+    "tests/run-admission.test.ts"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "df54610bd930",
+  "checkpoint_transcript_start": 519,
+  "transcript_lines_at_start": 519,
+  "compact_transcript_start": 63,
+  "token_usage": {
+    "input_tokens": 202350,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3946496,
+    "output_tokens": 5628,
+    "api_call_count": 22,
+    "subagent_tokens_complete": true
+  },
+  "session_metrics": {
+    "turn_count": 10
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T21:15:41.578309Z",
+    "agent_lines": 95,
+    "agent_removed": 718,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 95,
+    "total_lines_changed": 813,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 95,
+      "agent_lines_removed": 718
+    }
+  ]
+}

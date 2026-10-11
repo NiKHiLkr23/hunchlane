@@ -1,0 +1,41 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PD4GVE1CD533812TCQJ0PW",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "files_touched": [
+    ".env.example",
+    "DESIGN.md",
+    "docs/CONTINUOUS_AGENT.md",
+    "playwright.config.ts",
+    "src/app/api/runs/route.ts",
+    "src/app/dev/idea-preview/page.tsx",
+    "src/app/new/page.tsx",
+    "src/app/new/refine/[id]/page.tsx",
+    "src/app/page.tsx",
+    "src/components/idea-composer.tsx",
+    "src/components/idea-conversation.tsx",
+    "src/components/refine-form.tsx",
+    "src/server/agent-store.ts",
+    "src/server/inngest.ts",
+    "tests/run-admission.test.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 202350,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3946496,
+    "output_tokens": 5628,
+    "api_call_count": 22,
+    "subagent_tokens_complete": true
+  }
+}

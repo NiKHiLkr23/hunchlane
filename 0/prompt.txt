@@ -1,0 +1,9 @@
+commit and push
+
+---
+
+the deployed version still shows the previous ui for new screen, did we not remove the flag ?
+
+---
+
+remove the old ui and flag
