@@ -1,0 +1,188 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P5KRAH07VG7F0K7NPGN3E6",
+  "session_id": "01a12ba2-e429-7b72-9f6d-cddb475a5c5e",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T19:04:12.685441Z",
+  "branch": "main",
+  "checkpoints_count": 8,
+  "save_step_count": 7,
+  "files_touched": [
+    ".env.example",
+    ".gitignore",
+    "DESIGN.md",
+    "README.md",
+    "docs/CONTINUOUS_AGENT.md",
+    "drizzle/0004_continuous_agent.sql",
+    "drizzle/0005_account_allowances.sql",
+    "drizzle/meta/0004_snapshot.json",
+    "drizzle/meta/0005_snapshot.json",
+    "drizzle/meta/_journal.json",
+    "next.config.ts",
+    "playwright.config.ts",
+    "scripts/check-integrations.ts",
+    "scripts/reconcile-research.ts",
+    "src/app/api/inngest/route.ts",
+    "src/app/api/runs/[id]/messages/route.ts",
+    "src/app/api/runs/route.ts",
+    "src/app/dev/agent-preview/api/route.ts",
+    "src/app/dev/agent-preview/page.tsx",
+    "src/app/library/page.tsx",
+    "src/app/new/conversation.css",
+    "src/app/new/page.tsx",
+    "src/app/new/refine/[id]/page.tsx",
+    "src/app/page.tsx",
+    "src/app/research/[id]/page.tsx",
+    "src/components/agent-conversation.tsx",
+    "src/components/home-dashboard.tsx",
+    "src/components/idea-composer.tsx",
+    "src/components/refine-form.tsx",
+    "src/components/report-view.tsx",
+    "src/core/agent.ts",
+    "src/core/budget.ts",
+    "src/core/home.ts",
+    "src/core/types.ts",
+    "src/lib/auth-navigation.ts",
+    "src/server/agent-journal.ts",
+    "src/server/agent-store.ts",
+    "src/server/agent-worker.ts",
+    "src/server/auth.ts",
+    "src/server/crustdata.ts",
+    "src/server/db/schema.ts",
+    "src/server/inngest.ts",
+    "src/server/operation-context.ts",
+    "src/server/research-provider.ts",
+    "src/server/research.ts",
+    "src/server/sponsored-model.ts",
+    "src/server/store.ts",
+    "src/server/telemetry.ts",
+    "tests/agent-telemetry.test.ts",
+    "tests/agent.test.ts",
+    "tests/browser/agent.spec.ts",
+    "tests/browser/setup.ts",
+    "tests/crust-recovery.test.ts",
+    "tests/run-admission.test.ts",
+    "tests/sponsored-model.test.ts",
+    "tsconfig.json"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "b67890c168b0",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 474910,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 16476160,
+    "output_tokens": 118585,
+    "api_call_count": 151,
+    "subagent_tokens_complete": true
+  },
+  "session_metrics": {
+    "turn_count": 8
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T19:04:12.529091Z",
+    "agent_lines": 3402,
+    "agent_removed": 223,
+    "human_added": 389,
+    "human_modified": 77,
+    "human_removed": 0,
+    "total_committed": 3866,
+    "total_lines_changed": 4091,
+    "agent_percentage": 88.60914201906624,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2003,
+      "agent_lines_removed": 69
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2003,
+      "agent_lines_removed": 69
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 25,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2015,
+      "agent_lines_removed": 72,
+      "user_added_per_file": {
+        "drizzle/0004_continuous_agent.sql": 25
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 319,
+      "user_lines_removed": 71,
+      "agent_lines_added": 2871,
+      "agent_lines_removed": 240,
+      "user_added_per_file": {
+        "drizzle/0004_continuous_agent.sql": 25,
+        "src/server/crustdata.ts": 289,
+        "src/server/operation-context.ts": 5
+      },
+      "user_removed_per_file": {
+        "src/server/crustdata.ts": 70,
+        "src/server/operation-context.ts": 1
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 30,
+      "user_lines_removed": 1,
+      "agent_lines_added": 3143,
+      "agent_lines_removed": 293,
+      "user_added_per_file": {
+        "drizzle/0004_continuous_agent.sql": 25,
+        "src/server/operation-context.ts": 5
+      },
+      "user_removed_per_file": {
+        "src/server/operation-context.ts": 1
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 30,
+      "user_lines_removed": 1,
+      "agent_lines_added": 3895,
+      "agent_lines_removed": 298,
+      "user_added_per_file": {
+        "drizzle/0004_continuous_agent.sql": 25,
+        "src/server/operation-context.ts": 5
+      },
+      "user_removed_per_file": {
+        "src/server/operation-context.ts": 1
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 31,
+      "user_lines_removed": 2,
+      "agent_lines_added": 3912,
+      "agent_lines_removed": 298,
+      "user_added_per_file": {
+        "docs/CONTINUOUS_AGENT.md": 1,
+        "drizzle/0004_continuous_agent.sql": 25,
+        "src/server/operation-context.ts": 5
+      },
+      "user_removed_per_file": {
+        "docs/CONTINUOUS_AGENT.md": 1,
+        "src/server/operation-context.ts": 1
+      }
+    }
+  ]
+}
