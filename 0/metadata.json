@@ -1,0 +1,89 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PCQ25WNAWNKFN95AVC5W9Z",
+  "session_id": "01a12ba2-e429-7b72-9f6d-cddb475a5c5e",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T21:08:20.647806Z",
+  "branch": "main",
+  "checkpoints_count": 4,
+  "save_step_count": 3,
+  "files_touched": [
+    "DESIGN.md",
+    "src/app/hero.css",
+    "src/app/landing-details.css",
+    "src/app/sign-in/[[...sign-in]]/page.tsx",
+    "src/components/auth-content.tsx",
+    "src/components/auth-shell.tsx",
+    "src/components/footer.tsx",
+    "src/components/google-auth.tsx"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "6c17a3be0068",
+  "checkpoint_transcript_start": 286,
+  "transcript_lines_at_start": 286,
+  "compact_transcript_start": 33,
+  "token_usage": {
+    "input_tokens": 148046,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3725184,
+    "output_tokens": 8018,
+    "api_call_count": 28,
+    "subagent_tokens_complete": true
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T21:08:20.581028Z",
+    "agent_lines": 0,
+    "agent_removed": 13,
+    "human_added": 113,
+    "human_modified": 33,
+    "human_removed": 0,
+    "total_committed": 140,
+    "total_lines_changed": 159,
+    "agent_percentage": 8.176100628930817,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 146,
+      "user_lines_removed": 33,
+      "agent_lines_added": 7,
+      "agent_lines_removed": 12,
+      "user_added_per_file": {
+        "src/app/sign-in/[[...sign-in]]/page.tsx": 21,
+        "src/components/auth-content.tsx": 89,
+        "src/components/auth-shell.tsx": 36
+      },
+      "user_removed_per_file": {
+        "src/app/sign-in/[[...sign-in]]/page.tsx": 3,
+        "src/components/auth-content.tsx": 14,
+        "src/components/auth-shell.tsx": 16
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 149,
+      "agent_lines_removed": 41
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 173,
+      "agent_lines_removed": 46
+    }
+  ]
+}
