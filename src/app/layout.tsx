@@ -4,7 +4,13 @@ import { ClerkProvider } from "@clerk/nextjs";
 import localFont from "next/font/local";
 import { Header } from "@/components/header";
 import "./globals.css";
-const studioFont = localFont({ src: "./fonts/Manrope.ttf", variable: "--font-studio", display: "swap", weight: "200 800" });
+import { Footer } from "@/components/footer";
+const studioFont = localFont({
+  src: "./fonts/Manrope.ttf",
+  variable: "--font-studio",
+  display: "swap",
+  weight: "200 800",
+});
 export const metadata: Metadata = {
   ...publicMetadata(siteTitle, siteDescription, "/"),
   metadataBase: siteUrl,
@@ -13,9 +19,36 @@ export const metadata: Metadata = {
   // Only explicitly public pages opt into indexing; account/share routes inherit this.
   robots: { index: false, follow: false },
   alternates: {},
-  openGraph: { ...publicMetadata(siteTitle, siteDescription, "/").openGraph, url: undefined },
+  openGraph: {
+    ...publicMetadata(siteTitle, siteDescription, "/").openGraph,
+    url: undefined,
+  },
 };
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const body = <><a className="skip-link" href="#main">Skip to content</a><Header/>{children}<footer className="site-footer"><span>Follow your hunch. Check the evidence.</span><span>Built at Neathacks 2026 <span aria-hidden="true">↗</span></span></footer></>;
-  return <html lang="en" data-scroll-behavior="smooth"><body className={studioFont.variable}>{process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY ? <ClerkProvider>{body}</ClerkProvider> : body}</body></html>;
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const body = (
+    <>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
+      <Header />
+      {children}
+      <Footer />
+    </>
+  );
+  return (
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className={studioFont.variable}>
+        {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
+        process.env.CLERK_SECRET_KEY ? (
+          <ClerkProvider>{body}</ClerkProvider>
+        ) : (
+          body
+        )}
+      </body>
+    </html>
+  );
 }
