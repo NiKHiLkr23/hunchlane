@@ -21,7 +21,8 @@
     "intake:check": "tsx scripts/intake-check.ts",
     "budget:configure": "tsx scripts/configure-budget.ts",
     "cfo:probe": "tsx scripts/cfo-probe.ts",
-    "vault:init": "tsx scripts/init-vault.ts"
+    "vault:init": "tsx scripts/init-vault.ts",
+    "research:reconcile": "tsx scripts/reconcile-research.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.14",

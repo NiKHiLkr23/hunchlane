@@ -1,5 +1,5 @@
 import { neon } from "@neondatabase/serverless";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { IdeaBrief, ResearchReport, RunStage, RunState } from "@/core/types";
 import { RESERVATIONS } from "@/core/budget";
 import { CRUST_CREDITS, type ResearchProvider } from "./research-provider";
@@ -52,17 +52,42 @@ export async function progress(id: string, stage: RunStage) { await db()`update 
 export async function finishRun(id: string, report: ResearchReport) { await db()`update runs set status='complete',stage='complete',report=${JSON.stringify(report)}::jsonb,error=null where id=${id}`; }
 export async function failRun(id: string, message: string) { await db()`update runs set status='failed',error=${message} where id=${id} and status!='complete'`; }
 export async function retryRun(id: string, owner: string) {
-  const rows = await db()`update runs set status='queued',error=null,dispatched=false where id=${id} and owner_id=${owner} and (status='failed' or (status='queued' and dispatched=false)) and not exists (select 1 from provider_operations where run_id=${id} and state='creating') returning *`;
+  if (!owner) throw new Error("UNAUTHENTICATED");
+  const dispatchId = `retry-${id}-${randomUUID()}`;
+  // Queue transition and unlocking operations commit together. Concurrent or ambiguous
+  // sends for this queued attempt reuse the same persisted Inngest event identity.
+  const rows = await db()`with resumed as (
+    update runs set retry_dispatch_id=case when status='failed' then ${dispatchId} else coalesce(retry_dispatch_id,${dispatchId}) end,
+      status='queued',error=null,dispatched=false
+    where id=${id} and owner_id=${owner} and (status='failed' or (status='queued' and dispatched=false))
+      and not exists(select 1 from provider_operations where run_id=${id} and state='creating') returning *
+  ), unlocked as (
+    update provider_operations set state='retryable' where run_id in (select id from resumed) and state='failed_uncharged' returning phase
+  ) select * from resumed`;
   if (!rows[0]) throw new Error("RECONCILIATION_REQUIRED");
-  // Only an explicit, owner-authorized resume unlocks confirmed uncharged failures.
-  await db()`update provider_operations set state='retryable' where run_id=${id} and state='failed_uncharged' and exists(select 1 from runs where id=${id} and owner_id=${owner})`;
-  return runFromRow(rows[0]);
+  return {...runFromRow(rows[0]),dispatchId:String(rows[0].retry_dispatch_id)};
+}
+export async function markRetryDispatched(id:string,owner:string,dispatchId:string) {
+  await db()`update runs set dispatched=true where id=${id} and owner_id=${owner} and retry_dispatch_id=${dispatchId}`;
 }
 export type Operation = { state: string; response_id: string | null; result: unknown; cost_cents: number };
 export async function operation(id: string, phase: string) { const rows = await db()`select * from provider_operations where run_id=${id} and phase=${phase}`; return rows[0] as Operation | undefined; }
 export async function claimOperation(id: string, phase: string) { const rows = await db()`insert into provider_operations(run_id,phase,state) values(${id},${phase},'creating') on conflict (run_id,phase) do update set state='creating' where provider_operations.state='retryable' returning phase`; return rows.length > 0; }
-export async function failUnchargedOperation(id:string,phase:string,receipt:{status:number;credits:0;confirmedAt:string}) {
-  await db()`update provider_operations set state='failed_uncharged',result=jsonb_build_object('failures',coalesce(result->'failures','[]'::jsonb)||${JSON.stringify(receipt)}::jsonb) where run_id=${id} and phase=${phase} and state='creating'`;
+export type CrustFailureReceipt = {status:number;credits:0;confirmedAt:string;requestId?:string;errorType?:string};
+export async function failUnchargedOperation(id:string,phase:string,receipt:CrustFailureReceipt) {
+  await db()`update provider_operations set state='failed_uncharged',failure_history=failure_history||${JSON.stringify({...receipt,source:"provider_response"})}::jsonb where run_id=${id} and phase=${phase} and state='creating'`;
+}
+export async function recordCrustUncertainFailure(id:string,phase:string,receipt:{status:number;requestId?:string;errorType?:string;confirmedAt:string}) {
+  await db()`update provider_operations set failure_history=failure_history||${JSON.stringify({...receipt,source:"provider_response",credits:null})}::jsonb where run_id=${id} and phase=${phase} and state='creating'`;
+}
+// Operator-only: supply an independently checked provider receipt, never user API input.
+// This records the same terminal state as a provider-confirmed zero-credit failure.
+export async function reconcileCrustOperation(id:string,owner:string,phase:string,receipt:CrustFailureReceipt & {requestId:string;evidence:string}) {
+  if(!owner || !/^crust-(search-\d+|fetch)$/.test(phase) || !Number.isInteger(receipt.status) || receipt.status<400 || receipt.status>599 || receipt.credits!==0 || !/^[a-zA-Z0-9_-]{8,128}$/.test(receipt.requestId) || !receipt.evidence?.trim() || receipt.evidence.length>1000 || !Number.isFinite(Date.parse(receipt.confirmedAt))) throw new Error("INVALID_RECONCILIATION");
+  const rows=await db()`update provider_operations set state='failed_uncharged',failure_history=failure_history||${JSON.stringify({...receipt,source:"operator_receipt"})}::jsonb
+    where run_id=${id} and phase=${phase} and state='creating' and cost_cents=0 and credit_milli=0
+    and exists(select 1 from runs where id=${id} and owner_id=${owner} and status='failed' and provider='crustdata') returning phase`;
+  if(!rows[0])throw new Error("RECONCILIATION_REQUIRED");
 }
 export async function saveResponseId(id: string, phase: string, responseId: string) { await db()`update provider_operations set response_id=${responseId},state='polling' where run_id=${id} and phase=${phase}`; }
 export async function saveOperation(id: string, phase: string, result: unknown, cost = 0, credits = 0) {

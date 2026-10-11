@@ -68,4 +68,17 @@ Set `NEXT_PUBLIC_APP_URL` to the canonical production HTTPS origin before buildi
 
 Crustdata requests have no fixed application request timeout. The Inngest route allows 300 seconds per invocation; enable Vercel Fluid compute and verify the deployed function duration supports this value. Inngest checkpoints between steps; completed provider receipts are reused on an explicit Resume research action, with the original reservation.
 
-A non-success response with an explicit `X-Credits-Used: 0` receipt is journaled as `failed_uncharged`. Only owner-authorized resume unlocks that operation for another attempt. Missing billing receipts, disconnected requests, host termination, and unexpected billing remain uncertain and require operator reconciliation against the provider's request log. HTTP 500 alone is not proof of zero usage. The earlier 45-second aborted request still needs its observed zero-credit dashboard receipt recorded in its journal before resuming; this code change does not reinterpret old uncertain operations automatically.
+A non-success response with an explicit `X-Credits-Used: 0` receipt is journaled as `failed_uncharged`. Only owner-authorized resume unlocks that operation for another attempt. Missing billing receipts, disconnected requests, host termination, and unexpected billing remain uncertain and require operator reconciliation against the provider's request log. HTTP 500 alone is not proof of zero usage. The earlier aborted request was reconciled from its zero-credit dashboard receipt, retaining a separate archived attempt. Existing uncertain operations are never reclassified automatically.
+
+
+Apply `pnpm db:migrate` before deploying the recovery changes. This adds a persisted retry event ID and a failure-history column, copying earlier failure receipts into that history. Resume queues the run and unlocks confirmed uncharged operations in one statement. Repeated sends for the same queued attempt use the same Inngest event ID; successful responses never overwrite failure history.
+
+Sponsored research and intake use the installed SDK's default timeout (currently ten minutes) with automatic SDK retries disabled. Both the Inngest and intake routes allow 300 seconds on a supported Vercel runtime. These are longer-lived requests, not unlimited execution; an interrupted paid request still needs reconciliation.
+
+For a Crustdata error without a zero-credit response header, independently verify its request ID, query, time and zero usage in the provider dashboard. Save a private JSON receipt containing `status` (400–599), `credits` (0), `confirmedAt` (ISO timestamp), `requestId`, and `evidence` (a concise description of the matched provider log). Then run:
+
+```sh
+pnpm research:reconcile <run-id> <Clerk-owner-id> <crust-search-N|crust-fetch> <receipt.json>
+```
+
+The command only reconciles an uncertain Crustdata operation on a failed run owned by that Clerk user. It records the receipt in permanent failure history and permits a later explicit Resume; it does not send a research event. Preserve the receipt outside Git. Missing or nonzero usage must not be represented as zero. Safe response request IDs and error types are recorded when provided; raw error bodies and credentials are not stored.
