@@ -144,11 +144,17 @@ export default async function Home() {
       </section>
 
       <section className="landing-closing" aria-labelledby="closing-title">
-        <div className="closing-mark" aria-hidden="true"><LaneMark/></div>
+        <div className="closing-brand" aria-hidden="true"><span className="closing-mark"><LaneMark/></span><span>Hunchlane</span></div>
         <div className="landing-section-heading" data-reveal><span className="landing-pill">Room for a little uncertainty</span><h2 id="closing-title">Keep the curiosity.<br/>Question the evidence.</h2><p>Finding a competitor doesn’t end your idea. Finding none doesn’t prove it’s new. Research gives you context—not a guarantee that an idea will work.</p></div>
         <ul className="closing-checks"><li><Check size={16} aria-hidden="true"/>Citations you can check</li><li><Check size={16} aria-hidden="true"/>Hypotheses you can question</li><li><Check size={16} aria-hidden="true"/>Assumptions you can change</li></ul>
         <a href="#idea" className="button studio-primary">Explore my idea <ArrowRight size={18} aria-hidden="true"/></a>
         <p className="closing-helper">Start with a sentence. Sign in before research begins.</p>
+        <div className="closing-tiles" aria-hidden="true">
+          <span className="closing-tile closing-tile-note"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="72px"/></span>
+          <span className="closing-tile closing-tile-check"><FileCheck2 size={26}/></span>
+          <span className="closing-tile closing-tile-book"><Image src="/illustrations/evidence-book-v1.png" alt="" width={1254} height={1254} sizes="72px"/></span>
+          <span className="closing-tile closing-tile-bulb"><Image src="/illustrations/experiment-lightbulb-v1.png" alt="" width={1254} height={1254} sizes="72px"/></span>
+        </div>
       </section>
     </LandingMotion>
   </main>;

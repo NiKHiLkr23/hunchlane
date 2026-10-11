@@ -121,10 +121,35 @@
 .landing-benefit:nth-child(n + 2) .benefit-copy h3 { font-size: 18px; }
 .benefit-copy h3 { font-size: 22px; font-weight: 600; letter-spacing: -.035em; line-height: 1.35; margin: 14px 0; }
 .benefit-copy p { font-size: 13px; line-height: 1.85; color: var(--studio-muted); margin: 0; text-wrap: pretty; }
-.landing-closing { position: relative; isolation: isolate; margin: 8px 0 36px; padding: 84px 24px 36px; border: 0; border-radius: 0; text-align: center; background: transparent; }
-.landing-closing::before { content: none; }
-.closing-mark { display: flex; width: 50px; height: 50px; justify-content: center; align-items: center; margin: 0 auto 28px; border: 1px solid #dce5d9; background: #fff; border-radius: 14px; box-shadow: none; transform: rotate(-5deg); }
-.closing-mark svg { width: 30px; height: 30px; }
+.landing-closing {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: 12px 0 28px;
+  padding: 56px 28px 118px;
+  border: 1px solid #e3e8e0;
+  border-radius: 32px;
+  text-align: center;
+  background-color: #f6f7f4;
+  background-image:
+    radial-gradient(ellipse 46% 42% at 8% 0%, #ffd8c352, transparent 70%),
+    radial-gradient(ellipse 42% 48% at 100% 100%, #175d5020, transparent 72%),
+    radial-gradient(circle, #b7c3b6 1px, transparent 1.15px);
+  background-size: auto, auto, 18px 18px;
+  box-shadow: 0 18px 40px -32px #23332e45;
+}
+.landing-closing::before { content: ""; position: absolute; z-index: 0; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(ellipse at 50% 42%, #fffffff2 0%, #ffffffc7 38%, #ffffff00 76%); }
+.landing-closing > * { position: relative; z-index: 1; }
+.closing-brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; font-size: 15px; font-weight: 750; letter-spacing: -.03em; }
+.closing-mark { display: flex; width: 44px; height: 44px; justify-content: center; align-items: center; margin: 0; border: 1px solid #e4ebe3; background: #fff; border-radius: 14px; box-shadow: 0 8px 16px -12px #23332e40; transform: rotate(-6deg); color: var(--studio-teal); }
+.closing-mark svg { width: 28px; height: 28px; }
+.closing-tiles { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 1; display: flex; justify-content: center; gap: 28px; pointer-events: none; }
+.closing-tile { display: grid; place-items: center; width: 72px; height: 72px; border: 1px solid #e6ebe4; border-radius: 20px; background: #fff; box-shadow: 0 14px 24px -16px #23332e4a; }
+.closing-tile img { width: 52px; height: 52px; object-fit: contain; }
+.closing-tile-note { transform: rotate(-8deg); }
+.closing-tile-check { transform: rotate(7deg); color: #175d50; }
+.closing-tile-book { transform: rotate(-4deg); }
+.closing-tile-bulb { transform: rotate(8deg); }
 .landing-closing .landing-section-heading { margin-bottom: 24px; }
 .landing-closing .landing-section-heading > p { max-width: 540px; }
 .closing-checks { display: flex; flex-wrap: nowrap; justify-content: center; gap: 8px 28px; padding: 0; margin: 8px 0 36px; list-style: none; }
@@ -197,7 +222,11 @@
   .benefit-copy h3 { font-size: 19px; margin: 10px 0; }
   .benefit-copy p { font-size: 12px; }
   .benefit-copy .landing-eyebrow { font-size: 9px; letter-spacing: .03em; }
-  .landing-closing { padding: 48px 8px 28px; margin: 0 0 24px; }
+  .landing-closing { padding: 40px 16px 92px; margin: 8px 0 20px; border-radius: 24px; }
+  .closing-tiles { gap: 14px; bottom: 14px; }
+  .closing-tile { width: 54px; height: 54px; border-radius: 16px; }
+  .closing-tile img { width: 38px; height: 38px; }
+  .closing-tile-check svg { width: 22px; height: 22px; }
   .closing-checks { flex-direction: column; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 28px; }
   .landing-closing .studio-primary { width: 100%; justify-content: center; }
   .closing-helper { font-size: 10px; }
@@ -206,6 +235,9 @@
 @media (max-width: 360px) {
   .landing-section-heading h2 { font-size: 28px; }
   .report-preview-header > div > span { display: none; }
+  .closing-tiles { gap: 8px; }
+  .closing-tile { width: 46px; height: 46px; border-radius: 14px; }
+  .closing-tile img { width: 32px; height: 32px; }
   .landing-benefit, .landing-benefit:first-child, .landing-benefit:nth-child(n + 2) { grid-template-columns: 1fr; }
   .benefit-art, .landing-benefit:first-child .benefit-art, .landing-benefit:nth-child(n + 2) .benefit-art { height: auto; padding: 16px 16px 4px; }
   .landing-benefit .benefit-copy, .landing-benefit:nth-child(n + 2) .benefit-copy { padding: 8px 20px 24px; }
