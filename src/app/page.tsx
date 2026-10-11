@@ -54,7 +54,10 @@ export default async function Home() {
           <p>See how one idea becomes alternatives, open questions, and something small to try.</p>
         </div>
         <div className="report-stage" data-unfold>
-          <div className="report-sheets" aria-hidden="true"><span/><span/></div>
+          <div className="report-float report-float-questions" aria-hidden="true"><span className="landing-eyebrow">Still to find out</span><p>{sampleReport.unknowns[0]}</p></div>
+          <div className="report-float report-float-cost" aria-hidden="true"><span className="landing-eyebrow">A small experiment</span><strong>{sampleReport.experiment.title}</strong><p>{sampleReport.experiment.cost}</p></div>
+          <div className="report-frame">
+          <div className="report-sheets" aria-hidden="true"><span/><span/><span/></div>
           <div className="report-note-object" aria-hidden="true"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="180px"/></div>
           <article className="report-preview" aria-labelledby="sample-title">
             <header className="report-preview-header">
@@ -97,6 +100,7 @@ export default async function Home() {
             <footer className="report-preview-footer"><p>This sample explains the format. It is not live research. Open the linked websites to check current details.</p><Link href="/sample" className="studio-text-link">Open the sample report <ArrowRight size={16} aria-hidden="true"/></Link></footer>
           </article>
           <div className="report-book-object" aria-hidden="true"><Image src="/illustrations/evidence-book-v1.png" alt="" width={1254} height={1254} sizes="160px"/></div>
+          </div>
         </div>
       </section>
 
