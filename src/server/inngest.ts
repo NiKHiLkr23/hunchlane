@@ -72,7 +72,8 @@ export const researchFunction = inngest.createFunction({
     return { runId, complete: true };
   } catch (error) {
     const uncertain = error instanceof Error && error.message === "RECONCILIATION_REQUIRED";
-    await step.run("save-error", () => failRun(runId,uncertain ? "A provider request needs a check before retrying. Your progress is saved." : "Research paused before the report was ready. Your progress is saved; you can retry from the last checkpoint."));
+    const invalidEvidence = error instanceof Error && error.name === "EvidenceValidationError";
+    await step.run("save-error", () => failRun(runId,uncertain ? "A provider request needs a check before retrying. Your progress is saved." : invalidEvidence ? "The saved report did not pass its source checks. Your research is saved. Repeating Resume will reuse that response; it needs correction before it can be displayed." : "Research paused before the report was ready. Your progress is saved; you can retry from the last checkpoint."));
     throw new NonRetriableError(uncertain ? "Provider reconciliation required" : "Research paused", { cause: error });
   }
 });
