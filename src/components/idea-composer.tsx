@@ -70,11 +70,15 @@ export function IdeaComposer({
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const [requestId, setRequestId] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
   const ideaInput = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
-    if (fresh) return;
-    const saved = readIdeaDraft();
-    if (saved) setBrief(saved.brief);
+    if (!fresh) {
+      const saved = readIdeaDraft();
+      if (saved) setBrief(saved.brief);
+    }
+    // Enable interactions only after hydration and draft restoration finish.
+    setReady(true);
   }, [fresh]);
   function update<K extends keyof IdeaBrief>(key: K, value: IdeaBrief[K]) {
     setBrief((old) => ({ ...old, [key]: value }));
@@ -156,6 +160,7 @@ export function IdeaComposer({
     <section
       className={compact ? "composer compact-composer" : "composer workbench"}
       aria-label="Describe your idea"
+      aria-busy={!ready}
     >
       {!compact && (
         <div className="step-label">
@@ -186,6 +191,7 @@ export function IdeaComposer({
             <textarea
               id="idea"
               ref={ideaInput}
+              disabled={!ready}
               value={brief.idea}
               onChange={(e) => update("idea", e.target.value)}
               maxLength={3000}
@@ -211,6 +217,7 @@ export function IdeaComposer({
                   type="submit"
                   className="composer-send"
                   aria-label="Explore my idea"
+                  disabled={!ready}
                 >
                   <ArrowUp size={18} />
                 </Button>
@@ -372,6 +379,7 @@ export function IdeaComposer({
                   type="button"
                   className="example-chip"
                   key={example.label}
+                  disabled={!ready}
                   onClick={() => {
                     setBrief({
                       ...initial,

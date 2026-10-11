@@ -72,7 +72,6 @@ export default async function Home() {
         </div>
         <div id="start-your-idea" className="studio-entry">
           <IdeaComposer compact autonomous={autonomousEnabled()} />
-          {autonomousEnabled() && <p className="fine-print">Sending starts research after sign-in. Your idea and answers are shared with our research providers.</p>}
         </div>
       </HeroMotion>
 
@@ -140,7 +139,7 @@ export default async function Home() {
                             <ArrowUpRight size={13} aria-hidden="true" />
                             <span className="sr-only">
                               {" "}
-                              — official website, opens a new tab
+                              Official website, opens a new tab
                             </span>
                           </a>
                           <p>{competitor.description.text}</p>
@@ -317,7 +316,7 @@ export default async function Home() {
             </h2>
             <p>
               Finding a competitor doesn’t end your idea. Finding none doesn’t
-              prove it’s new. Research gives you context—not a guarantee that an
+              prove it’s new. Research gives you context, not a guarantee that an
               idea will work.
             </p>
           </div>

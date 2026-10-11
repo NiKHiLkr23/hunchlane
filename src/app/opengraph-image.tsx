@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-export const alt = "Hunchlane — Give your idea a clearer next step";
+export const alt = "Hunchlane: Give your idea a clearer next step";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function Image() {

@@ -21,22 +21,39 @@ export type HomeNext =
   | { kind: "empty" };
 
 export function homeNext(runs: HomeRun[], draft: IdeaBrief | null): HomeNext {
-  const newest = [...runs].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  const active = newest.find(run => !run.hasReport && (run.status === "queued" || run.status === "running"));
+  const newest = [...runs].sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt)
+  );
+  const active = newest.find(
+    (run) =>
+      !run.hasReport && (run.status === "queued" || run.status === "running")
+  );
   if (active) return { kind: "active", run: active };
   // Older submissions left a device draft behind. Prefer its saved report
   // without deleting local input or hiding a draft for an unrelated idea.
-  const normalizeIdea = (idea: string) => idea.trim().replace(/\s+/g, " ").toLowerCase();
-  const submittedDraft = draft && newest.find(run => run.hasReport && run.category === draft.category && normalizeIdea(run.idea) === normalizeIdea(draft.idea));
+  const normalizeIdea = (idea: string) =>
+    idea.trim().replace(/\s+/g, " ").toLowerCase();
+  const submittedDraft =
+    draft &&
+    newest.find(
+      (run) =>
+        run.hasReport &&
+        run.category === draft.category &&
+        normalizeIdea(run.idea) === normalizeIdea(draft.idea)
+    );
   if (submittedDraft) return { kind: "report", run: submittedDraft };
   if (draft) return { kind: "draft", draft };
-  const report = newest.find(run => run.hasReport);
+  const report = newest.find((run) => run.hasReport);
   if (report) return { kind: "report", run: report };
-  const paused = newest.find(run => run.status === "failed");
+  const paused = newest.find((run) => run.status === "failed");
   return paused ? { kind: "paused", run: paused } : { kind: "empty" };
 }
 
-export const homeCategories = { software: "Software", physical: "Physical product", service: "Service" };
+export const homeCategories = {
+  software: "Software",
+  physical: "Physical product",
+  service: "Service",
+};
 export const homeStages: Record<RunStage, string> = {
   queued: "Waiting for a research slot",
   discovering: "Looking for what exists",
@@ -47,5 +64,5 @@ export const homeStages: Record<RunStage, string> = {
 };
 
 export function homeRunHref(run: HomeRun) {
-  return `/${run.mode === "autonomous" ? "research" : run.hasReport ? "reports" : "research"}/${run.id}`;
+  return `/${run.hasReport ? "reports" : "research"}/${run.id}`;
 }
