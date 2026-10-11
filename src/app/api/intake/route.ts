@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { requireOwner, sameOrigin, apiError } from '@/server/auth';
 import { intakeEnabled, intakeTurn, savedIntake } from '@/server/intake';
 import { IntakeRequestSchema } from '@/core/intake';
+export const maxDuration = 300;
 export async function POST(request: Request) {
   let claimed = false;
   try {

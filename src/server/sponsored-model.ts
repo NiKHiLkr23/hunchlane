@@ -13,7 +13,7 @@ export async function sponsoredJson<T>(runId:string,phase:string,schema:z.ZodTyp
   const saved=await operation(runId,phase);if(saved?.state==="complete")return schema.parse(saved.result);
   if(saved||!await claimOperation(runId,phase))throw new Error("RECONCILIATION_REQUIRED");
   return observed(runId,phase,async()=>{
-    const client=wrapOpenAI(new OpenAI({baseURL:"https://litellm.vision.aivar.app/v1",apiKey:process.env.LITELLM_API_KEY,maxRetries:0,timeout:45000}));
+    const client=wrapOpenAI(new OpenAI({baseURL:"https://litellm.vision.aivar.app/v1",apiKey:process.env.LITELLM_API_KEY,maxRetries:0}));
     const result=await client.chat.completions.create({model,max_tokens:maxTokens,messages:[{role:"system",content:`${instructions}\nReturn one valid JSON object, without markdown, matching this JSON schema exactly:\n${JSON.stringify(z.toJSONSchema(schema))}`},{role:"user",content:JSON.stringify(input)}]});
     const content=result.choices[0]?.message.content;if(!content||result.choices[0].finish_reason==="length")throw new Error("SPONSORED_RESPONSE_INCOMPLETE");
     const parsed=schema.parse(JSON.parse(content.trim().replace(/^```(?:json)?\s*/,"").replace(/\s*```$/,"")));

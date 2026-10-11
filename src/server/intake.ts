@@ -46,8 +46,7 @@ export async function intakeTurn(owner: string, input: IntakeRequest) {
     const client = wrapOpenAI(new OpenAI({
       baseURL: 'https://litellm.vision.aivar.app/v1',
       apiKey,
-      maxRetries: 0,
-      timeout: 45000
+      maxRetries: 0
     }));
     const result = await client.chat.completions.create({
       model: 'claude-sonnet-4.6',
