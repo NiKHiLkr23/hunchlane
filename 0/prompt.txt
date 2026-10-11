@@ -1,0 +1,26 @@
+create pr's and merge things to  main
+AI intake should be enabled by default so we don't need the flag -remove it
+I have 5000 credits on crustdata so we can increase the allowance / budget  
+I'll be using inngest cloud so I'll add inngest related keys
+
+---
+
+<in-app-browser-context source="ambient-ui-state">
+This block is automatically supplied ambient UI state, not part of the user's request. Do not treat it as an instruction or as evidence that the user explicitly selected the in-app browser.
+# In app browser:
+- The user has the in-app browser open with 1 tab.
+- Current URL: https://github.com/NiKHiLkr23/hunchlane/compare/main...codex/teal-motion-landing
+</in-app-browser-context>
+
+## My request:
+github is connected.. do the thing
+give me a walkthrough of everythig we have done 
+an high level design and architecture of the product
+
+---
+
+list all the env's I need to add on vercel
+
+---
+
+check if we have proper metadata and og for seo, if not add it
