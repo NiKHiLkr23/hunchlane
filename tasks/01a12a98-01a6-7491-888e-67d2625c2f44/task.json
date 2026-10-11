@@ -1,0 +1,17 @@
+{
+  "tool_use_id": "01a12a98-01a6-7491-888e-67d2625c2f44",
+  "agent_id": "01a12a98-01a6-7491-888e-67d2625c2f44",
+  "subagent_type": "default",
+  "files": [
+    "tests/sponsored-model.test.ts"
+  ],
+  "token_usage": {
+    "input_tokens": 56989,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 753920,
+    "output_tokens": 4079,
+    "api_call_count": 17
+  },
+  "started_at": "2026-10-11T16:22:51.290125+05:30",
+  "completed_at": "2026-10-11T16:28:03.328271+05:30"
+}

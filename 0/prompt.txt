@@ -1,0 +1,21 @@
+how can we avoid this failure, if something fails we should be able to resume or retry, also don't add a 45 second time out .. sometimes the queries might take longer
+
+---
+
+how do I resume the existing task before I deploy this
+
+---
+
+do it
+
+---
+
+&#x20; [$prod-review](/Users/nikhil/.codex/skills/prod-review/SKILL.md)  our conversation above and the changes, look for issues
+
+---
+
+make the changes commit and push it out and merge to main
+
+---
+
+write and run test using a smaller model like gpt6 or gpt6.1 on low
