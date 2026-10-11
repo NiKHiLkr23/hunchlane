@@ -4,7 +4,7 @@ body:has(.dimensional-hero) .studio-header { background: transparent; border-bot
 body:has(.dimensional-hero) .studio-header-inner,
 body:has(.dimensional-hero) .studio-landing,
 body:has(.dimensional-hero) .site-footer {
-  max-width: 1040px;
+  max-width: 1280px;
   padding-left: clamp(24px, 4vw, 40px);
   padding-right: clamp(24px, 4vw, 40px);
   box-sizing: border-box;
@@ -116,6 +116,21 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
 @keyframes hero-copy-arrive {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
+}
+@media (min-width: 761px) {
+  .dimensional-hero h1 { font-size: clamp(48px, 5.6vw, 72px); }
+  .dimensional-hero .studio-hero-copy > p { font-size: 16px; }
+  .dimensional-hero .studio-entry { width: min(100%, 840px); margin-top: 28px; }
+  .dimensional-hero .compact-composer form { max-width: 640px; padding: 20px; }
+  .dimensional-hero .composer-label { font-size: 14px; }
+  .dimensional-hero .composer-field-head .char-count { font-size: 12px; }
+  .dimensional-hero .composer textarea { height: 112px; min-height: 112px; padding-bottom: 48px; font-size: 17px; }
+  .dimensional-hero .composer-action .button.composer-send { width: 44px; min-width: 44px; height: 44px; min-height: 44px; }
+  .dimensional-hero .example-prompt { font-size: 14px; }
+  .dimensional-hero .example-pills { gap: 10px; }
+  .dimensional-hero .example-row button.example-chip { min-height: 44px; padding: 8px 16px 8px 10px; font-size: 14px; }
+  body:has(.dimensional-hero) .studio-desktop-nav,
+  body:has(.dimensional-hero) .studio-header-actions { font-size: 14px; }
 }
 @media (max-width: 1240px) {
   .hero-note-scene { left: 8px; }

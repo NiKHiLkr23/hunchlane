@@ -15,7 +15,7 @@ const columns = [
 export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-[#f3f4f0] font-[family-name:var(--font-studio),sans-serif] text-[#23332e] bg-[radial-gradient(circle,#c5cdc4_0.7px,transparent_0.75px)] [background-size:8px_8px]">
-      <div className="relative z-10 mx-auto w-full max-w-[1040px] px-6 pb-20 pt-10 sm:px-10 sm:pb-40 sm:pt-16 lg:pb-52 lg:pt-20">
+      <div className="relative z-10 mx-auto w-full max-w-[1280px] px-6 pb-20 pt-10 sm:px-10 sm:pb-40 sm:pt-16 lg:pb-52 lg:pt-20">
         <div className="grid items-start gap-7 sm:gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
           <div>
             <Link

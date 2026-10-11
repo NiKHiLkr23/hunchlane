@@ -10,7 +10,7 @@ const appearance = { variables: { colorPrimary: "#175d50", fontFamily: "var(--fo
 
 export function GoogleAuth(props: { mode: AuthMode; destination: string; verify: boolean; button: React.ReactNode; busyButton: React.ReactNode }) {
   return <>
-    <ClerkLoading><button className="google-button" disabled>{props.button}</button><p className="auth-status" role="status">Loading secure sign-in.</p></ClerkLoading>
+    <ClerkLoading><button className="google-button" disabled aria-busy="true">{props.busyButton}</button></ClerkLoading>
     <ClerkFailed><p className="auth-status auth-error" role="alert">Sign-in couldn’t connect. Your draft is still on this device.</p><button className="auth-recovery" onClick={() => window.location.reload()}>Reload sign-in</button></ClerkFailed>
     <ClerkLoaded><ReadyGoogleAuth {...props}/></ClerkLoaded>
   </>;
@@ -49,13 +49,12 @@ function ReadyGoogleAuth({ mode, destination, verify, button, busyButton }: { mo
   // Native Clerk UI handles additional verification, such as MFA and missing
   // profile information. The ordinary entry screen only offers Google.
   if (verify) {
-    const common = { routing: "hash" as const, forceRedirectUrl: destination, appearance, fallback: <p className="auth-status" role="status">Loading account verification.</p> };
+    const common = { routing: "hash" as const, forceRedirectUrl: destination, appearance, fallback: <button className="google-button" disabled aria-busy="true">{busyButton}</button> };
     return <div className="auth-verification">{mode === "sign-in" ? <SignIn {...common} signUpUrl={authRoute("/sign-up", destination, true)} signUpForceRedirectUrl={destination}/> : <SignUp {...common} signInUrl={authRoute("/sign-in", destination, true)} signInForceRedirectUrl={destination}/>}</div>;
   }
   return <>
-    <button ref={buttonRef} type="button" className="google-button" onClick={continueWithGoogle} disabled={busy || Boolean(isSignedIn)} aria-busy={busy} aria-describedby={error ? "auth-google-error" : undefined}>{busy ? busyButton : button}</button>
+    <button ref={buttonRef} type="button" className="google-button" onClick={continueWithGoogle} disabled={busy || Boolean(isSignedIn)} aria-busy={busy || Boolean(isSignedIn)} aria-describedby={error ? "auth-google-error" : undefined}>{busy || isSignedIn ? busyButton : button}</button>
     <div id="clerk-captcha"/>
-    {busy && <p className="auth-status" role="status">Opening Google’s secure sign-in.</p>}
     {error && <p id="auth-google-error" className="auth-status auth-error" role="alert">{error}</p>}
   </>;
 }

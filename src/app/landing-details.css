@@ -87,6 +87,10 @@
 .landing-details[data-motion="on"] .report-experiment, .landing-details[data-motion="on"] .landing-benefit:nth-child(3) { transition-delay: 180ms; }
 .landing-details[data-motion="on"] .report-panel:not([data-revealed]) { transform: translateY(22px) rotate(-1deg); }
 .landing-details[data-motion="on"] [data-reveal]:focus-within { transform: none; opacity: 1; transition: none; }
+@media (min-width: 761px) {
+  .landing-section-heading h2 { font-size: clamp(32px, 3.6vw, 48px); }
+  .landing-section-heading > p { font-size: 16px; }
+}
 @media (max-width: 1200px) {
   .report-question-object { width: 150px; left: -12px; top: -62px; }
 }
