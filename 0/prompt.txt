@@ -1,0 +1,6 @@
+alright commit what we have right now and push it out, no need to change branches, main is fine
+
+---
+
+alright lest continue fixing the ui now 
+the footer currently is on all the pages, move it only on the landing page
