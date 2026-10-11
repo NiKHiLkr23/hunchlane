@@ -11,6 +11,7 @@ import {
   FlaskConical,
 } from "lucide-react";
 import { IdeaComposer } from "@/components/idea-composer";
+import { Footer } from "@/components/footer";
 import { HeroMotion } from "@/components/hero-motion";
 import { LandingMotion } from "@/components/landing-motion";
 import { LaneMark } from "@/components/brand";
@@ -30,6 +31,7 @@ export default async function Home() {
   )
     redirect("/home");
   return (
+    <>
     <main id="main" className="studio-landing">
       <HeroMotion>
         <div className="hero-decoration" aria-hidden="true">
@@ -326,5 +328,7 @@ export default async function Home() {
         </section>
       </LandingMotion>
     </main>
+    <Footer />
+    </>
   );
 }
