@@ -1,10 +1,23 @@
 /* Teal and Depth: landing-only report showcase, benefits and closing. */
-.landing-details { --detail-paper: #fff; --detail-line: #e3e8e3; }
+.sponsor-carousel { margin: 36px 0 56px; padding-top: 18px; border-top: 1px solid #e3e8e0; border-bottom: 1px solid #e3e8e0; }
+.sponsor-kicker { margin: 0 0 4px; padding-left: 0; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--studio-muted); }
+.sponsor-viewport { overflow: clip; }
+.sponsor-track { display: flex; width: max-content; animation: sponsor-drift 42s linear infinite; }
+.sponsor-carousel:hover .sponsor-track, .sponsor-carousel:focus-within .sponsor-track { animation-play-state: paused; }
+.sponsor-group { display: flex; align-items: center; margin: 0; padding: 0 12px; list-style: none; }
+.sponsor-mark { display: inline-flex; align-items: center; min-height: 48px; padding: 0 28px; color: #6a786f; font-weight: 700; font-size: 18px; letter-spacing: -.03em; white-space: nowrap; }
+.sponsor-mark:hover { color: var(--studio-teal); }
+.sponsor-mark[data-mark="entire"] { font-size: 13px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; }
+.sponsor-mark[data-mark="cfo"] { font-weight: 750; letter-spacing: -.04em; }
+.sponsor-mark[data-mark="aws"] { font-size: 15px; font-weight: 800; letter-spacing: .12em; }
+.sponsor-mark[data-mark="litellm"] { font-weight: 650; letter-spacing: -.02em; }
+@keyframes sponsor-drift { to { transform: translateX(-50%); } }
+.landing-details { --detail-paper: #fff; --detail-line: #e3e8e3; margin-inline: 0; }
 .landing-section-heading { text-align: center; max-width: 660px; margin: 0 auto 48px; }
 .landing-pill { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 14px; border: 1px solid var(--detail-line); background: #fff; border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--studio-muted); box-shadow: 0 3px 5px #23332e06; }
 .landing-section-heading h2 { margin: 24px 0 18px; font-size: clamp(32px, 3.4vw, 44px); font-weight: 550; letter-spacing: -.045em; line-height: 1.16; text-wrap: balance; }
 .landing-section-heading > p { max-width: 480px; margin: auto; color: var(--studio-muted); font-size: 14px; line-height: 1.8; text-wrap: pretty; }
-.landing-showcase { padding: 32px 0 100px; }
+.landing-showcase { padding: 8px 0 80px; }
 .report-stage { position: relative; isolation: isolate; padding: 64px 48px 40px; border-radius: 32px; background: linear-gradient(160deg, #d7e8df, #eaf1eb 65%, #f1f4ee); --showcase-progress: 1; }
 .report-sheets { position: absolute; inset: 38px 64px 50px; z-index: -1; pointer-events: none; }
 .report-sheets span { position: absolute; inset: 0; border: 1px solid #d5ded6; background: #fdfefb; border-radius: 18px; transform: rotate(calc(-2deg - (1 - var(--showcase-progress)) * 2deg)); box-shadow: 0 6px 12px #23332e08; }
@@ -103,8 +116,11 @@
   .landing-section-heading { margin-bottom: 30px; }
   .landing-section-heading h2 { font-size: 31px; margin-top: 20px; }
   .landing-section-heading > p { font-size: 13px; }
-  .landing-showcase { padding: 8px 0 60px; }
-  .report-stage { margin: 0 -8px; padding: 20px 12px; border-radius: 22px; }
+  .sponsor-carousel { margin: 28px 0 36px; padding-top: 14px; }
+  .sponsor-kicker { padding-left: 0; }
+  .sponsor-mark { padding: 0 18px; font-size: 16px; }
+  .landing-showcase { padding: 4px 0 60px; }
+  .report-stage { margin: 0; padding: 20px 12px; border-radius: 22px; }
   .report-sheets { inset: 20px 20px; }
   .report-sheets span, .report-sheets span + span { transform: none; }
   .report-note-object, .report-book-object { display: none; }
@@ -156,6 +172,10 @@
   .landing-benefit .benefit-copy, .landing-benefit:nth-child(n + 2) .benefit-copy { padding: 0 24px 28px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .sponsor-track { display: block; animation: none; transform: none; width: 100%; }
+  .sponsor-group[aria-hidden="true"] { display: none; }
+  .sponsor-group { flex-wrap: wrap; justify-content: center; width: 100%; min-width: 0; }
+  .sponsor-group li:nth-child(n + 8) { display: none; }
   .landing-details [data-reveal], .landing-details[data-motion="on"] [data-reveal]:not([data-revealed]), .landing-details[data-motion="on"] .report-panel:not([data-revealed]) { transform: none; opacity: 1; transition: none; }
   .report-note-object { transform: rotate(-11deg); }
   .report-book-object { transform: rotate(12deg); }

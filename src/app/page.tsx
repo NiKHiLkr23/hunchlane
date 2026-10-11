@@ -7,6 +7,7 @@ import { ArrowRight, ArrowUpRight, Check, FileCheck2, Search, FlaskConical } fro
 import { IdeaComposer } from "@/components/idea-composer";
 import { HeroMotion } from "@/components/hero-motion";
 import { LandingMotion } from "@/components/landing-motion";
+import { SponsorCarousel } from "@/components/sponsor-carousel";
 import { LaneMark } from "@/components/brand";
 import { sampleReport } from "@/core/sample";
 import "./studio.css";
@@ -42,6 +43,7 @@ export default async function Home() {
       <div id="start-your-idea" className="studio-entry"><IdeaComposer compact/></div>
       <Link href="/sample" className="studio-text-link hero-sample-link">See what a report looks like <ArrowRight size={16}/></Link>
     </HeroMotion>
+    <SponsorCarousel/>
 
     <LandingMotion>
       <section className="landing-showcase" aria-labelledby="preview-title">

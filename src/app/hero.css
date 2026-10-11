@@ -1,6 +1,15 @@
 /* Teal and Depth: centered landing hero and immediate idea entry. */
 body:has(.dimensional-hero) { background: #f5f6f4; }
-body:has(.dimensional-hero) .studio-header { background: #fff; border-color: #e8ece6; }
+body:has(.dimensional-hero) .studio-header { background: transparent; border-bottom-color: transparent; }
+body:has(.dimensional-hero) .studio-header-inner,
+body:has(.dimensional-hero) .studio-landing,
+body:has(.dimensional-hero) .site-footer {
+  max-width: 1040px;
+  padding-left: clamp(24px, 4vw, 40px);
+  padding-right: clamp(24px, 4vw, 40px);
+  box-sizing: border-box;
+}
+body:has(.dimensional-hero) .site-footer { margin-left: auto; margin-right: auto; }
 body:has(.dimensional-hero) .studio-header-inner { height: 76px; }
 body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
 .studio-hero.dimensional-hero {
@@ -15,7 +24,7 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
   position: relative;
   isolation: isolate;
   overflow: visible;
-  margin: 20px -16px 56px;
+  margin: 20px 0 28px;
   padding: 32px 24px 26px;
   border: 1px solid #e3e8e0;
   border-radius: 32px;
@@ -109,7 +118,7 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
 }
 @media (max-width: 760px) {
   body:has(.dimensional-hero) .studio-header-inner { height: 68px; }
-  .studio-hero.dimensional-hero { margin: 12px -8px 32px; padding: 24px 16px 16px; border-radius: 24px; }
+  .studio-hero.dimensional-hero { margin: 12px 0 20px; padding: 24px 16px 16px; border-radius: 24px; }
   .dimensional-hero h1 { font-size: 42px; }
   .hero-brand-tile { width: 44px; height: 44px; margin-bottom: 18px; border-radius: 13px; }
   .hero-brand-tile > svg { width: 29px; height: 29px; }
@@ -125,7 +134,7 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
   .dimensional-hero .example-row button { padding: 8px; font-size: 11px; column-gap: 4px; }
   .dimensional-hero .example-row button > svg { width: 12px; }
   .dimensional-hero .studio-example-type { font-size: 10px; }
-  .hero-note-scene { top: 4px; left: -12px; width: 96px; }
+  .hero-note-scene { top: 4px; left: 8px; width: 96px; }
   .hero-idea-object { width: 96px; }
   .hero-drift-item { transform: none; }
   .hero-float { --entrance-travel: 8px; }
