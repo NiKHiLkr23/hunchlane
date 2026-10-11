@@ -24,6 +24,11 @@ export function homeNext(runs: HomeRun[], draft: IdeaBrief | null): HomeNext {
   const newest = [...runs].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const active = newest.find(run => !run.hasReport && (run.status === "queued" || run.status === "running"));
   if (active) return { kind: "active", run: active };
+  // Older submissions left a device draft behind. Prefer its saved report
+  // without deleting local input or hiding a draft for an unrelated idea.
+  const normalizeIdea = (idea: string) => idea.trim().replace(/\s+/g, " ").toLowerCase();
+  const submittedDraft = draft && newest.find(run => run.hasReport && run.category === draft.category && normalizeIdea(run.idea) === normalizeIdea(draft.idea));
+  if (submittedDraft) return { kind: "report", run: submittedDraft };
   if (draft) return { kind: "draft", draft };
   const report = newest.find(run => run.hasReport);
   if (report) return { kind: "report", run: report };

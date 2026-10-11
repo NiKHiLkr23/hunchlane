@@ -6,7 +6,7 @@ import { ArrowUp, ArrowRight, LoaderCircle, LockKeyhole } from "lucide-react";
 import { IdeaBriefSchema, type IdeaBrief, type RunState } from "@/core/types";
 import { inferCategory, type AgentMessageInput } from "@/core/agent";
 import { newDraft } from "@/core/idea-draft";
-import { readIdeaDraft, readFreshDraft, saveIdeaDraft, clearFreshDraft } from "@/lib/idea-draft";
+import { readIdeaDraft, readFreshDraft, saveIdeaDraft, clearIdeaDraft, clearFreshDraft } from "@/lib/idea-draft";
 import { LaneMark } from "./brand";
 import { ReportView } from "./report-view";
 import "@/app/new/conversation.css";
@@ -38,6 +38,8 @@ export function AgentConversation({ initial, ownerId = null, signedIn = false, a
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Your idea could not be submitted.");
       if (data.id !== intent.id) throw new Error("Your submission could not be confirmed.");
+      const savedDraft = readIdeaDraft(preview);
+      if (savedDraft?.requestId === intent.id && JSON.stringify(savedDraft.brief) === JSON.stringify(intent.brief)) clearIdeaDraft(intent.id, preview);
       try {sessionStorage.removeItem(intentKey);} catch { /* A saved server run does not depend on device storage. */ }
       if (preview) { acceptRun(data.run); change(""); }
       else router.replace(`/research/${intent.id}`);
@@ -114,7 +116,7 @@ export function AgentConversation({ initial, ownerId = null, signedIn = false, a
       const saved = JSON.parse(sessionStorage.getItem(intentKey) || "null") as StartIntent | null;
       if (saved && saved.owner === ownerId && Date.now() - saved.createdAt < 30 * 60_000) intent = saved;
       sessionStorage.setItem(intentKey, JSON.stringify(intent));
-      saveIdeaDraft({ ...newDraft(), brief: parsed.data, buffer: parsed.data.idea }, preview);
+      saveIdeaDraft({ ...newDraft(), brief: parsed.data, buffer: parsed.data.idea, requestId: intent.id }, preview);
       if (fresh) clearFreshDraft();
     } catch { setNotice("This browser could not save the submission identity. Allow session storage before starting research."); return; }
     if (!signedIn && !preview) { router.push(`/sign-in?redirect_url=${encodeURIComponent(`/new?start=${intent.id}`)}`); return; }
