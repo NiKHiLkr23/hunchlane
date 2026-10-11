@@ -23,21 +23,22 @@ export default async function Home() {
       <div className="hero-decoration" aria-hidden="true">
         <div className="hero-drift-item hero-note-scene">
           <div className="hero-float hero-idea-object"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 96px, 230px" preload/></div>
-          <div className="hero-float hero-idea-card"><span className="hero-card-kicker">A little what if…</span><p>Make plans with friends.<br/>Actually make them happen.</p><span className="hero-note-line"/></div>
+          <div className="hero-float hero-idea-card"><span className="hero-note-pin"/><span className="hero-card-kicker">The starting idea</span><p>{sampleReport.title}</p><span className="hero-note-idea">{sampleReport.brief.idea}</span></div>
+          <div className="hero-float hero-check-chip"><Check size={22}/></div>
         </div>
         <div className="hero-drift-item hero-alternatives-scene">
-          <div className="hero-float hero-mini-card hero-alternatives-card"><span className="hero-card-kicker">Sample alternatives</span><h2>A few familiar names</h2><div className="hero-mini-alternatives">{sampleReport.competitors.map(competitor => <span key={competitor.name}><i>{competitor.name[0]}</i>{competitor.name}</span>)}</div></div>
+          <div className="hero-float hero-mini-card hero-alternatives-card"><span className="hero-card-kicker">Sample alternatives</span><p className="hero-widget-title">A few familiar names</p><ul className="hero-mini-alternatives">{sampleReport.competitors.map(competitor => <li key={competitor.name}><i>{competitor.name[0]}</i><span><strong>{competitor.name}</strong><em>{competitor.match}</em></span></li>)}</ul></div>
         </div>
         <div className="hero-drift-item hero-evidence-scene">
-          <div className="hero-float hero-mini-card hero-evidence-card"><span className="hero-icon-tile"><FileCheck2 size={27}/></span><div><span className="hero-card-kicker">Keep evidence close</span><p>Follow the source.</p><span className="hero-evidence-line"/><span className="hero-evidence-line short"/></div></div>
+          <div className="hero-float hero-mini-card hero-evidence-card"><div className="hero-widget-head"><span className="hero-icon-tile"><FileCheck2 size={18}/></span><div><span className="hero-card-kicker">Sample evidence</span><p>How close a match</p></div></div><ul className="hero-bars">{sampleReport.competitors.map(competitor => <li key={competitor.name}><span className="hero-bar-label"><span>{competitor.name}</span><span className="hero-bar-match">{competitor.match}</span></span><span className="hero-bar-track"><span className="hero-bar-fill" data-match={competitor.match}/></span></li>)}</ul></div>
         </div>
         <div className="hero-drift-item hero-experiment-scene">
-          <div className="hero-float hero-experiment-card"><span className="hero-icon-tile"><ArrowUpRight size={25}/></span><div><span className="hero-card-kicker">The next move</span><p>Start small. Learn something.</p></div></div>
+          <div className="hero-float hero-experiment-card"><span className="hero-card-kicker">The next move</span><p>{sampleReport.experiment.title}</p><ul className="hero-steps">{sampleReport.experiment.steps.slice(0, 3).map(step => <li key={step}><span className="hero-check-box"/>{step}</li>)}</ul></div>
         </div>
       </div>
       <div className="studio-hero-copy">
         <div className="hero-brand-tile" aria-hidden="true"><LaneMark/></div>
-        <h1 id="studio-title">Give your idea<br/>{" "}a clearer <span>next step.</span></h1>
+        <h1 id="studio-title"><span className="hero-line">Give your idea</span><span className="hero-line hero-line-muted">a clearer <span>next step.</span></span></h1>
         <p>Explore existing alternatives, see the evidence, and find something worth testing—whether it’s an app, a product, or a service.</p>
       </div>
       <div id="start-your-idea" className="studio-entry"><IdeaComposer compact/></div>
