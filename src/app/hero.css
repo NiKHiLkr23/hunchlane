@@ -153,8 +153,8 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
   .dimensional-hero .example-row button { padding: 8px; font-size: 11px; column-gap: 4px; }
   .dimensional-hero .example-row button > svg { width: 12px; }
   .dimensional-hero .studio-example-type { font-size: 10px; }
-  .hero-note-scene { top: 4px; left: 8px; width: 96px; }
-  .hero-idea-object { width: 96px; }
+  .hero-note-scene { top: 0; left: 4px; width: 60px; }
+  .hero-idea-object { width: 60px; }
   .hero-drift-item { transform: none; }
   .hero-float { --entrance-travel: 8px; }
 }
