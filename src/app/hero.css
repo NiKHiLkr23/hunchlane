@@ -71,10 +71,7 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
 .hero-note-scene { left: -28px; top: 68px; width: 216px; --drift-distance: -36px; }
 .hero-idea-object { --float-turn: -12deg; width: 196px; margin-left: 0; animation-delay: 90ms; }
 .hero-idea-object img { width: 100%; height: auto; display: block; }
-.hero-idea-card { --float-turn: -11deg; position: relative; width: 190px; margin: -18px 0 0 8px; padding: 18px; background: #fffef5; border: 1px solid #efe8d8; border-radius: 5px 5px 18px 5px; box-shadow: 0 10px 20px -12px #23332e35; animation-delay: 180ms; }
 .hero-card-kicker { display: block; font-size: 8px; font-weight: 700; letter-spacing: .035em; color: #637269; }
-.hero-idea-card p { font-size: 12px; line-height: 1.7; font-weight: 600; margin: 12px 0; }
-.hero-note-line { display: block; width: 45px; height: 3px; border-radius: 2px; background: #edc9ad; }
 .hero-alternatives-scene { right: -22px; top: 78px; width: 190px; --drift-distance: -20px; }
 .hero-mini-card { border: 1px solid #e4e9e1; border-radius: 18px; background: #fff; box-shadow: 0 2px 4px #23332e03, 0 18px 28px -18px #23332e45; }
 .hero-alternatives-card { --float-turn: 12deg; padding: 20px 18px; animation-delay: 270ms; }
@@ -112,7 +109,7 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
 }
 @media (max-width: 900px) {
   .studio-hero.dimensional-hero { overflow: hidden; }
-  .hero-idea-card, .hero-alternatives-scene, .hero-evidence-scene, .hero-experiment-scene { display: none; }
+  .hero-alternatives-scene, .hero-evidence-scene, .hero-experiment-scene { display: none; }
   .hero-note-scene { top: 20px; left: 18px; width: 120px; }
   .hero-idea-object { width: 120px; margin: 0; }
 }

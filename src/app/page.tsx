@@ -22,8 +22,7 @@ export default async function Home() {
     <HeroMotion>
       <div className="hero-decoration" aria-hidden="true">
         <div className="hero-drift-item hero-note-scene">
-          <div className="hero-float hero-idea-object"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 96px, 230px" preload/></div>
-          <div className="hero-float hero-idea-card"><span className="hero-card-kicker">A little what if…</span><p>Make plans with friends.<br/>Actually make them happen.</p><span className="hero-note-line"/></div>
+          <div className="hero-float hero-idea-object"><Image src="/illustrations/idea-note-real-v2.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 96px, 196px" preload/></div>
         </div>
         <div className="hero-drift-item hero-alternatives-scene">
           <div className="hero-float hero-mini-card hero-alternatives-card"><span className="hero-card-kicker">Sample alternatives</span><h2>A few familiar names</h2><div className="hero-mini-alternatives">{sampleReport.competitors.map(competitor => <span key={competitor.name}><i>{competitor.name[0]}</i>{competitor.name}</span>)}</div></div>
@@ -54,7 +53,7 @@ export default async function Home() {
         </div>
         <div className="report-stage" data-unfold>
           <div className="report-sheets" aria-hidden="true"><span/><span/></div>
-          <div className="report-note-object" aria-hidden="true"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="180px"/></div>
+          <div className="report-question-object" aria-hidden="true"><Image src="/illustrations/questions-tracing-real-v2.png" alt="" width={1254} height={1254} sizes="176px"/></div>
           <article className="report-preview" aria-labelledby="sample-title">
             <header className="report-preview-header">
               <div><LaneMark/><span>Hunchlane <span className="report-header-detail">/ A closer look</span></span></div>
@@ -95,7 +94,6 @@ export default async function Home() {
             </div>
             <footer className="report-preview-footer"><p>This sample explains the format. It is not live research. Open the linked websites to check current details.</p><Link href="/sample" className="studio-text-link">Open the sample report <ArrowRight size={16} aria-hidden="true"/></Link></footer>
           </article>
-          <div className="report-book-object" aria-hidden="true"><Image src="/illustrations/evidence-book-v1.png" alt="" width={1254} height={1254} sizes="160px"/></div>
         </div>
       </section>
 
@@ -103,22 +101,22 @@ export default async function Home() {
         <div className="landing-section-heading" data-reveal><span className="landing-pill">How it works</span><h2 id="how-title">Keep the spark.<br/>Get a clearer picture.</h2><p>Describe your idea, add a little context, then choose when to start research.</p></div>
         <ol className="landing-benefit-grid">
           <li className="landing-benefit" data-reveal>
-            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 280px"/><span className="benefit-caption">A little “what if…”</span></div>
+            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/alternatives-cards-real-v2.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 110px, 280px"/><span className="benefit-caption">More than one way forward</span></div>
             <div className="benefit-copy"><span className="landing-eyebrow">01 / Look around</span><h3>Find alternatives.<br/>Find perspective.</h3><p>See how others approach the problem. Close matches can be useful starting points for your own idea.</p></div>
           </li>
           <li className="landing-benefit" data-reveal>
-            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/evidence-book-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 220px"/><span className="benefit-caption">Keep the source close</span></div>
+            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/evidence-book-real-v2.png" alt="" width={1254} height={1254} sizes="118px"/><span className="benefit-caption">Keep the source close</span></div>
             <div className="benefit-copy"><span className="landing-eyebrow">02 / Follow the evidence</span><h3>More context.<br/>Fewer blind guesses.</h3><p>Follow citations, question possible angles, and see what the research still leaves uncertain.</p></div>
           </li>
           <li className="landing-benefit" data-reveal>
-            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/experiment-lightbulb-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 220px"/><span className="benefit-caption">Start small. Learn something.</span></div>
+            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/experiment-bulb-real-v2.png" alt="" width={1254} height={1254} sizes="118px"/><span className="benefit-caption">Start small. Learn something.</span></div>
             <div className="benefit-copy"><span className="landing-eyebrow">03 / Try something</span><h3>A next step.<br/>Not a giant leap.</h3><p>Choose a small experiment to learn about the problem before investing in a bigger solution.</p></div>
           </li>
         </ol>
       </section>
 
       <section className="landing-closing" aria-labelledby="closing-title">
-        <div className="closing-mark" aria-hidden="true"><LaneMark/></div>
+        <div className="closing-paper-arrow" aria-hidden="true"><Image src="/illustrations/next-step-arrow-real-v2.png" alt="" width={1254} height={1254} sizes="120px"/></div>
         <div className="landing-section-heading" data-reveal><span className="landing-pill">Room for a little uncertainty</span><h2 id="closing-title">Keep the curiosity.<br/>Question the evidence.</h2><p>Finding a competitor doesn’t end your idea. Finding none doesn’t prove it’s new. Research gives you context—not a guarantee that an idea will work.</p></div>
         <ul className="closing-checks"><li><Check size={16} aria-hidden="true"/>Citations you can check</li><li><Check size={16} aria-hidden="true"/>Hypotheses you can question</li><li><Check size={16} aria-hidden="true"/>Assumptions you can change</li></ul>
         <a href="#idea" className="button studio-primary">Explore my idea <ArrowRight size={18} aria-hidden="true"/></a>

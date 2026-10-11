@@ -22,9 +22,8 @@
 .report-sheets { position: absolute; inset: 38px 64px 50px; z-index: -1; pointer-events: none; }
 .report-sheets span { position: absolute; inset: 0; border: 1px solid #d5ded6; background: #fdfefb; border-radius: 18px; transform: rotate(calc(-2deg - (1 - var(--showcase-progress)) * 2deg)); box-shadow: 0 6px 12px #23332e08; }
 .report-sheets span + span { transform: rotate(calc(2deg + (1 - var(--showcase-progress)) * 2deg)); background: #f4f7f2; }
-.report-note-object, .report-book-object { position: absolute; z-index: 2; pointer-events: none; }
-.report-note-object { width: 176px; top: -78px; left: -48px; transform: translateY(calc((1 - var(--showcase-progress)) * 22px)) rotate(-11deg); }
-.report-book-object { width: 148px; bottom: -84px; right: -40px; transform: translateY(calc((1 - var(--showcase-progress)) * 18px)) rotate(12deg); }
+.report-question-object { position: absolute; z-index: 2; pointer-events: none; }
+.report-question-object { width: 176px; top: -78px; left: -48px; transform: translateY(calc((1 - var(--showcase-progress)) * 22px)) rotate(-11deg); }
 .report-preview { position: relative; background: var(--detail-paper); border: 1px solid #dbe3dc; border-radius: 18px; box-shadow: 0 24px 44px -24px #23332e38, 0 3px 8px #23332e05; }
 .report-preview-header { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--detail-line); }
 .report-preview-header > div { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 700; }
@@ -85,8 +84,8 @@
 .benefit-copy p { font-size: 13px; line-height: 1.85; color: var(--studio-muted); margin: 0; text-wrap: pretty; }
 .landing-closing { position: relative; isolation: isolate; margin: 8px 0 36px; padding: 84px 24px 36px; border: 0; border-radius: 0; text-align: center; background: transparent; }
 .landing-closing::before { content: none; }
-.closing-mark { display: flex; width: 50px; height: 50px; justify-content: center; align-items: center; margin: 0 auto 28px; border: 1px solid #dce5d9; background: #fff; border-radius: 14px; box-shadow: none; transform: rotate(-5deg); }
-.closing-mark svg { width: 30px; height: 30px; }
+.closing-paper-arrow { width: 120px; margin: 0 auto 20px; pointer-events: none; }
+.closing-paper-arrow img { display: block; width: 100%; height: auto; }
 .landing-closing .landing-section-heading { margin-bottom: 24px; }
 .landing-closing .landing-section-heading > p { max-width: 540px; }
 .closing-checks { display: flex; flex-wrap: nowrap; justify-content: center; gap: 8px 28px; padding: 0; margin: 8px 0 36px; list-style: none; }
@@ -102,8 +101,7 @@
 .landing-details[data-motion="on"] .report-panel:not([data-revealed]) { transform: translateY(22px) rotate(-1deg); }
 .landing-details[data-motion="on"] [data-reveal]:focus-within { transform: none; opacity: 1; transition: none; }
 @media (max-width: 1200px) {
-  .report-note-object { width: 150px; left: -12px; top: -62px; }
-  .report-book-object { width: 122px; right: -8px; bottom: -66px; }
+  .report-question-object { width: 150px; left: -12px; top: -62px; }
 }
 @media (max-width: 1000px) {
   .report-stage { padding: 48px 24px 28px; }
@@ -123,7 +121,7 @@
   .report-stage { margin: 0; padding: 20px 12px; border-radius: 22px; }
   .report-sheets { inset: 20px 20px; }
   .report-sheets span, .report-sheets span + span { transform: none; }
-  .report-note-object, .report-book-object { display: none; }
+  .report-question-object { display: none; }
   .report-preview-header { padding: 16px; gap: 10px; }
   .report-header-detail { display: none; }
   .report-preview-header > div { font-size: 11px; gap: 7px; }
@@ -177,8 +175,7 @@
   .sponsor-group { flex-wrap: wrap; justify-content: center; width: 100%; min-width: 0; }
   .sponsor-group li:nth-child(n + 8) { display: none; }
   .landing-details [data-reveal], .landing-details[data-motion="on"] [data-reveal]:not([data-revealed]), .landing-details[data-motion="on"] .report-panel:not([data-revealed]) { transform: none; opacity: 1; transition: none; }
-  .report-note-object { transform: rotate(-11deg); }
-  .report-book-object { transform: rotate(12deg); }
+  .report-question-object { transform: rotate(-11deg); }
   .report-sheets span { transform: rotate(-2deg); }
   .report-sheets span + span { transform: rotate(2deg); }
   .landing-closing .studio-primary { transition: none; }
