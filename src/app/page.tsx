@@ -16,7 +16,6 @@ import { HeroMotion } from "@/components/hero-motion";
 import { LandingMotion } from "@/components/landing-motion";
 import { LaneMark } from "@/components/brand";
 import { sampleReport } from "@/core/sample";
-import { autonomousEnabled } from "@/server/agent-store";
 import "./studio.css";
 import "./hero.css";
 import "./landing-details.css";
@@ -71,7 +70,7 @@ export default async function Home() {
           <p>See what already exists, then choose a small thing to try.</p>
         </div>
         <div id="start-your-idea" className="studio-entry">
-          <IdeaComposer compact autonomous={autonomousEnabled()} />
+          <IdeaComposer />
         </div>
       </HeroMotion>
 

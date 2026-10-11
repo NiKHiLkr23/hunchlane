@@ -4,7 +4,7 @@ import { apiError, requireOwner, sameOrigin, researchReady } from "@/server/auth
 import { createRun, listRuns, markDispatched } from "@/server/store";
 import { inngest } from "@/server/inngest";
 import { researchProvider } from "@/server/research-provider";
-import { autonomousEnabled,createAgentRun,matchesAgentSubmission } from "@/server/agent-store";
+import { createAgentRun,matchesAgentSubmission } from "@/server/agent-store";
 import { dispatchAgentWake } from "@/server/inngest";
 export const runtime = "nodejs";
 export async function GET() { try { return Response.json({ runs:await listRuns(await requireOwner()) }); } catch(e) { return apiError(e); } }
@@ -17,7 +17,6 @@ export async function POST(request:Request) {
     if(!input.success) return Response.json({error:input.error.issues[0].message},{status:400});
     if(input.data.ownerId && input.data.ownerId!==owner) return Response.json({error:"Your account changed. This submission belongs to the account that started it."},{status:403});
     if(input.data.mode==="autonomous") {
-      if(!autonomousEnabled()) return Response.json({error:"The continuous research flow is not available yet."},{status:503});
       let run;
       try { run=await createAgentRun(input.data.id,owner,input.data.brief,input.data.parentId||null,researchProvider()); }
       catch(error) { const existing=await import("@/server/store").then(s=>s.ownedRun(input.data.id,owner)); if(!existing || !await matchesAgentSubmission(input.data.id,owner,input.data.brief,input.data.parentId||null)) throw error; run=existing; }

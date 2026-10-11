@@ -4,7 +4,7 @@ vi.mock("@/server/inngest",()=>({inngest:{send:vi.fn()},dispatchAgentWake:vi.fn(
 import { POST } from "@/app/api/runs/route";
 const request=()=>new Request("http://localhost:3100/api/runs",{method:"POST",headers:{origin:"http://localhost:3100","content-type":"application/json"},body:JSON.stringify({id:"00000000-0000-4000-8000-000000000001",mode:"autonomous",brief:{}})});
 beforeEach(()=>{
-  for(const [key,value] of Object.entries({CLERK_SECRET_KEY:"fixture",NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:"fixture",DATABASE_URL:"fixture",NEATLOGS_API_KEY:"fixture",INNGEST_DEV:"1",INNGEST_EVENT_KEY:"",RESEARCH_PROVIDER:"auto",CRUSTDATA_API_KEY:"fixture",LITELLM_API_KEY:"fixture",OPENAI_API_KEY:"",HUNCHLANE_AUTONOMOUS_FLOW:"1"})) vi.stubEnv(key,value);
+  for(const [key,value] of Object.entries({CLERK_SECRET_KEY:"fixture",NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:"fixture",DATABASE_URL:"fixture",NEATLOGS_API_KEY:"fixture",INNGEST_DEV:"1",INNGEST_EVENT_KEY:"",RESEARCH_PROVIDER:"auto",CRUSTDATA_API_KEY:"fixture",LITELLM_API_KEY:"fixture",OPENAI_API_KEY:""})) vi.stubEnv(key,value);
   vi.stubGlobal("fetch",vi.fn(()=>{throw Error("No network calls allowed in admission validation");}));
 });
 afterEach(()=>{vi.unstubAllEnvs();vi.unstubAllGlobals();});

@@ -5,7 +5,6 @@ import type { IdeaBrief, ResearchReport, RunStage } from "@/core/types";
 import { db, ownedRun } from "./store";
 import { CRUST_CREDITS, type ResearchProvider } from "./research-provider";
 
-export function autonomousEnabled() { return process.env.HUNCHLANE_AUTONOMOUS_FLOW === "1"; }
 export async function agentSchemaReady() { const rows=await db()`select to_regclass('public.agent_outbox') is not null as ready`; return Boolean(rows[0]?.ready); }
 export type Wake = { id: string; runId: string; ownerId: string; availableAt: string };
 export function agentSubmissionHash(brief: IdeaBrief, parentId: string | null) { return createHash("sha256").update(JSON.stringify({brief,parentId})).digest("hex"); }

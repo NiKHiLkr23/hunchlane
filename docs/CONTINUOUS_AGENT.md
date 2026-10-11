@@ -1,6 +1,6 @@
 # Continuous research
 
-The new flow is implemented behind `HUNCHLANE_AUTONOMOUS_FLOW=1`. Its default is off. Existing callers without `mode: "autonomous"` retain the legacy API. Continuous runs cannot enter the legacy retry worker.
+The continuous flow is the only new-idea UI and needs no feature flag. Existing callers without `mode: "autonomous"` retain the legacy API. Continuous runs cannot enter the legacy retry worker.
 
 ## Behavior
 
@@ -16,7 +16,7 @@ The conversation displays persisted progress, optional questions and the final e
 
 - Admission reserves the full/refinement dollar allowance and the configured Crustdata credits per run (default 5 each via `CRUSTDATA_FULL_REPORT_CREDITS` and `CRUSTDATA_REFINEMENT_CREDITS`), and inserts the first outbox item atomically. Accounts allow five full reports and five refinements, including existing runs, with one queued or running at a time. Migration `0005_account_allowances.sql` replaces the previous one-per-kind index with a serialized quota trigger. Quota failures roll back the reservation. Existing reservations are unchanged.
 - `continuous-agent` advances one bounded work unit under a 90-second database lease. Subsequent wake identities and due times are persisted before dispatch. Inngest sleeps durably; the browser only reads state and delivers user messages.
-- `continuous-agent-recovery` runs each minute, dispatches outstanding outbox identities and rescues stale leases. It scans identifiers only, then performs all private work with the Clerk owner predicate. Already admitted runs continue if the admission flag is turned off.
+- `continuous-agent-recovery` runs each minute, dispatches outstanding outbox identities and rescues stale leases. It scans identifiers only, then performs all private work with the Clerk owner predicate.
 - Confirmed zero-credit failures permit at most three retries with 5/30/120-second backoff, respecting longer `Retry-After` instructions and renewed provider rate-limit slots. Known response IDs are retrieved again without another creation.
 - Unknown creation outcomes are never re-created. Provider readback is used where a response ID exists. Unknown synchronous creations lack a verified lookup contract and emit `hunchlane.agent.reconciliation_required` for operators; they retain their reservation and journal even when a supported fallback report is delivered.
 - Raw receipts and returned usage are saved before parsing. Dollar/credit ceilings are claimed before creation; counted receipts are idempotent. OpenAI accounting remains the existing estimate, not a vendor invoice guarantee. Sponsor usage keeps its conservative operation allocation; a zero personal-ledger charge is not proof of free model usage.
@@ -27,14 +27,14 @@ Operator events contain run ID, phase, classification, attempt, and outcome. The
 
 ## Rollout
 
-1. Apply migration `0004_continuous_agent` using `pnpm db:migrate`; it is additive and preserves existing allocations. Keep admission off during migration. The recovery cron skips databases without the new table.
+1. Apply migration `0004_continuous_agent` using `pnpm db:migrate`; it is additive and preserves existing allocations. Apply it before serving new submissions. The recovery cron skips databases without the new table.
 2. Register/sync `/api/inngest`, including both continuous functions. Local development requires the persisted Inngest runner; hosted execution requires configured event/signing keys and cron scheduling.
 3. Verify current funded capacity and owner eligibility without increasing allowances. Exercise the offline recovery and browser suites. Verify event/outbox recovery on the configured deployment before enabling live admission.
-4. Set `HUNCHLANE_AUTONOMOUS_FLOW=1` on the target environment. Turning it off stops new continuous submissions; existing continuous runs still finish and legacy reports remain readable.
+4. Deploy the continuous UI after the schema and workers are ready. Existing legacy reports remain readable; legacy API callers retain their original behavior.
 
 `/dev/agent-preview` is an isolated development gallery with `running`, `recovering`, `complete`, and `failure` scenarios. It requires `HUNCHLANE_UI_PREVIEW=1`, returns 404 in production, uses separate storage, and never calls paid providers or impersonates a real account. Its report is clearly illustrative. Fixture data expires with the development process.
 
-For local continuous research, keep both `pnpm dev` (port 3100) and `pnpm jobs:dev` (port 8288) running. The web server alone cannot advance background work. Set `HUNCHLANE_AUTONOMOUS_FLOW=1` in the ignored `.env.local` only after migrating and verifying job registration. Refresh `/new` after changing the flag; saved legacy drafts still require one explicit submission. Browser tests use `.next-browser`, disable live integrations and keep the live web server's build directory separate.
+For local continuous research, keep both `pnpm dev` (port 3100) and `pnpm jobs:dev` (port 8288) running. The web server alone cannot advance background work. Apply migrations and verify job registration before accepting research; saved legacy drafts still require one explicit submission. Browser tests use `.next-browser`, disable live integrations and keep the live web server's build directory separate.
 
 Run `pnpm integrations:check` before accepting submissions. It checks the actual provider selection and exits unsuccessfully when admission configuration is blocked. Crustdata requires `CRUSTDATA_CREDIT_BUDGET` to match an existing approved database credit cap; a provider API key or account balance alone does not establish that allowance. If it is unset, automatic selection falls back to OpenAI, which requires its own configured key. An Inngest registration response of 200 does not verify research admission.
 

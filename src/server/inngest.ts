@@ -33,7 +33,6 @@ import {
   pendingAgentWakes,
   stalledAgentPointers,
   rescueAgent,
-  autonomousEnabled,
   agentSchemaReady,
   type Wake,
 } from "./agent-store";
@@ -84,7 +83,6 @@ export const agentRecoveryFunction = inngest.createFunction(
     retries: 3,
   },
   async ({ step }) => {
-    // Continue already admitted runs even after the admission feature flag is switched off.
     if (!process.env.DATABASE_URL) return { dispatched: 0 };
     if (!(await step.run("schema-ready", agentSchemaReady)))
       return { dispatched: 0 };
@@ -102,7 +100,7 @@ export const agentRecoveryFunction = inngest.createFunction(
       });
       await step.run(`ack-${wake.id}`, () => acknowledgeWake(wake));
     }
-    return { dispatched: wakes.length, admissionEnabled: autonomousEnabled() };
+    return { dispatched: wakes.length };
   }
 );
 export const researchFunction = inngest.createFunction(
