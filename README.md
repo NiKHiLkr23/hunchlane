@@ -63,3 +63,9 @@ SQL behavior tests execute migrations and store queries in isolated embedded Pos
 ### Search and link previews
 
 Set `NEXT_PUBLIC_APP_URL` to the canonical production HTTPS origin before building on Vercel. Landing and `/sample` have canonical URLs, Open Graph and large Twitter cards; `/opengraph-image` generates a branded 1200×630 PNG. Only those two public pages appear in the sitemap. Account routes and report shares inherit `noindex`; shares remain accessible by link. Vercel Preview deployments disable indexing and produce an empty sitemap. Crawler directives do not replace authentication or share-token access controls.
+
+### Research recovery
+
+Crustdata requests have no fixed application request timeout. The Inngest route allows 300 seconds per invocation; enable Vercel Fluid compute and verify the deployed function duration supports this value. Inngest checkpoints between steps; completed provider receipts are reused on an explicit Resume research action, with the original reservation.
+
+A non-success response with an explicit `X-Credits-Used: 0` receipt is journaled as `failed_uncharged`. Only owner-authorized resume unlocks that operation for another attempt. Missing billing receipts, disconnected requests, host termination, and unexpected billing remain uncertain and require operator reconciliation against the provider's request log. HTTP 500 alone is not proof of zero usage. The earlier 45-second aborted request still needs its observed zero-credit dashboard receipt recorded in its journal before resuming; this code change does not reinterpret old uncertain operations automatically.

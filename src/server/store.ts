@@ -53,11 +53,17 @@ export async function finishRun(id: string, report: ResearchReport) { await db()
 export async function failRun(id: string, message: string) { await db()`update runs set status='failed',error=${message} where id=${id} and status!='complete'`; }
 export async function retryRun(id: string, owner: string) {
   const rows = await db()`update runs set status='queued',error=null,dispatched=false where id=${id} and owner_id=${owner} and (status='failed' or (status='queued' and dispatched=false)) and not exists (select 1 from provider_operations where run_id=${id} and state='creating') returning *`;
-  if (!rows[0]) throw new Error("RECONCILIATION_REQUIRED"); return runFromRow(rows[0]);
+  if (!rows[0]) throw new Error("RECONCILIATION_REQUIRED");
+  // Only an explicit, owner-authorized resume unlocks confirmed uncharged failures.
+  await db()`update provider_operations set state='retryable' where run_id=${id} and state='failed_uncharged' and exists(select 1 from runs where id=${id} and owner_id=${owner})`;
+  return runFromRow(rows[0]);
 }
 export type Operation = { state: string; response_id: string | null; result: unknown; cost_cents: number };
 export async function operation(id: string, phase: string) { const rows = await db()`select * from provider_operations where run_id=${id} and phase=${phase}`; return rows[0] as Operation | undefined; }
-export async function claimOperation(id: string, phase: string) { const rows = await db()`insert into provider_operations(run_id,phase,state) values(${id},${phase},'creating') on conflict do nothing returning phase`; return rows.length > 0; }
+export async function claimOperation(id: string, phase: string) { const rows = await db()`insert into provider_operations(run_id,phase,state) values(${id},${phase},'creating') on conflict (run_id,phase) do update set state='creating' where provider_operations.state='retryable' returning phase`; return rows.length > 0; }
+export async function failUnchargedOperation(id:string,phase:string,receipt:{status:number;credits:0;confirmedAt:string}) {
+  await db()`update provider_operations set state='failed_uncharged',result=jsonb_build_object('failures',coalesce(result->'failures','[]'::jsonb)||${JSON.stringify(receipt)}::jsonb) where run_id=${id} and phase=${phase} and state='creating'`;
+}
 export async function saveResponseId(id: string, phase: string, responseId: string) { await db()`update provider_operations set response_id=${responseId},state='polling' where run_id=${id} and phase=${phase}`; }
 export async function saveOperation(id: string, phase: string, result: unknown, cost = 0, credits = 0) {
   if (![cost,credits].every(n=>Number.isSafeInteger(n)&&n>=0)) throw new Error("INVALID_PROVIDER_COST");

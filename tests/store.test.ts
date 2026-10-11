@@ -3,7 +3,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { readFile,readdir } from "node:fs/promises";
 const harness=vi.hoisted(()=>({query:undefined as undefined|((sql:string,args:unknown[])=>Promise<unknown[]>)}));
 vi.mock("@neondatabase/serverless",()=>({neon:()=>async(strings:TemplateStringsArray,...args:unknown[])=>{const query=strings.reduce((s,part,i)=>s+part+(i<args.length?`$${i+1}`:""),"");return harness.query!(query,args);}}));
-import { createRun,ownedRun,internalRun,listRuns,listHomeRuns,finishRun,createShare,sharedReport,revokeShares,claimOperation,saveResponseId,saveOperation,retryRun,failRun,reserveCrustSlot,db } from "@/server/store";
+import { createRun,ownedRun,internalRun,listRuns,listHomeRuns,finishRun,createShare,sharedReport,revokeShares,claimOperation,saveResponseId,saveOperation,retryRun,failRun,reserveCrustSlot,failUnchargedOperation,db } from "@/server/store";
 import { sampleReport } from "@/core/sample";
 let engine:PGlite;
 beforeAll(async()=>{process.env.DATABASE_URL="postgres://test";engine=new PGlite();harness.query=async(sql,args)=>(await engine.query(sql,args)).rows;const folder=new URL("../drizzle/",import.meta.url);for(const file of (await readdir(folder)).filter(f=>f.endsWith(".sql")).sort())await engine.exec(await readFile(new URL(file,folder),"utf8"));},30000);
@@ -37,6 +37,19 @@ describe("persisted ownership and reservations (real SQL, embedded PostgreSQL)",
   it("permits only one refinement of a completed owned original",async()=>{await createRun("a","alice",sampleReport.brief,null);await finishRun("a",sampleReport);await expect(createRun("b","bob",sampleReport.brief,"a")).rejects.toThrow("REFINEMENT_NOT_ALLOWED");await createRun("b","alice",sampleReport.brief,"a");await finishRun("b",{...sampleReport,version:2});await expect(createRun("c","alice",sampleReport.brief,"b")).rejects.toThrow("REFINEMENT_NOT_ALLOWED");});
   it("shares an immutable snapshot and revokes existing links",async()=>{await createRun("a","alice",sampleReport.brief,null);await finishRun("a",sampleReport);await expect(createShare("a","bob")).rejects.toThrow();const token=await createShare("a","alice");await finishRun("a",{...sampleReport,title:"Changed later"});expect((await sharedReport(token))?.title).toBe(sampleReport.title);await revokeShares("a","bob");expect(await sharedReport(token)).not.toBeNull();await revokeShares("a","alice");expect(await sharedReport(token)).toBeNull();});
   it("refuses automatic replay of an ambiguous provider creation",async()=>{await createRun("a","alice",sampleReport.brief,null);expect(await claimOperation("a","discovery")).toBe(true);expect(await claimOperation("a","discovery")).toBe(false);await failRun("a","saved");await expect(retryRun("a","alice")).rejects.toThrow("RECONCILIATION_REQUIRED");await saveResponseId("a","discovery","response-known");expect((await retryRun("a","alice")).status).toBe("queued");});
+  it("unlocks uncharged failures only on owned explicit resume and keeps completed receipts",async()=>{
+    await createRun("a","alice",sampleReport.brief,null);
+    await claimOperation("a","crust-search-0");await saveOperation("a","crust-search-0",{sources:[]});
+    await claimOperation("a","crust-search-1");await failUnchargedOperation("a","crust-search-1",{status:500,credits:0,confirmedAt:"2026-10-11T10:07:00Z"});
+    expect(await claimOperation("a","crust-search-1")).toBe(false);
+    await failRun("a","paused");await expect(retryRun("a","bob")).rejects.toThrow();
+    await retryRun("a","alice");
+    expect(await claimOperation("a","crust-search-1")).toBe(true);
+    expect(await claimOperation("a","crust-search-1")).toBe(false);
+    expect(await claimOperation("a","crust-search-0")).toBe(false);
+    expect((await db()`select allocated_cents from budgets`)[0].allocated_cents).toBe(75);
+    expect((await db()`select result from provider_operations where phase='crust-search-1'`)[0].result).toMatchObject({failures:[{status:500,credits:0}]});
+  });
   it("counts a completed operation once and freezes an overrun",async()=>{await createRun("a","alice",sampleReport.brief,null);await claimOperation("a","discovery");await saveOperation("a","discovery",{text:"done"},80);await saveOperation("a","discovery",{text:"done"},80);const rows=await db()`select actual_cents from runs`;expect(rows[0].actual_cents).toBe(80);await expect(createRun("b","bob",sampleReport.brief,null)).rejects.toThrow("BUDGET_EXHAUSTED");});
   it("reserves both budget dimensions atomically and persists the research provider",async()=>{
     await expect(createRun("a","alice",sampleReport.brief,null,"crustdata")).rejects.toThrow("BUDGET_EXHAUSTED");
