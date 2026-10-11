@@ -11,7 +11,7 @@ test("landing validates input and carries each example category without starting
   await expect(idea).toBeFocused();
   await expect(idea).toHaveValue("Too short");
   await page.screenshot({path:`artifacts/landing-error-${test.info().project.name}.png`});
-  for(const [label,category,content] of [["App Plans with friends","Software or app","friend group"],["Product Meal kits for one","Physical product","meal kit"],["Service Coworking for night owls","A service or place","coworking"]]){
+  for(const [label,content,category] of [["Grocery list for roommates","grocery list","Software or app"],["Meal kit for one person","meal kit","Physical product"],["Mending for work clothes","mending","A service or place"],["Office hours for a tutor","neighborhood tutor","Software or app"],["Refills for kitchen basics","kitchen basics","Physical product"]]){
     await page.goto("/");
     await page.getByRole("button",{name:label,exact:true}).click();
     await expect(idea).toHaveValue(new RegExp(content));
