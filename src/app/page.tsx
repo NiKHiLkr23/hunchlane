@@ -73,21 +73,23 @@ export default async function Home() {
                   <span className="report-reference" aria-label={`Sample source ${index+1}`}>{index+1}</span>
                 </li>)}</ul>
               </section>
-              <section className="report-panel report-evidence" data-reveal aria-labelledby="evidence-title">
-                <span className="report-panel-icon"><FileCheck2 size={20} aria-hidden="true"/></span>
-                <h4 id="evidence-title">Keep the questions open</h4>
-                <span className="report-hypothesis">Hypothesis</span>
-                <h5>{sampleReport.angles[0].title}</h5>
-                <p>{sampleReport.angles[0].explanation.text}</p>
-                <div className="report-open-question"><span>Still to find out</span><p>{sampleReport.unknowns[0]}</p></div>
-              </section>
-              <section className="report-panel report-experiment" data-reveal aria-labelledby="experiment-title">
-                <span className="report-panel-icon"><FlaskConical size={20} aria-hidden="true"/></span>
-                <h4 id="experiment-title">Try a small experiment</h4>
-                <h5>{sampleReport.experiment.title}</h5>
-                <ol>{sampleReport.experiment.steps.slice(0,3).map(step=><li key={step}>{step}</li>)}</ol>
-                <p className="report-experiment-cost">{sampleReport.experiment.cost}</p>
-              </section>
+              <div className="report-side-stack">
+                <section className="report-panel report-evidence" data-reveal aria-labelledby="evidence-title">
+                  <span className="report-panel-icon"><FileCheck2 size={20} aria-hidden="true"/></span>
+                  <h4 id="evidence-title">Keep the questions open</h4>
+                  <span className="report-hypothesis">Hypothesis</span>
+                  <h5>{sampleReport.angles[0].title}</h5>
+                  <p>{sampleReport.angles[0].explanation.text}</p>
+                  <div className="report-open-question"><span>Still to find out</span><p>{sampleReport.unknowns[0]}</p></div>
+                </section>
+                <section className="report-panel report-experiment" data-reveal aria-labelledby="experiment-title">
+                  <span className="report-panel-icon"><FlaskConical size={20} aria-hidden="true"/></span>
+                  <h4 id="experiment-title">Try a small experiment</h4>
+                  <h5>{sampleReport.experiment.title}</h5>
+                  <ol>{sampleReport.experiment.steps.slice(0,3).map(step=><li key={step}>{step}</li>)}</ol>
+                  <p className="report-experiment-cost">{sampleReport.experiment.cost}</p>
+                </section>
+              </div>
             </div>
             <footer className="report-preview-footer"><p>This sample explains the format. It is not live research. Open the linked websites to check current details.</p><Link href="/sample" className="studio-text-link">Open the sample report <ArrowRight size={16} aria-hidden="true"/></Link></footer>
           </article>
@@ -99,7 +101,7 @@ export default async function Home() {
         <div className="landing-section-heading" data-reveal><span className="landing-pill">How it works</span><h2 id="how-title">Keep the spark.<br/>Get a clearer picture.</h2><p>Describe your idea, add a little context, then choose when to start research.</p></div>
         <ol className="landing-benefit-grid">
           <li className="landing-benefit" data-reveal>
-            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 220px"/><span className="benefit-caption">A little “what if…”</span></div>
+            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 280px"/><span className="benefit-caption">A little “what if…”</span></div>
             <div className="benefit-copy"><span className="landing-eyebrow">01 / Look around</span><h3>Find alternatives.<br/>Find perspective.</h3><p>See how others approach the problem. Close matches can be useful starting points for your own idea.</p></div>
           </li>
           <li className="landing-benefit" data-reveal>
