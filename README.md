@@ -59,3 +59,7 @@ pnpm build
 ```
 
 SQL behavior tests execute migrations and store queries in isolated embedded PostgreSQL (PGlite). They are not substitutes for remote Neon concurrency and failure testing. Browser tests cover draft preservation, report sections, citations, local financial assumptions, keyboard tabs, mobile overflow, reduced motion and unauthenticated access. Live provider quality, actual cost, OAuth renewal and Vercel/Inngest recovery checks require configured accounts.
+
+### Search and link previews
+
+Set `NEXT_PUBLIC_APP_URL` to the canonical production HTTPS origin before building on Vercel. Landing and `/sample` have canonical URLs, Open Graph and large Twitter cards; `/opengraph-image` generates a branded 1200×630 PNG. Only those two public pages appear in the sitemap. Account routes and report shares inherit `noindex`; shares remain accessible by link. Vercel Preview deployments disable indexing and produce an empty sitemap. Crawler directives do not replace authentication or share-token access controls.

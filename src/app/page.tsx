@@ -1,3 +1,4 @@
+import { publicMetadata, siteTitle, siteDescription } from "@/lib/seo";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -11,6 +12,8 @@ import { sampleReport } from "@/core/sample";
 import "./studio.css";
 import "./hero.css";
 import "./landing-details.css";
+
+export const metadata = publicMetadata(siteTitle, siteDescription, "/");
 
 export default async function Home() {
   if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY && (await auth()).userId) redirect("/home");
