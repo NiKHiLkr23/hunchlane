@@ -108,15 +108,36 @@ export default async function Home() {
         <div className="landing-section-heading" data-reveal><span className="landing-pill">How it works</span><h2 id="how-title">Keep the spark.<br/>Get a clearer picture.</h2><p>Describe your idea, add a little context, then choose when to start research.</p></div>
         <ol className="landing-benefit-grid">
           <li className="landing-benefit" data-reveal>
-            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 280px"/><span className="benefit-caption">A little “what if…”</span></div>
+            <div className="benefit-art">
+              <div className="benefit-mock" aria-hidden="true">
+                <div className="mock-bar"><span>Sample alternatives</span><span>{sampleReport.competitors.length}</span></div>
+                <ul className="mock-rows">{sampleReport.competitors.map(competitor => <li key={competitor.name}><i>{competitor.name[0]}</i><span><strong>{competitor.name}</strong><em>{competitor.match} match</em></span></li>)}</ul>
+              </div>
+              <Image className="benefit-accent" src="/illustrations/idea-note-v1.png" alt="" width={1254} height={1254} sizes="96px"/>
+            </div>
             <div className="benefit-copy"><span className="landing-eyebrow">01 / Look around</span><h3>Find alternatives.<br/>Find perspective.</h3><p>See how others approach the problem. Close matches can be useful starting points for your own idea.</p></div>
           </li>
           <li className="landing-benefit" data-reveal>
-            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/evidence-book-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 220px"/><span className="benefit-caption">Keep the source close</span></div>
+            <div className="benefit-art">
+              <div className="benefit-mock" aria-hidden="true">
+                <span className="report-hypothesis">Hypothesis</span>
+                <strong className="mock-title">{sampleReport.angles[0].title}</strong>
+                <p className="mock-clamp">{sampleReport.angles[0].explanation.text}</p>
+                <div className="mock-source"><span>1</span>{sampleReport.sources[0].title}</div>
+              </div>
+              <Image className="benefit-accent" src="/illustrations/evidence-book-v1.png" alt="" width={1254} height={1254} sizes="72px"/>
+            </div>
             <div className="benefit-copy"><span className="landing-eyebrow">02 / Follow the evidence</span><h3>More context.<br/>Fewer blind guesses.</h3><p>Follow citations, question possible angles, and see what the research still leaves uncertain.</p></div>
           </li>
           <li className="landing-benefit" data-reveal>
-            <div className="benefit-art" aria-hidden="true"><Image src="/illustrations/experiment-lightbulb-v1.png" alt="" width={1254} height={1254} sizes="(max-width: 760px) 180px, 220px"/><span className="benefit-caption">Start small. Learn something.</span></div>
+            <div className="benefit-art">
+              <div className="benefit-mock" aria-hidden="true">
+                <strong className="mock-title">{sampleReport.experiment.title}</strong>
+                <ol className="mock-steps">{sampleReport.experiment.steps.slice(0, 3).map(step => <li key={step}>{step}</li>)}</ol>
+                <span className="mock-cost">{sampleReport.experiment.cost}</span>
+              </div>
+              <Image className="benefit-accent" src="/illustrations/experiment-lightbulb-v1.png" alt="" width={1254} height={1254} sizes="72px"/>
+            </div>
             <div className="benefit-copy"><span className="landing-eyebrow">03 / Try something</span><h3>A next step.<br/>Not a giant leap.</h3><p>Choose a small experiment to learn about the problem before investing in a bigger solution.</p></div>
           </li>
         </ol>
