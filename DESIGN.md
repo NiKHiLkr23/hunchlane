@@ -62,3 +62,11 @@ A versioned v2 device draft stores the brief, current step, accepted conversatio
 The user's request for live AI intake adds a separately prepared server endpoint and zero-funded intake reservation/journal recipe. It remains disabled pending operator budget approval and sponsor pricing/cap confirmation. The isolated `/dev/idea-preview` and `/dev/research-preview` galleries use prominently labeled deterministic fixtures, never account impersonation or paid calls, and return 404 in production. The UI is reviewable while live integration awaits activation; no live intake or trace success is claimed.
 
 Preview conversations use an isolated local-storage namespace through the same draft helpers, so fixture replies never overwrite a real draft or appear in the live intake.
+
+## Continuous agent conversation
+
+The continuous-flow flag replaces manual intake/review/start handoffs with one disclosed research submission. The same conversation holds optional clarification cards, brief server-observed updates, live context entry and an expandable final report. Unanswered questions never stop the worker; unanswered context stays explicitly uncertain. Model suggestions do not become user facts unless selected. The composer remains available during work; report preparation fixes a brief revision and later changes become follow-up context.
+
+Keep Manrope throughout, sage user bubbles, white surfaces, deep teal actions, 20px composer corners and restrained 140ms feedback. Use ordinary document scrolling; the composer must not cover questions or the report. Mobile stacks the optional suggestions and report sections without horizontal overflow. Reduced motion removes the spinner and all control movement immediately. No simulated percentages or fictional agent delegation are displayed.
+
+The completed result stays in the thread, with nearby source links, the existing report sections, a standalone-report link and explicit refinement suggestions. Limited evidence produces an honest limited report; no evidence produces an honest final outcome. Provider retries and reconciliation are server-owned and do not appear as Resume controls. The development gallery uses clearly labeled fixtures and an isolated storage namespace. Rollout and operation accounting are documented in `docs/CONTINUOUS_AGENT.md`.

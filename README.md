@@ -41,7 +41,7 @@ Live conversational intake uses the existing sponsored key and shared app allowa
 
 Research proceeds through discovery → verification → composition → CFO modeling → saved report. Background OpenAI response IDs survive application restarts. Inngest polls durably rather than tying research to an open browser request. An uncertain provider creation stops for reconciliation, never blindly creates another request. Failed core research remains recoverable. CFO failures produce an explicit unavailable financial section and keep the research report.
 
-Each user receives one full report and one refinement during the hackathon. A conditional PostgreSQL budget-row update and unique run constraints gate allocations atomically. Reservations remain charged after failure to account conservatively for unknown usage. Actual OpenAI usage is recorded separately; over-reservation usage freezes new allocations. Hosted search and input billing still need live validation and vendor-side limits: the app ledger alone cannot guarantee a provider invoice cap. Set an OpenAI project budget before public access. Public shares store immutable report snapshots behind random hashed tokens; all links can be revoked by the owner.
+Each user receives five full reports and five refinements during the hackathon, with one queued or running report at a time. A conditional PostgreSQL budget-row update, serialized quota trigger and active-run constraint gate allocations atomically. Crustdata reserves 5 credits by default for each full report or refinement. Set `CRUSTDATA_FULL_REPORT_CREDITS` and `CRUSTDATA_REFINEMENT_CREDITS` in `.env.local` to change those per-run allowances (for example, `10` each), then restart the app and workers. These settings affect new runs only; `CRUSTDATA_CREDIT_BUDGET` remains the separate global cap. Existing runs retain their reservations and count toward the account allowance. Reservations remain charged after failure to account conservatively for unknown usage. Actual OpenAI usage is recorded separately; over-reservation usage freezes new allocations. Hosted search and input billing still need live validation and vendor-side limits: the app ledger alone cannot guarantee a provider invoice cap. Set an OpenAI project budget before public access. Public shares store immutable report snapshots behind random hashed tokens; all links can be revoked by the owner.
 
 ## Hackathon integrations
 
@@ -82,3 +82,7 @@ pnpm research:reconcile <run-id> <Clerk-owner-id> <crust-search-N|crust-fetch> <
 ```
 
 The command only reconciles an uncertain Crustdata operation on a failed run owned by that Clerk user. It records the receipt in permanent failure history and permits a later explicit Resume; it does not send a research event. Preserve the receipt outside Git. Missing or nonzero usage must not be represented as zero. Safe response request IDs and error types are recorded when provided; raw error bodies and credentials are not stored.
+
+## Continuous agent flow
+
+The autonomous conversation, durable recovery, and inline report are behind `HUNCHLANE_AUTONOMOUS_FLOW`. See [rollout and operation details](docs/CONTINUOUS_AGENT.md). The flag defaults off; migration 0004 and registered Inngest jobs are required before activation. `/dev/agent-preview` provides an isolated, explicitly illustrative gallery when `HUNCHLANE_UI_PREVIEW=1`.

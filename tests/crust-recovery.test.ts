@@ -1,8 +1,8 @@
 import {afterEach,expect,it,vi} from "vitest";
-const journal=vi.hoisted(()=>({operation:vi.fn(),claimOperation:vi.fn(),saveOperation:vi.fn(),failUnchargedOperation:vi.fn(),recordCrustUncertainFailure:vi.fn()}));
+const journal=vi.hoisted(()=>({operation:vi.fn(),claimOperation:vi.fn(),saveOperation:vi.fn(),saveProviderReceipt:vi.fn(),failUnchargedOperation:vi.fn(),recordCrustUncertainFailure:vi.fn()}));
 vi.mock("@/server/store",()=>journal);
 vi.mock("@/server/telemetry",()=>({observed:async(_id:string,_phase:string,fn:()=>Promise<unknown>)=>fn()}));
-import {searchCrust} from "@/server/crustdata";
+import {searchCrust,CrustHttpError} from "@/server/crustdata";
 afterEach(()=>{vi.resetAllMocks();vi.unstubAllGlobals();vi.unstubAllEnvs();});
 it("waits for provider responses without a request cutoff and journals explicit zero-credit failures",async()=>{
   vi.stubEnv("CRUSTDATA_API_KEY","test");journal.claimOperation.mockResolvedValue(true);
@@ -27,4 +27,17 @@ it("omits unsafe provider codes and raw error text from uncertain receipts",asyn
   vi.stubGlobal("fetch",vi.fn().mockResolvedValue(new Response(JSON.stringify({error:{type:"contains private text!",message:"secret raw message"}}),{status:502,headers:{"x-request-id":"unsafe request id"}})));
   await expect(searchCrust("run",1,"query")).rejects.toThrow("RECONCILIATION_REQUIRED");
   expect(journal.recordCrustUncertainFailure).toHaveBeenCalledWith("run","crust-search-1",{status:502,requestId:undefined,errorType:undefined,confirmedAt:expect.any(String)});
+});
+it("retains the raw charged receipt before JSON decoding can fail",async()=>{
+  vi.stubEnv("CRUSTDATA_API_KEY","test");journal.claimOperation.mockResolvedValue(true);
+  vi.stubGlobal("fetch",vi.fn().mockResolvedValue(new Response('{malformed',{status:200,headers:{"X-Credits-Used":"1"}})));
+  await expect(searchCrust("run",0,"query")).rejects.toThrow();
+  expect(journal.saveProviderReceipt).toHaveBeenCalledWith("run","crust-search-0",{body:'{malformed',credits:1000},0,1000);
+  expect(journal.saveOperation).not.toHaveBeenCalled();
+});
+it("preserves Retry-After on a provider-confirmed uncharged failure",async()=>{
+  vi.stubEnv("CRUSTDATA_API_KEY","test");journal.claimOperation.mockResolvedValue(true);
+  vi.stubGlobal("fetch",vi.fn().mockResolvedValue(new Response('{}',{status:429,headers:{"X-Credits-Used":"0","Retry-After":"90"}})));
+  const error=await searchCrust("run",0,"query").catch(error=>error);
+  expect(error).toBeInstanceOf(CrustHttpError);expect(error.retryAfterSeconds).toBe(90);
 });

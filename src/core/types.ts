@@ -38,7 +38,7 @@ export type FinancialResult = { status: "verified" | "unavailable"; provider: "c
 export type ResearchReport = ResearchContent & { sources: EvidenceSource[]; createdAt: string; brief: IdeaBrief; finance: FinancialResult; version: number };
 export const STAGES = ["queued", "discovering", "verifying", "composing", "finances", "complete"] as const;
 export type RunStage = typeof STAGES[number];
-export type RunState = { id: string; brief: IdeaBrief; status: "queued" | "running" | "complete" | "failed"; stage: RunStage; createdAt: string; error: string | null; parentId: string | null; report: ResearchReport | null; dispatched: boolean; provider: "openai" | "crustdata" };
+export type RunState = { id: string; brief: IdeaBrief; status: "queued" | "running" | "complete" | "failed"; stage: RunStage; createdAt: string; error: string | null; parentId: string | null; report: ResearchReport | null; dispatched: boolean; provider: "openai" | "crustdata"; mode?: "legacy" | "autonomous"; agent?: import("./agent").AgentState };
 
 export function clarify(brief: Pick<IdeaBrief, "audience" | "location" | "category">) {
   const questions: { id: string; label: string; hint: string }[] = [];

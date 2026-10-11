@@ -2,6 +2,7 @@
 // visitor-controlled URL directly to Clerk or window.location.
 export function authDestination(value: string | string[] | undefined): string {
   if (typeof value !== "string") return "/home";
+  if (/^\/new\?start=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) return value;
   if (value === "/new" || value === "/library" || value === "/home") return value;
   if (/^\/(?:reports|research|new\/refine)\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) return value;
   return "/home";

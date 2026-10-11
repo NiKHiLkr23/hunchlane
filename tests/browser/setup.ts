@@ -7,7 +7,7 @@ import { chromium, type FullConfig } from "@playwright/test";
 // Denied private API prewarms cannot enter the research workflow.
 export default async function setup(config: FullConfig) {
   const baseURL = config.projects[0].use.baseURL!;
-  const paths = ["/", "/sample", "/new", "/new?fresh=1", "/sign-in", "/sign-up", "/sso-callback", "/library", "/home", "/dev/home-preview", "/dev/idea-preview", "/dev/research-preview", "/share/not-a-real-share"];
+  const paths = ["/", "/sample", "/new", "/new?fresh=1", "/sign-in", "/sign-up", "/sso-callback", "/library", "/home", "/dev/home-preview", "/dev/idea-preview", "/dev/agent-preview", "/dev/research-preview", "/share/not-a-real-share"];
   for (const path of paths) {
     const response = await fetch(new URL(path, baseURL));
     await response.arrayBuffer();

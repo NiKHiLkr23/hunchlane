@@ -56,11 +56,13 @@ export function IdeaComposer({
   signedIn = false,
   authConfigured = false,
   fresh = false,
+  autonomous = false,
 }: {
   compact?: boolean;
   signedIn?: boolean;
   authConfigured?: boolean;
   fresh?: boolean;
+  autonomous?: boolean;
 }) {
   const router = useRouter();
   const [brief, setBrief] = useState<IdeaBrief>(initial),
@@ -102,6 +104,13 @@ export function IdeaComposer({
       return;
     }
     if (compact) {
+      if(autonomous) {
+        const intent={id:crypto.randomUUID(),brief:parsed.data,owner:null,createdAt:Date.now()};
+        try { sessionStorage.setItem("hunchlane.agent.start.v1",JSON.stringify(intent)); }
+        catch { setError("This browser could not save your submission. Allow session storage before starting research.");return; }
+        router.push(`/sign-in?redirect_url=${encodeURIComponent(`/new?start=${intent.id}`)}`);
+        return;
+      }
       router.push("/new");
       return;
     }

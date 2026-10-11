@@ -15,6 +15,7 @@ import { HeroMotion } from "@/components/hero-motion";
 import { LandingMotion } from "@/components/landing-motion";
 import { LaneMark } from "@/components/brand";
 import { sampleReport } from "@/core/sample";
+import { autonomousEnabled } from "@/server/agent-store";
 import "./studio.css";
 import "./hero.css";
 import "./landing-details.css";
@@ -68,7 +69,8 @@ export default async function Home() {
           <p>See what already exists, then choose a small thing to try.</p>
         </div>
         <div id="start-your-idea" className="studio-entry">
-          <IdeaComposer compact />
+          <IdeaComposer compact autonomous={autonomousEnabled()} />
+          {autonomousEnabled() && <p className="fine-print">Sending starts research after sign-in. Your idea and answers are shared with our research providers.</p>}
         </div>
       </HeroMotion>
 
@@ -91,6 +93,7 @@ export default async function Home() {
             </div>
             <article className="report-preview" aria-labelledby="sample-title">
               <header className="report-preview-header">
+                <span className="report-sample-label">Illustrative sample</span>
                 <div>
                   <LaneMark className="text-[var(--teal)]" />
                   <span>

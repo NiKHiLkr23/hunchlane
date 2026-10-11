@@ -11,6 +11,8 @@ export type HomeRun = {
   parentId: string | null;
   title: string | null;
   hasReport: boolean;
+  mode?: "legacy" | "autonomous";
+  recovery?: "working" | "recovering" | "reconciling";
 };
 
 export type HomeNext =
@@ -40,5 +42,5 @@ export const homeStages: Record<RunStage, string> = {
 };
 
 export function homeRunHref(run: HomeRun) {
-  return `/${run.hasReport ? "reports" : "research"}/${run.id}`;
+  return `/${run.mode === "autonomous" ? "research" : run.hasReport ? "reports" : "research"}/${run.id}`;
 }

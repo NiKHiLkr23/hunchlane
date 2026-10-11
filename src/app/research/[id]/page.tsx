@@ -1,6 +1,7 @@
 import { requireOwner } from "@/server/auth";
 import { ownedRun } from "@/server/store";
 import { notFound, redirect } from "next/navigation";
+import { AgentConversation } from "@/components/agent-conversation";
 import { RunProgress } from "@/components/run-progress";
 export const dynamic = "force-dynamic";
 export default async function ResearchPage({
@@ -21,6 +22,7 @@ export default async function ResearchPage({
   }
   const run = await ownedRun(id, owner);
   if (!run) notFound();
+  if(run.mode === "autonomous") return <AgentConversation initial={run} ownerId={owner} signedIn authConfigured/>;
   if (run.report) redirect(`/reports/${id}`);
   return <RunProgress initial={run} />;
 }

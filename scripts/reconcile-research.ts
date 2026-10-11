@@ -9,7 +9,7 @@ try {
   if(!runId || !owner || !phase || !receiptPath)throw new Error('ARGUMENTS');
   const receipt=Receipt.parse(JSON.parse(await readFile(receiptPath,'utf8')));
   await reconcileCrustOperation(z.uuid().parse(runId),owner,phase,receipt);
-  console.log('Verified zero-credit failure recorded. The owner can now explicitly resume the existing research. No event was sent.');
+  console.log('Verified zero-credit failure recorded. Active continuous runs recover automatically; completed reports remain immutable. Legacy runs retain explicit retry. No paid request or event was sent.');
 } catch {
   console.error('Reconciliation refused. Use: pnpm research:reconcile <run-id> <Clerk-owner-id> <crust-search-N|crust-fetch> <receipt.json>. Check the owner, failed state and independently verified zero-credit receipt.');
   process.exitCode=1;
