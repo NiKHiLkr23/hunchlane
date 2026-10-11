@@ -1,0 +1,28 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4N7S461DJX2K94AY7GTM45W",
+  "strategy": "manual-commit",
+  "branch": "codex/research-recovery",
+  "checkpoints_count": 12,
+  "files_touched": [
+    "src/app/api/inngest/route.ts",
+    "src/server/crustdata.ts",
+    "src/server/store.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3688799,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 112110976,
+    "output_tokens": 432085,
+    "api_call_count": 59
+  }
+}
