@@ -10,28 +10,34 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
   --studio-canvas: #f7f8f6;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0;
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
   margin: 20px -16px 56px;
   padding: 32px 24px 26px;
   border: 1px solid #e3e8e0;
   border-radius: 32px;
-  background: radial-gradient(circle, #dce3da80 .7px, transparent .8px) 0 0 / 6px 6px, #fcfdfb;
+  background:
+    radial-gradient(ellipse 46% 38% at 8% 12%, #ffd8c366, transparent 70%),
+    radial-gradient(ellipse 42% 36% at 96% 88%, #175d5026, transparent 72%),
+    radial-gradient(circle, #c9d4c666 .45px, transparent .65px) 0 0 / 3px 3px,
+    #f7f8f4;
   box-shadow: 0 4px 8px #23332e02, 0 24px 60px -42px #23332e35;
 }
 .dimensional-hero::before {
   content: ""; position: absolute; z-index: -1; pointer-events: none;
-  inset: 0; background: radial-gradient(ellipse at center, #fff 0%, #ffffffea 32%, #ffffff00 75%);
+  inset: 0; border-radius: inherit;
+  background: radial-gradient(ellipse at center, #fff 0%, #ffffffeb 34%, #ffffff00 74%);
 }
-.dimensional-hero .studio-hero-copy { position: relative; width: 100%; text-align: center; }
-.hero-brand-tile { display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 20px; color: var(--studio-teal); border: 1px solid #f0f2ed; border-radius: 16px; background: #fff; box-shadow: 0 3px 5px #23332e05, 0 10px 22px -8px #23332e30; transform: rotate(-5deg); }
+.dimensional-hero .studio-hero-copy { position: relative; align-self: stretch; width: 100%; text-align: center; }
+.hero-brand-tile { display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 20px; color: var(--studio-teal); border: 1px solid #f0f2ed; border-radius: 16px; background: #fff; box-shadow: 0 3px 5px #23332e05, 0 10px 22px -8px #23332e30; transform: rotate(-5deg); animation: hero-mark-arrive 480ms cubic-bezier(.2, .8, .2, 1) both; }
 .hero-brand-tile > svg { width: 34px; height: 34px; }
-.dimensional-hero h1 { font-size: clamp(48px, 5vw, 64px); font-weight: 600; line-height: 1.08; letter-spacing: -.04em; margin: 0; }
+.dimensional-hero h1 { font-size: clamp(48px, 5vw, 64px); font-weight: 600; line-height: 1.08; letter-spacing: -.04em; margin: 0; animation: hero-copy-arrive 480ms cubic-bezier(.2, .8, .2, 1) 90ms both; }
 .dimensional-hero h1 span::after { display: none; }
-.dimensional-hero .studio-hero-copy > p { max-width: 535px; margin: 16px auto 0; font-size: 14px; line-height: 1.75; color: var(--studio-muted); }
-.dimensional-hero .studio-entry { position: relative; width: 100%; max-width: 540px; margin-top: 24px; }
+.dimensional-hero .studio-hero-copy > p { max-width: 38ch; margin: 14px auto 0; font-size: 13px; line-height: 1.65; color: var(--studio-muted); animation: hero-copy-arrive 480ms cubic-bezier(.2, .8, .2, 1) 180ms both; }
+.dimensional-hero .studio-entry { position: relative; width: min(100%, 540px); margin-top: 24px; }
 .dimensional-hero .compact-composer { border: 0; border-radius: 0; background: transparent; }
 .dimensional-hero .compact-composer form { padding: 16px; border: 1px solid #dce4da; border-radius: 18px; background: #fff; box-shadow: 0 8px 24px -12px #23332e28; text-align: left; }
 .dimensional-hero .composer-label { font-size: 12px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0; }
@@ -53,41 +59,50 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
 .hero-decoration { position: absolute; inset: 0; pointer-events: none; z-index: -1; }
 .hero-drift-item { position: absolute; transform: translateY(calc(var(--hero-drift) * var(--drift-distance, -28px))); }
 .hero-float { --float-turn: 0deg; transform: rotate(var(--float-turn)); animation: hero-arrive 480ms cubic-bezier(.2, .8, .2, 1) both; }
-.hero-note-scene { left: 18px; top: 85px; width: 216px; --drift-distance: -36px; }
-.hero-idea-object { --float-turn: -9deg; width: 210px; margin-left: -30px; animation-delay: 90ms; }
+.hero-note-scene { left: -28px; top: 68px; width: 216px; --drift-distance: -36px; }
+.hero-idea-object { --float-turn: -12deg; width: 196px; margin-left: 0; animation-delay: 90ms; }
 .hero-idea-object img { width: 100%; height: auto; display: block; }
-.hero-idea-card { --float-turn: -7deg; position: relative; width: 190px; margin: -18px 0 0 8px; padding: 18px; background: #fffef5; border: 1px solid #efe8d8; border-radius: 5px 5px 18px 5px; box-shadow: 0 10px 20px -12px #23332e35; animation-delay: 180ms; }
+.hero-idea-card { --float-turn: -11deg; position: relative; width: 190px; margin: -18px 0 0 8px; padding: 18px; background: #fffef5; border: 1px solid #efe8d8; border-radius: 5px 5px 18px 5px; box-shadow: 0 10px 20px -12px #23332e35; animation-delay: 180ms; }
 .hero-card-kicker { display: block; font-size: 8px; font-weight: 700; letter-spacing: .035em; color: #637269; }
 .hero-idea-card p { font-size: 12px; line-height: 1.7; font-weight: 600; margin: 12px 0; }
 .hero-note-line { display: block; width: 45px; height: 3px; border-radius: 2px; background: #edc9ad; }
-.hero-alternatives-scene { right: 25px; top: 104px; width: 190px; --drift-distance: -20px; }
+.hero-alternatives-scene { right: -22px; top: 78px; width: 190px; --drift-distance: -20px; }
 .hero-mini-card { border: 1px solid #e4e9e1; border-radius: 18px; background: #fff; box-shadow: 0 2px 4px #23332e03, 0 18px 28px -18px #23332e45; }
-.hero-alternatives-card { --float-turn: 8deg; padding: 20px 18px; animation-delay: 270ms; }
+.hero-alternatives-card { --float-turn: 12deg; padding: 20px 18px; animation-delay: 270ms; }
 .hero-alternatives-card h2 { font-size: 12px; line-height: 1.5; font-weight: 650; margin: 8px 0 14px; letter-spacing: -.01em; }
 .hero-mini-alternatives { display: grid; gap: 10px; }
 .hero-mini-alternatives > span { display: flex; gap: 8px; align-items: center; font-size: 10px; color: #43594c; }
 .hero-mini-alternatives i { display: grid; place-items: center; width: 24px; height: 24px; font-size: 10px; font-weight: 700; font-style: normal; background: #edf3ec; color: #175d50; border-radius: 7px; }
 .hero-mini-alternatives > span:nth-child(2) i { background: #fff0e2; color: #76563b; }
-.hero-evidence-scene { right: -20px; bottom: 58px; width: 230px; --drift-distance: -42px; }
-.hero-evidence-card { --float-turn: -8deg; display: flex; gap: 12px; padding: 18px; animation-delay: 360ms; }
+.hero-evidence-scene { right: -30px; bottom: 28px; width: 230px; --drift-distance: -42px; }
+.hero-evidence-card { --float-turn: -12deg; display: flex; gap: 12px; padding: 18px; animation-delay: 360ms; }
 .hero-icon-tile { display: grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; color: #175d50; background: #f1f6ef; border: 1px solid #e6ece2; border-radius: 14px; box-shadow: inset 0 2px 2px #fff, 0 3px 7px #23332e07; }
 .hero-evidence-card p { margin: 6px 0 10px; font-size: 11px; font-weight: 600; }
 .hero-evidence-line { display: block; height: 4px; width: 98px; background: #e2e9df; border-radius: 3px; margin-top: 5px; }
 .hero-evidence-line.short { width: 65px; }
-.hero-experiment-scene { left: 8px; bottom: 65px; width: 238px; --drift-distance: -18px; }
-.hero-experiment-card { --float-turn: 6deg; display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #e6ece3; border-radius: 16px; background: #fff; box-shadow: 0 15px 28px -18px #23332e45; animation-delay: 450ms; }
+.hero-experiment-scene { left: -24px; bottom: 32px; width: 238px; --drift-distance: -18px; }
+.hero-experiment-card { --float-turn: 10deg; display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #e6ece3; border-radius: 16px; background: #fff; box-shadow: 0 15px 28px -18px #23332e45; animation-delay: 450ms; }
 .hero-experiment-card p { font-size: 10px; font-weight: 600; margin: 5px 0 0; }
 @keyframes hero-arrive {
   from { opacity: 0; transform: translateY(var(--entrance-travel, 18px)) rotate(calc(var(--float-turn) - 3deg)) scale(.97); }
   to { opacity: 1; transform: translateY(0) rotate(var(--float-turn)) scale(1); }
 }
-@media (max-width: 1080px) {
-  .hero-note-scene { left: -38px; }
-  .hero-alternatives-scene { right: -36px; }
-  .hero-experiment-scene { left: -72px; }
-  .hero-evidence-scene { right: -72px; }
+@keyframes hero-mark-arrive {
+  from { opacity: 0; transform: translateY(12px) rotate(-8deg); }
+  to { opacity: 1; transform: translateY(0) rotate(-5deg); }
+}
+@keyframes hero-copy-arrive {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@media (max-width: 1240px) {
+  .hero-note-scene { left: 8px; }
+  .hero-alternatives-scene { right: 8px; }
+  .hero-experiment-scene { left: 4px; }
+  .hero-evidence-scene { right: 4px; }
 }
 @media (max-width: 900px) {
+  .studio-hero.dimensional-hero { overflow: hidden; }
   .hero-idea-card, .hero-alternatives-scene, .hero-evidence-scene, .hero-experiment-scene { display: none; }
   .hero-note-scene { top: 20px; left: 18px; width: 120px; }
   .hero-idea-object { width: 120px; margin: 0; }
@@ -98,7 +113,7 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
   .dimensional-hero h1 { font-size: 42px; }
   .hero-brand-tile { width: 44px; height: 44px; margin-bottom: 18px; border-radius: 13px; }
   .hero-brand-tile > svg { width: 29px; height: 29px; }
-  .dimensional-hero .studio-hero-copy > p { font-size: 13px; line-height: 1.75; margin-top: 14px; max-width: 410px; }
+  .dimensional-hero .studio-hero-copy > p { font-size: 13px; line-height: 1.65; margin-top: 12px; max-width: 36ch; }
   .dimensional-hero .studio-entry { margin-top: 20px; }
   .dimensional-hero .compact-composer form { padding: 14px; border-radius: 15px; }
   .dimensional-hero .composer textarea { height: 88px; min-height: 88px; font-size: 16px; }
@@ -119,7 +134,10 @@ body:has(.dimensional-hero) .studio-header .nav-signin { border-radius: 12px; }
   .dimensional-hero h1 { font-size: 38px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dimensional-hero .hero-float { animation: none; }
+  .dimensional-hero .hero-float,
+  .dimensional-hero .hero-brand-tile,
+  .dimensional-hero h1,
+  .dimensional-hero .studio-hero-copy > p { animation: none; }
   .dimensional-hero .hero-drift-item { transform: none; }
   .dimensional-hero .composer-action .button { transition: none; }
   .dimensional-hero .composer-action .button:active { transform: none; }
