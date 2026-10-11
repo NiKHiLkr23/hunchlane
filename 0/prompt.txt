@@ -1,0 +1,2 @@
+we have some ui change review it 
+for the carousel section under hero section we are showing neathacks parterns which is probably not a very good idea, suggest me what else can we do here ?
