@@ -7,7 +7,7 @@ const columns = [
     ["Sample report", "/sample"],
   ],
   [
-    ["X (formely twitter)", "https://x.com/nikhilkr_tw"],
+    ["X (formerly Twitter)", "https://x.com/nikhilkr_tw"],
     ["Contact Us", "mailto:hi@nikhilkr.in"],
   ],
 ] as const;
@@ -15,8 +15,8 @@ const columns = [
 export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-[#f3f4f0] font-[family-name:var(--font-studio),sans-serif] text-[#23332e] bg-[radial-gradient(circle,#c5cdc4_0.7px,transparent_0.75px)] [background-size:8px_8px]">
-      <div className="relative z-10 mx-auto w-full max-w-[1040px] px-6 pb-28 pt-14 sm:px-10 sm:pb-40 sm:pt-16 lg:pb-52 lg:pt-20">
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
+      <div className="relative z-10 mx-auto w-full max-w-[1040px] px-6 pb-20 pt-10 sm:px-10 sm:pb-40 sm:pt-16 lg:pb-52 lg:pt-20">
+        <div className="grid items-start gap-7 sm:gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
           <div>
             <Link
               href="/"
@@ -28,20 +28,20 @@ export function Footer() {
                 hunchlane<span className="text-[#89a18d]">.</span>
               </span>
             </Link>
-            <p className="mt-8 max-w-[14ch] text-[clamp(32px,4vw,44px)] font-semibold leading-[1.08] tracking-[-0.045em]">
+            <p className="mb-0! mt-4! max-w-[18ch] text-[28px] font-semibold leading-[1.12] tracking-[-0.045em] sm:mt-8! sm:max-w-[14ch] sm:text-[clamp(32px,4vw,44px)] sm:leading-[1.08]">
               Give your idea a clearer next step.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-1 sm:gap-x-14">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 sm:gap-x-14">
             {columns.map((links) => (
-              <ul key={links[0][0]} className="m-0 list-none p-0">
+              <ul key={links[0][0]} className="m-0 list-none p-0!">
                 {links.map(([label, href]) => (
                   <li key={href}>
                     <Link
                       href={href}
                       className="inline-flex min-h-11 items-center gap-2 text-sm text-[#5d6c63] transition-colors hover:text-[#175d50]"
                     >
-                      <span aria-hidden="true">→</span>
+                      <span className="shrink-0" aria-hidden="true">→</span>
                       {label}
                     </Link>
                   </li>
@@ -50,14 +50,14 @@ export function Footer() {
             ))}
           </div>
         </div>
-        <div className="mt-14 border-t border-[#23332e14] pt-5 text-xs text-[#5d6c63]">
-          <p className="m-0">© 2026 Hunchlane. All rights reserved.</p>
-          <p className="mb-0 mt-2">Built for Neathacks.</p>
+        <div className="mt-8 border-t border-[#23332e14] pt-5 text-xs leading-relaxed text-[#5d6c63] sm:mt-14">
+          <p className="m-0!">© 2026 Hunchlane. All rights reserved.</p>
+          <p className="mb-0! mt-2!">Built for Neathacks.</p>
         </div>
       </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-[-0.1em] z-0 select-none whitespace-nowrap text-center text-[clamp(8rem,20vw,19rem)] font-semibold leading-[0.72] tracking-[-0.075em] text-zinc-950/[0.035]"
+        className="pointer-events-none absolute inset-x-0 bottom-[-0.1em] z-0 select-none whitespace-nowrap text-center text-[19vw] font-semibold leading-[0.72] tracking-[-0.075em] text-zinc-950/[0.035] sm:text-[clamp(8rem,20vw,19rem)]"
       >
         hunchlane
       </div>
