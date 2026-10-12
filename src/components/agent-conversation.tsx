@@ -1,10 +1,10 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowUp, ArrowRight, LoaderCircle, LockKeyhole } from "lucide-react";
+import { ArrowUp, ArrowRight, LoaderCircle, CircleHelp } from "lucide-react";
 import { IdeaBriefSchema, type IdeaBrief, type RunState } from "@/core/types";
-import { inferCategory, type AgentMessageInput } from "@/core/agent";
+import { awaitingAnswers, inferCategory, type AgentMessage, type AgentMessageInput } from "@/core/agent";
 import { newDraft } from "@/core/idea-draft";
 import {
   readIdeaDraft,
@@ -13,8 +13,8 @@ import {
   clearIdeaDraft,
   clearFreshDraft,
 } from "@/lib/idea-draft";
-import { LaneMark } from "./brand";
 import { ReportView } from "./report-view";
+import { AgentQuestionCard } from "./agent-question-card";
 import "@/app/new/conversation.css";
 
 type StartIntent = {
@@ -46,12 +46,21 @@ export function AgentConversation({
   const [run, setRun] = useState(initial),
     [buffer, setBuffer] = useState(""),
     [loaded, setLoaded] = useState(Boolean(initial)),
+    [started, setStarted] = useState(Boolean(initial)),
+    [headingDismissed, setHeadingDismissed] = useState(Boolean(initial)),
+    [optimisticMessage, setOptimisticMessage] = useState<AgentMessage | null>(null),
     [busy, setBusy] = useState(false),
-    [notice, setNotice] = useState(""),
-    [questionId, setQuestionId] = useState<AgentMessageInput["questionId"]>();
+    [notice, setNotice] = useState("");
   const router = useRouter(),
     input = useRef<HTMLTextAreaElement>(null),
+    composerDock = useRef<HTMLDivElement>(null),
+    composerOrigin = useRef<number | null>(null),
+    scrollArea = useRef<HTMLDivElement>(null),
+    followLatest = useRef(true),
+    userScrolling = useRef(false),
     guard = useRef(false),
+    openingStarted = useRef<string | null>(null),
+    runRef = useRef(initial),
     bufferRef = useRef(""),
     briefRef = useRef(newDraft().brief),
     pending = useRef<AgentMessageInput | null>(null),
@@ -60,27 +69,27 @@ export function AgentConversation({
   const pendingKey = `hunchlane.${preview ? "preview." : ""}agent.message.${
     initial?.id || "new"
   }`;
-  function change(text: string) {
+  const bufferKey = useCallback((id = "new") =>
+    `hunchlane.${preview ? "preview." : ""}agent.buffer.${ownerId || "guest"}.${id}`,
+  [preview, ownerId]);
+  const change = useCallback((text: string) => {
+    if (text.trim()) setHeadingDismissed(true);
     bufferRef.current = text;
     setBuffer(text);
     try {
       sessionStorage.setItem(
-        `hunchlane.${preview ? "preview." : ""}agent.buffer.${
-          ownerId || "guest"
-        }.${run?.id || "new"}`,
+        bufferKey(runRef.current?.id),
         text
       );
     } catch {
       /* Server-saved work continues when device storage is unavailable. */
     }
-  }
+  }, [bufferKey]);
   useEffect(() => {
     if (!run) return;
     try {
       const text = sessionStorage.getItem(
-        `hunchlane.${preview ? "preview." : ""}agent.buffer.${
-          ownerId || "guest"
-        }.${run.id}`
+        bufferKey(run.id)
       );
       if (text) {
         bufferRef.current = text;
@@ -89,14 +98,87 @@ export function AgentConversation({
     } catch {
       /* Preserve server-saved conversation. */
     }
-  }, [run?.id, preview, ownerId]);
+  }, [run?.id, bufferKey]);
   const acceptRun = useCallback((next: RunState) => {
+    const current = runRef.current;
+    if (current) {
+      // Messages and activity are append-only. A late read must not undo an
+      // acknowledged answer, progress, or report already shown in this tab.
+      const messages = new Set(next.agent?.conversation.messages.map(message => message.id));
+      const activity = new Set(next.agent?.conversation.activity.map(entry => entry.id));
+      if (next.id !== current.id ||
+          (current.report && !next.report) ||
+          (["complete", "failed"].includes(current.status) && next.status !== current.status) ||
+          (current.agent && (!next.agent || next.agent.revision < current.agent.revision ||
+            current.agent.conversation.messages.some(message => !messages.has(message.id)) ||
+            current.agent.conversation.activity.some(entry => !activity.has(entry.id))))) return;
+    }
+    runRef.current = next;
     setRun(next);
+    setOptimisticMessage(message => next.agent?.conversation.messages.some(saved => saved.id === message?.id) ? null : message);
+  }, []);
+  useLayoutEffect(() => {
+    const dock = composerDock.current, origin = composerOrigin.current;
+    composerOrigin.current = null;
+    if (!started || !dock || origin === null) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reducedMotion.matches) return;
+    const animation = dock.animate([
+      { transform: `translateY(${origin - dock.getBoundingClientRect().top}px)` },
+      { transform: "translateY(0)" },
+    ], { duration: 380, easing: "cubic-bezier(.22,1,.36,1)" });
+    const stop = () => { if (reducedMotion.matches) animation.cancel(); };
+    reducedMotion.addEventListener("change", stop);
+    return () => {
+      animation.cancel();
+      reducedMotion.removeEventListener("change", stop);
+    };
+  }, [started]);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const update = () => {
+      // Mobile keyboards can shrink the visible viewport without changing 100dvh.
+      if (viewport.scale === 1) document.body.style.setProperty("--agent-viewport-height", `${viewport.height}px`);
+      else document.body.style.removeProperty("--agent-viewport-height");
+    };
+    update();
+    viewport.addEventListener("resize", update);
+    return () => {
+      viewport.removeEventListener("resize", update);
+      document.body.style.removeProperty("--agent-viewport-height");
+    };
+  }, []);
+  const timelineSize = (run?.agent?.conversation.messages.length || 0) + (run?.agent?.conversation.activity.length || 0) + Number(Boolean(optimisticMessage));
+  useEffect(() => {
+    const area = scrollArea.current;
+    if (area && followLatest.current) {
+      userScrolling.current = false;
+      area.scrollTop = area.scrollHeight;
+    }
+  }, [run?.id, timelineSize]);
+  useEffect(() => {
+    const area = scrollArea.current;
+    if (!area) return;
+    const observer = new ResizeObserver(() => {
+      if (followLatest.current) area.scrollTop = area.scrollHeight;
+    });
+    observer.observe(area);
+    return () => observer.disconnect();
   }, []);
   const sendOpening = useCallback(
     async (intent: StartIntent) => {
       if (guard.current) return;
       guard.current = true;
+      if (openingStarted.current !== intent.id) {
+        openingStarted.current = intent.id;
+        composerOrigin.current = composerDock.current?.getBoundingClientRect().top ?? null;
+        // Clear the submitted idea once. Retries leave newly typed context alone.
+        if (bufferRef.current.trim() === intent.brief.idea) change("");
+      }
+      setStarted(true);
+      setHeadingDismissed(true);
+      setOptimisticMessage({ id: "opening", role: "user", text: intent.brief.idea, createdAt: new Date(intent.createdAt).toISOString() });
       setBusy(true);
       setNotice("");
       try {
@@ -128,12 +210,13 @@ export function AgentConversation({
           clearIdeaDraft(intent.id, preview);
         try {
           sessionStorage.removeItem(intentKey);
+          // Carry text typed during submission into the saved conversation.
+          sessionStorage.setItem(bufferKey(intent.id), bufferRef.current);
         } catch {
           /* A saved server run does not depend on device storage. */
         }
         if (preview) {
           acceptRun(data.run);
-          change("");
         } else router.replace(`/research/${intent.id}`);
       } catch (error) {
         setNotice(
@@ -146,14 +229,17 @@ export function AgentConversation({
         setBusy(false);
       }
     },
-    [preview, scenario, intentKey, router, acceptRun]
+    [preview, scenario, intentKey, router, acceptRun, change, bufferKey]
   );
 
   useEffect(() => {
     if (initial) {
       try {
         const saved = JSON.parse(sessionStorage.getItem(pendingKey) || "null");
-        if (saved?.owner === ownerId) pending.current = saved.message;
+        if (saved?.owner === ownerId && saved?.message) {
+          pending.current = saved.message;
+          setOptimisticMessage({ ...saved.message, role: "user", createdAt: saved.createdAt || new Date().toISOString() });
+        }
       } catch {
         /* Corrupt local input never authorizes a request. */
       }
@@ -228,8 +314,57 @@ export function AgentConversation({
     return () => clearInterval(timer);
   }, [run, signedIn, preview, intentKey, ownerId, sendOpening]);
 
+  const settlePending = useCallback((message: AgentMessageInput) => {
+    if (pending.current?.id !== message.id) return false;
+    pending.current = null;
+    try {
+      sessionStorage.removeItem(pendingKey);
+    } catch {
+      // An acknowledged identity is safe to read back again after reload.
+    }
+    return true;
+  }, [pendingKey]);
+
+  const deliverMessage = useCallback(async (message: AgentMessageInput, runId: string) => {
+    if (guard.current || pending.current?.id !== message.id || runRef.current?.id !== runId) return;
+    // Immediate delivery and reconnects share one in-flight request.
+    guard.current = true;
+    setBusy(true);
+    try {
+      const response = await fetch(
+        preview ? "/dev/agent-preview/api" : `/api/runs/${runId}/messages`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(preview ? { ...message, runId } : message),
+          signal: AbortSignal.timeout(15000),
+        }
+      );
+      if (response.ok) {
+        acceptRun(await response.json());
+        if (settlePending(message)) setNotice("");
+      } else if (response.status >= 400 && response.status < 500) {
+        const data = await response.json();
+        if (settlePending(message)) {
+          setNotice(data.error || "The message could not be saved.");
+          setOptimisticMessage(current => current?.id === message.id ? null : current);
+          if (!bufferRef.current) change(message.text);
+        }
+      }
+    } catch {
+      if (pending.current?.id === message.id) setNotice(
+        "Your message is saved in this tab and will send when the connection returns."
+      );
+    } finally {
+      guard.current = false;
+      setBusy(false);
+    }
+  }, [preview, acceptRun, settlePending, change]);
+
+  const hasPendingMessage = Boolean(pending.current);
   useEffect(() => {
     if (!run) return;
+    if (["complete", "failed"].includes(run.status) && !pending.current) return;
     let active = true,
       timer: ReturnType<typeof setTimeout>;
     async function poll() {
@@ -250,47 +385,16 @@ export function AgentConversation({
           if (
             next.agent?.conversation.messages.some((m) => m.id === message.id)
           ) {
-            pending.current = null;
-            sessionStorage.removeItem(pendingKey);
+            settlePending(message);
           } else {
-            const result = await fetch(
-              preview
-                ? "/dev/agent-preview/api"
-                : `/api/runs/${next.id}/messages`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(
-                  preview ? { ...message, runId: next.id } : message
-                ),
-                signal: AbortSignal.timeout(15000),
-              }
-            );
-            if (result.ok) {
-              const updated = await result.json();
-              if (active) acceptRun(updated);
-              pending.current = null;
-              sessionStorage.removeItem(pendingKey);
-            } else if (result.status >= 400 && result.status < 500) {
-              const data = await result.json();
-              if (active)
-                setNotice(data.error || "This message could not be added.");
-              pending.current = null;
-              sessionStorage.removeItem(pendingKey);
-            }
+            await deliverMessage(message, next.id);
           }
         }
-        if (next.status === "complete" || next.status === "failed") {
-          // Keep readback alive for queued follow-up input, without polling completed work indefinitely.
-          if (!pending.current) {
-            if (active) timer = setTimeout(poll, 15000);
-            return;
-          }
-        }
+        if (runRef.current && ["complete", "failed"].includes(runRef.current.status) && !pending.current) return;
       } catch {
         if (active)
           setNotice(
-            "Updates are reconnecting. Your saved research continues in the background."
+            "Updates are reconnecting. Your idea and conversation are saved."
           );
       }
       if (active) timer = setTimeout(poll, 3000);
@@ -300,7 +404,7 @@ export function AgentConversation({
       active = false;
       clearTimeout(timer);
     };
-  }, [run?.id, preview, pendingKey, ownerId, acceptRun]);
+  }, [run?.id, run?.status, hasPendingMessage, preview, ownerId, acceptRun, settlePending, deliverMessage]);
 
   async function opening() {
     const parsed = IdeaBriefSchema.safeParse({
@@ -309,8 +413,6 @@ export function AgentConversation({
       category: inferCategory(buffer),
     });
     if (!parsed.success) {
-      setNotice(parsed.error.issues[0].message);
-      input.current?.focus();
       return;
     }
     if (!signedIn && !preview && !authConfigured) {
@@ -361,20 +463,23 @@ export function AgentConversation({
   }
   function submitMessage(
     text = buffer.trim(),
-    chosenQuestion = questionId,
-    useJudgment = false
+    chosenQuestion: AgentMessageInput["questionId"] = undefined,
+    useJudgment = false,
+    autoAnswerAll = false
   ) {
-    if (!text || pending.current || guard.current || !run) return;
+    if (!text || pending.current || guard.current || !run || run.report) return;
     const message: AgentMessageInput = {
       id: crypto.randomUUID(),
       text,
       ...(chosenQuestion ? { questionId: chosenQuestion } : {}),
       useJudgment,
+      ...(autoAnswerAll ? { autoAnswerAll: true } : {}),
     };
+    const createdAt = new Date().toISOString();
     try {
       sessionStorage.setItem(
         pendingKey,
-        JSON.stringify({ owner: ownerId, message })
+        JSON.stringify({ owner: ownerId, message, createdAt })
       );
     } catch {
       setNotice(
@@ -383,310 +488,211 @@ export function AgentConversation({
       return;
     }
     pending.current = message;
+    setOptimisticMessage({ ...message, role: "user", createdAt, followUp: Boolean(run.agent?.lockedRevision !== null && run.agent?.lockedRevision !== undefined) });
+    followLatest.current = true;
     change("");
-    setQuestionId(undefined);
-    setNotice("Your message is queued for delivery.");
+    setNotice("");
     // Delivery retries reuse this identity. Polling research state never triggers paid work.
-    void (async () => {
-      guard.current = true;
-      setBusy(true);
-      try {
-        const response = await fetch(
-          preview ? "/dev/agent-preview/api" : `/api/runs/${run.id}/messages`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(
-              preview ? { ...message, runId: run.id } : message
-            ),
-            signal: AbortSignal.timeout(15000),
-          }
-        );
-        if (response.ok) {
-          acceptRun(await response.json());
-          pending.current = null;
-          sessionStorage.removeItem(pendingKey);
-          setNotice("");
-        } else if (response.status < 500) {
-          const data = await response.json();
-          setNotice(data.error || "The message could not be saved.");
-          pending.current = null;
-          sessionStorage.removeItem(pendingKey);
-          change(text);
-        }
-      } catch {
-        setNotice(
-          "Your message is saved in this tab and will send when the connection returns."
-        );
-      } finally {
-        guard.current = false;
-        setBusy(false);
-      }
-    })();
+    void deliverMessage(message, run.id);
   }
   const terminal = run?.status === "complete" || run?.status === "failed";
   const questions =
     run?.agent?.conversation.questions.filter((q) => !q.answer) || [];
+  const waiting = Boolean(!terminal && run?.agent && awaitingAnswers(run.agent.conversation));
+  const currentQuestion = waiting ? questions[0] : undefined;
+  const canSend = !run?.report && Boolean(buffer.trim()) && (Boolean(run) || IdeaBriefSchema.safeParse({
+    ...briefRef.current,
+    idea: buffer,
+    category: inferCategory(buffer),
+  }).success);
+  const activities = run?.agent?.conversation.activity || [];
+  const latestActivityId = [...activities].sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1)?.id;
+  const savedMessages = run?.agent?.conversation.messages || [];
+  const timeline = [
+    ...savedMessages.map(message => ({ ...message, active: false, optimistic: false })),
+    ...activities.map(activity => ({ ...activity, id: `activity-${activity.id}`, role: "assistant" as const, followUp: false, optimistic: false, active: !terminal && !waiting && activity.id === latestActivityId })),
+    ...(optimisticMessage && !savedMessages.some(message => message.id === optimisticMessage.id)
+      ? [{ ...optimisticMessage, active: false, optimistic: true }] : []),
+  ].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   return (
-    <main id="main" className="idea-chat agent-chat">
-      <div className={`chat-heading${run ? " chat-heading-context" : ""}`}>
-        <span className="chat-kicker">FOLLOW YOUR HUNCH</span>
-        <h1>
-          {run
-            ? terminal
-              ? run.report
-                ? "A clearer next step."
-                : "Your idea is saved."
-              : "Following your hunch."
-            : "What’s your hunch?"}
-        </h1>
-        <p>
-          {run
-            ? "You can add context while I work. I’ll bring the evidence and next step together here."
-            : "An app, a product, a service. Start with whatever is on your mind."}
-        </p>
-      </div>
-      {!loaded ? (
-        <p role="status">Opening your idea…</p>
-      ) : (
-        <>
-          {run?.agent && (
-            <section className="chat-thread" aria-label="Idea conversation">
-              {[
-                ...run.agent.conversation.messages,
-                ...run.agent.conversation.activity.map((a) => ({
-                  id: `activity-${a.id}`,
-                  role: "assistant" as const,
-                  text: a.text,
-                  createdAt: a.createdAt,
-                  followUp: false,
-                })),
-              ]
-                .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-                .map((m) => (
-                  <div key={m.id} className={`chat-message chat-${m.role}`}>
-                    {m.role === "assistant" && <LaneMark />}
-                    <div>
-                      <p>{m.text}</p>
-                      {m.followUp && (
-                        <small className="chat-subtle">
-                          Saved for a follow-up; the report keeps its original
-                          scope.
-                        </small>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              {!terminal && (
-                <div className="chat-message chat-assistant">
-                  <LaneMark />
-                  <p className="chat-activity" role="status">
-                    <LoaderCircle size={15} className="spinner" />
-                    Research in progress
-                  </p>
-                </div>
-              )}
-              {!terminal && questions.length > 0 && (
-                <section
-                  className="agent-questions"
-                  aria-label="Optional clarification"
-                >
-                  <p className="chat-subtle">
-                    Optional context · I’ll keep researching if you leave these
-                    open. Suggestions are unverified starting points.
-                  </p>
-                  {questions.map((q) => (
-                    <div key={q.id} className="agent-question">
-                      <h2>{q.text}</h2>
-                      <div className="chat-suggestions">
-                        {q.suggestions.map((s) => (
-                          <button
-                            key={s}
-                            disabled={busy || Boolean(pending.current)}
-                            onClick={() =>
-                              submitMessage(
-                                s,
-                                q.id as AgentMessageInput["questionId"]
-                              )
-                            }
-                          >
-                            {s}
-                          </button>
-                        ))}
-                        <button
-                          disabled={busy || Boolean(pending.current)}
-                          onClick={() =>
-                            submitMessage(
-                              "Use your judgment.",
-                              q.id as AgentMessageInput["questionId"],
-                              true
-                            )
-                          }
-                        >
-                          Use your judgment
-                        </button>
-                        <button
-                          onClick={() => {
-                            setQuestionId(
-                              q.id as AgentMessageInput["questionId"]
-                            );
-                            input.current?.focus();
-                          }}
-                        >
-                          Write my own answer
-                        </button>
+    <main id="main" className={`idea-chat agent-chat${!started && !run ? " agent-chat-intro" : ""}`}>
+      <div
+        ref={scrollArea}
+        className="agent-scroll"
+        role="region"
+        aria-label="Conversation and report"
+        tabIndex={0}
+        onWheel={() => { userScrolling.current = true; }}
+        onTouchMove={() => { userScrolling.current = true; }}
+        onPointerDown={event => { if (event.target === event.currentTarget) userScrolling.current = true; }}
+        onKeyDown={event => { if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) userScrolling.current = true; }}
+        onScroll={event => {
+          const area = event.currentTarget;
+          if (userScrolling.current) followLatest.current = area.scrollHeight - area.scrollTop - area.clientHeight < 80;
+        }}
+      >
+        <div className="agent-content page-container">
+          <div
+            className={`agent-intro-heading${headingDismissed || started || run ? " agent-intro-heading-hidden" : ""}`}
+            aria-hidden={headingDismissed || started || Boolean(run)}
+            inert={headingDismissed || started || Boolean(run)}
+          >
+            <div className="chat-heading">
+              <span className="chat-kicker">FOLLOW YOUR HUNCH</span>
+              <h1>What’s your hunch?</h1>
+              <p>An app, a product, a service. Start with whatever is on your mind.</p>
+            </div>
+          </div>
+          {!loaded ? (
+            <p role="status">Opening your idea…</p>
+          ) : (
+            <>
+              {(run?.agent || optimisticMessage) && (
+                <section className="chat-thread" aria-label="Idea conversation">
+                  {timeline.map((message) => (
+                    <div key={message.id} className={`chat-message chat-${message.role}`}>
+                      <div>
+                        <p className={message.active ? "chat-activity" : undefined} role={message.active ? "status" : undefined}>
+                          {message.active && <LoaderCircle size={15} className="spinner" aria-hidden="true" />}
+                          {message.text}
+                        </p>
+                        {message.optimistic && <small className="chat-subtle">Sending…</small>}
+                        {message.followUp && <small className="chat-subtle">Saved for a follow-up; the report keeps its original scope.</small>}
                       </div>
                     </div>
                   ))}
-                </section>
-              )}
-              {run.report && (
-                <section
-                  className="agent-result"
-                  aria-label="Final research result"
-                >
-                  <span className="chat-kicker">YOUR RESEARCH REPORT</span>
-                  <h2>{run.report.title}</h2>
-                  <p>
-                    {run.report.summary.text}{" "}
-                    {run.report.summary.sourceIds.map((id) => {
-                      const source = run.report!.sources.find(
-                        (s) => s.id === id
-                      );
-                      return source ? (
-                        <a
-                          key={id}
-                          href={source.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          [{run.report!.sources.indexOf(source) + 1}]
-                        </a>
-                      ) : null;
-                    })}
-                  </p>
-                  <details>
-                    <summary>Read the full report</summary>
-                    <ReportView
-                      report={run.report}
-                      runId={preview ? undefined : run.id}
-                      sample={preview}
-                      embedded
-                    />
-                  </details>
-                  {!preview && (
-                    <Link
-                      className="chat-text-button"
-                      href={`/reports/${run.id}`}
+                  {waiting && (
+                    <div className="agent-question-status" role="status">
+                      <CircleHelp size={16} />
+                      <span>Agent has questions for you</span>
+                      <small>Waiting for answers</small>
+                    </div>
+                  )}
+                  {run?.report && (
+                    <section
+                      className="agent-result"
+                      aria-label="Final research result"
                     >
-                      Open standalone report <ArrowRight size={14} />
-                    </Link>
+                      <span className="chat-kicker">YOUR RESEARCH REPORT</span>
+                      <h2>{run.report.title}</h2>
+                      <p>
+                        {run.report.summary.text}{" "}
+                        {run.report.summary.sourceIds.map((id) => {
+                          const source = run.report!.sources.find(
+                            (s) => s.id === id
+                          );
+                          return source ? (
+                            <a
+                              key={id}
+                              href={source.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              [{run.report!.sources.indexOf(source) + 1}]
+                            </a>
+                          ) : null;
+                        })}
+                      </p>
+                      <details>
+                        <summary>Read the full report</summary>
+                        <ReportView
+                          report={run.report}
+                          runId={preview ? undefined : run.id}
+                          sample={preview}
+                          embedded
+                        />
+                      </details>
+                      {!preview && (
+                        <Link
+                          className="chat-text-button"
+                          href={`/reports/${run.id}`}
+                        >
+                          Open standalone report <ArrowRight size={14} />
+                        </Link>
+                      )}
+                    </section>
                   )}
-                  <div className="agent-followups">
-                    <h3>Where would you like to go next?</h3>
-                    <p>
-                      Save a direction below. A new research run starts only
-                      when you submit a refinement.
-                    </p>
-                    {[
-                      "Focus on a different audience",
-                      "Explore a different approach",
-                    ].map((text) => (
-                      <button
-                        className="chat-text-button"
-                        key={text}
-                        onClick={() => {
-                          change(text);
-                          input.current?.focus();
-                        }}
-                      >
-                        {text}
-                        <ArrowRight size={13} />
-                      </button>
-                    ))}
-                    {!preview && !run.parentId && (
-                      <Link
-                        className="chat-text-button"
-                        href={`/new/refine/${run.id}`}
-                      >
-                        Research a refinement <ArrowRight size={14} />
-                      </Link>
-                    )}
-                  </div>
                 </section>
               )}
-            </section>
+            </>
           )}
+          {notice && <p className="agent-delivery-notice chat-subtle" role="status">{notice}</p>}
+        </div>
+      </div>
+      {loaded && (
+        <div ref={composerDock} className={`agent-dock-presence${run?.report ? " agent-dock-closed" : ""}`} aria-hidden={Boolean(run?.report)} inert={Boolean(run?.report)}>
+          <div className="agent-dock-clip">
           <div className="agent-composer-wrap">
-            <form
-              className="chat-composer"
-              onSubmit={(event) => {
-                event.preventDefault();
-                if (run) submitMessage();
-                else void opening();
-              }}
-            >
-              <label htmlFor="agent-input" className="sr-only">
-                {run
-                  ? questionId
-                    ? "Your clarification answer"
-                    : "Add context or a direction"
-                  : "Tell us what you have in mind."}
-              </label>
-              <textarea
-                ref={input}
-                id="agent-input"
-                value={buffer}
-                onChange={(e) => change(e.target.value)}
-                rows={3}
-                maxLength={run ? 500 : 3000}
-                placeholder={
-                  run
-                    ? terminal
-                      ? "A direction for your next look…"
-                      : "Add context or steer the research…"
-                    : "I’m thinking about…"
-                }
+          <div className="agent-composer-inner page-container">
+            {currentQuestion ? (
+              <AgentQuestionCard
+                key={currentQuestion.id}
+                question={currentQuestion}
+                index={run!.agent!.conversation.questions.findIndex(q => q.id === currentQuestion.id)}
+                total={run!.agent!.conversation.questions.length}
+                busy={busy || Boolean(pending.current)}
+                onAnswer={text => submitMessage(text, currentQuestion.id as AgentMessageInput["questionId"])}
+                onAutoAnswer={() => submitMessage("Use your judgment.", undefined, true, true)}
               />
-              <div className="chat-composer-bottom">
-                <span>
-                  {run
-                    ? terminal
-                      ? "Saved as follow-up context."
-                      : questionId
-                      ? "Answering the selected question."
-                      : "Optional. The research continues."
-                    : "A sentence is enough."}
-                </span>
-                <button
-                  type="submit"
-                  disabled={busy || Boolean(pending.current)}
-                  aria-label={run ? "Send message" : "Research my idea"}
-                >
-                  {busy ? (
-                    <LoaderCircle size={18} className="spinner" />
-                  ) : (
-                    <ArrowUp size={19} />
-                  )}
-                </button>
-              </div>
-            </form>
+            ) : (
+              <form
+                className="chat-composer"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (run) submitMessage();
+                  else void opening();
+                }}
+              >
+                <label htmlFor="agent-input" className="sr-only">
+                  {run ? "Add context or a direction" : "Tell us what you have in mind."}
+                </label>
+                <textarea
+                  ref={input}
+                  id="agent-input"
+                  value={buffer}
+                  onChange={(e) => change(e.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+                    event.preventDefault();
+                    if (!busy && !pending.current && canSend) event.currentTarget.form?.requestSubmit();
+                  }}
+                  rows={3}
+                  maxLength={run ? 500 : 3000}
+                  placeholder={
+                    run
+                      ? terminal
+                        ? "A direction for your next look…"
+                        : "Add context or steer the research…"
+                      : "I’m thinking about…"
+                  }
+                />
+                <div className="chat-composer-bottom">
+                  <span>
+                    {run
+                      ? terminal
+                        ? "Saved as follow-up context."
+                        : "Optional. The research continues."
+                      : "A sentence is enough."}
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={busy || Boolean(pending.current) || !canSend}
+                    aria-label={run ? "Send message" : "Research my idea"}
+                  >
+                    {busy ? (
+                      <LoaderCircle size={18} className="spinner" />
+                    ) : (
+                      <ArrowUp size={19} />
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
 
-            {run && (
-              <p className="chat-subtle">
-                {terminal
-                  ? "Your idea and conversation are saved. Return through "
-                  : "You can close this tab. The research continues; return through "}
-                <Link href="/library">My ideas</Link>.
-              </p>
-            )}
-            {notice && (
-              <p className="chat-subtle" role="status">
-                {notice}
-              </p>
-            )}
           </div>
-        </>
+          </div>
+          </div>
+        </div>
       )}
     </main>
   );

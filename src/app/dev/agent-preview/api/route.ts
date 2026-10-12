@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { randomUUID } from "node:crypto";
-import { openingConversation, AgentMessageSchema } from "@/core/agent";
+import { awaitingAnswers, openingConversation, AgentMessageSchema } from "@/core/agent";
 import { IdeaBriefSchema, type RunState } from "@/core/types";
 import { sampleReport } from "@/core/sample";
 type Fixture = { run: RunState; scenario: string; polls: number };
@@ -14,7 +14,9 @@ export async function POST(request: Request) {
     const now = new Date().toISOString(), token = cookieStore.get("hunchlane-agent-preview")?.value || randomUUID();
     const existing = fixtures.get(token);
     if (existing && existing.run.id === body.id) return Response.json({ id: body.id, run: existing.run }, { status: 202 });
-    const run: RunState = { id: body.id, brief: parsed.data, status: "running", stage: "discovering", createdAt: now, error: null, parentId: null, report: null, dispatched: true, provider: "crustdata", mode: "autonomous", agent: { conversation: openingConversation(parsed.data, now), revision: 0, lockedRevision: null, cursor: "crust-search-0", deadlineAt: new Date(Date.now() + 1200000).toISOString(), nextAttemptAt: now, recovery: "working", finalBrief: null } };
+    const conversation = openingConversation(parsed.data, now);
+    const waiting = awaitingAnswers(conversation);
+    const run: RunState = { id: body.id, brief: parsed.data, status: waiting ? "queued" : "running", stage: waiting ? "queued" : "discovering", createdAt: now, error: null, parentId: null, report: null, dispatched: true, provider: "crustdata", mode: "autonomous", agent: { conversation, revision: 0, lockedRevision: null, cursor: "crust-search-0", deadlineAt: new Date(Date.now() + 1200000).toISOString(), nextAttemptAt: now, recovery: "working", finalBrief: null } };
     fixtures.set(token, { run, scenario: body.scenario, polls: 0 });
     cookieStore.set("hunchlane-agent-preview", token, { httpOnly: true, sameSite: "strict", path: "/dev/agent-preview", maxAge: 3600 });
     return Response.json({ id: run.id, run }, { status: 202 });
@@ -23,16 +25,23 @@ export async function POST(request: Request) {
   if (!fixture || !parsed.success || body.runId !== fixture.run.id) return Response.json({ error: "Fixture not found" }, { status: 404 });
   const input = parsed.data, agent = fixture.run.agent!;
   const existing=agent.conversation.messages.find(m=>m.id===input.id);
-  if(existing && (existing.text!==input.text || existing.questionId!==input.questionId || Boolean(existing.useJudgment)!==Boolean(input.useJudgment))) return Response.json({error:"Conflicting message"},{status:409});
+  if(existing && (existing.text!==input.text || existing.questionId!==input.questionId || Boolean(existing.useJudgment)!==Boolean(input.useJudgment) || Boolean(existing.autoAnswerAll)!==Boolean(input.autoAnswerAll))) return Response.json({error:"Conflicting message"},{status:409});
   if (!existing) {
     const createdAt=new Date().toISOString();
-    agent.conversation.messages.push({ id: input.id, role: "user", text: input.text, questionId:input.questionId,useJudgment:input.useJudgment,createdAt, followUp: agent.lockedRevision !== null });
+    agent.conversation.messages.push({ id: input.id, role: "user", text: input.text, questionId:input.questionId,useJudgment:input.useJudgment,autoAnswerAll:input.autoAnswerAll,createdAt, followUp: agent.lockedRevision !== null });
     if(agent.lockedRevision===null){
       const question = agent.conversation.questions.find(q => q.id === input.questionId); if (question) question.answer = input.text;
+      if(input.autoAnswerAll) for(const question of agent.conversation.questions) if(!question.answer) question.answer=input.text;
       if (!input.useJudgment) {
         agent.revision++; fixture.run.brief.answers[input.questionId || input.id] = input.text.slice(0, 500);
         if(input.questionId==="audience") fixture.run.brief.audience=input.text.slice(0,300);
         agent.conversation.briefRevisions?.push({revision:agent.revision,brief:structuredClone(fixture.run.brief),createdAt});
+      }
+      if(agent.conversation.clarification?.state === "waiting" && !awaitingAnswers(agent.conversation)) {
+        agent.conversation.clarification={...agent.conversation.clarification,state:"ready",completedAt:createdAt};
+        agent.deadlineAt=new Date(Date.now()+1200000).toISOString();
+        fixture.run.status="running";fixture.run.stage="discovering";fixture.polls=0;
+        agent.conversation.activity.push({id:"clarified",text:"Thanks. I’m researching your idea with that context.",createdAt});
       }
     }
   }
@@ -42,9 +51,20 @@ export async function GET(request: Request) {
   if (!allowed()) return new Response(null, { status: 404 });
   const fixture = fixtures.get((await cookies()).get("hunchlane-agent-preview")?.value || "");
   if (!fixture || fixture.run.id !== new URL(request.url).searchParams.get("id")) return Response.json({ error: "Fixture not found" }, { status: 404 });
+  if(awaitingAnswers(fixture.run.agent!.conversation)) return Response.json(fixture.run, {headers:{"Cache-Control":"no-store"}});
   fixture.polls++;
+  const progress = [
+    { id: "fixture-discovery", text: "Looking for alternatives and current workarounds.", stage: "discovering" as const, cursor: "crust-search-0" as const },
+    { id: "fixture-verification", text: "Checking the closest matches against retrieved sources.", stage: "verifying" as const, cursor: "crust-select" as const },
+    { id: "fixture-composition", text: "Finding a useful next step from the evidence.", stage: "composing" as const, cursor: "composition" as const },
+  ][fixture.polls - 1];
+  if (progress && !["complete", "failed"].includes(fixture.run.status)) {
+    fixture.run.stage = progress.stage;
+    fixture.run.agent!.cursor = progress.cursor;
+    fixture.run.agent!.conversation.activity.push({ id: progress.id, text: progress.text, createdAt: new Date().toISOString() });
+  }
   if (fixture.scenario === "recovering") fixture.run.agent!.recovery = "recovering";
-  if ((fixture.scenario === "complete" || fixture.scenario === "failure") && fixture.polls >= 2 && !["complete","failed"].includes(fixture.run.status)) {
+  if ((fixture.scenario === "complete" || fixture.scenario === "failure") && fixture.polls >= 4 && !["complete","failed"].includes(fixture.run.status)) {
     fixture.run.status = fixture.scenario === "complete" ? "complete" : "failed";
     fixture.run.stage = "complete"; fixture.run.agent!.lockedRevision = fixture.run.agent!.revision;
     fixture.run.agent!.finalBrief = structuredClone(fixture.run.brief);

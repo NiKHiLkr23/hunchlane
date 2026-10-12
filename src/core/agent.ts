@@ -3,21 +3,27 @@ import { clarify, type IdeaBrief, type EvidenceSource, type ResearchReport } fro
 import { safeWebUrl, validateEvidence } from "./evidence";
 
 export const AGENT_LIMITS = { deadlineMs: 20 * 60_000, leaseSeconds: 90, retrySeconds: [5, 30, 120], questions: 2 } as const;
-export type AgentMessage = { id: string; role: "user" | "assistant"; text: string; createdAt: string; followUp?: boolean; questionId?: string; useJudgment?: boolean };
+export type AgentMessage = { id: string; role: "user" | "assistant"; text: string; createdAt: string; followUp?: boolean; questionId?: string; useJudgment?: boolean; autoAnswerAll?: boolean };
 export type AgentQuestion = { id: string; text: string; suggestions: string[]; answer?: string };
 export type AgentActivity = { id: string; text: string; createdAt: string };
-export type AgentConversation = { messages: AgentMessage[]; questions: AgentQuestion[]; assumptions: string[]; activity: AgentActivity[]; briefRevisions?: { revision: number; brief: IdeaBrief; createdAt: string }[] };
+export type AgentConversation = { messages: AgentMessage[]; questions: AgentQuestion[]; assumptions: string[]; activity: AgentActivity[]; clarification?: { state: "waiting" | "ready"; startedAt: string; completedAt?: string }; briefRevisions?: { revision: number; brief: IdeaBrief; createdAt: string }[] };
 export type AgentCursor = "queued" | "crust-plan" | "crust-search-0" | "crust-search-1" | "crust-select" | "crust-fetch" | "discovery" | "discovery-poll" | "verification" | "verification-poll" | "composition" | "composition-poll" | "repair" | "repair-poll" | "finalize";
 export type AgentState = { conversation: AgentConversation; revision: number; lockedRevision: number | null; cursor: AgentCursor; deadlineAt: string; nextAttemptAt: string; recovery: "working" | "recovering" | "reconciling"; finalBrief: IdeaBrief | null };
-export const AgentMessageSchema = z.object({ id: z.string().uuid(), text: z.string().trim().min(1).max(500), questionId: z.enum(["audience", "difference", "delivery"]).optional(), useJudgment: z.boolean().optional() });
+export const AgentMessageSchema = z.object({ id: z.string().uuid(), text: z.string().trim().min(1).max(500), questionId: z.enum(["audience", "difference", "delivery"]).optional(), useJudgment: z.boolean().optional(), autoAnswerAll: z.boolean().optional() }).refine(input => !input.autoAnswerAll || (input.useJudgment && !input.questionId && input.text === "Use your judgment."), { message: "Auto-answer must explicitly leave the remaining questions to the agent." });
 export type AgentMessageInput = z.infer<typeof AgentMessageSchema>;
 
+export function awaitingAnswers(conversation: AgentConversation) {
+  return conversation.clarification?.state === "waiting" && conversation.questions.some(q => !q.answer);
+}
+
 export function openingConversation(brief: IdeaBrief, now: string): AgentConversation {
+  const questions = clarify(brief).slice(0, AGENT_LIMITS.questions).map(q => ({ id: q.id, text: q.label, suggestions: q.id === "audience" ? ["People like me", "A specific community", "Small businesses"] : q.id === "delivery" ? ["Online", "Locally", "Delivered"] : ["A simpler experience", "A specific audience", "A different approach"] }));
   return {
     messages: [{ id: "opening", role: "user", text: brief.idea, createdAt: now }],
-    questions: clarify(brief).slice(0, AGENT_LIMITS.questions).map(q => ({ id: q.id, text: q.label, suggestions: q.id === "audience" ? ["People like me", "A specific community", "Small businesses"] : q.id === "delivery" ? ["Online", "Locally", "Delivered"] : ["A simpler experience", "A specific audience", "A different approach"] })),
+    questions,
+    clarification: { state: questions.length ? "waiting" : "ready", startedAt: now },
     assumptions: ["Unanswered context remains open; suggested answers are not assumed facts."],
-    activity: [{ id: "queued", text: "Your idea is saved. I’m starting the research.", createdAt: now }],
+    activity: [{ id: "queued", text: questions.length ? "I’ll clarify a couple of things first, then research your idea using your answers." : "Your idea is saved. I’m starting the research.", createdAt: now }],
     briefRevisions: [{ revision: 0, brief: structuredClone(brief), createdAt: now }],
   };
 }

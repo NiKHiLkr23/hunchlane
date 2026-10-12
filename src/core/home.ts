@@ -13,6 +13,7 @@ export type HomeRun = {
   hasReport: boolean;
   mode?: "legacy" | "autonomous";
   recovery?: "working" | "recovering" | "reconciling";
+  awaitingAnswers?: boolean;
 };
 
 export type HomeNext =

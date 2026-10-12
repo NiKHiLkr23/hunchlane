@@ -39,7 +39,7 @@ export async function appendAgentMessage(id: string, owner: string, input: Agent
   if (!owner) throw new Error("UNAUTHENTICATED");
   const run = await ownedRun(id, owner); if (!run?.agent) throw new Error("RUN_NOT_FOUND");
   const old = run.agent.conversation.messages.find(m => m.id === input.id);
-  const matches = (saved: typeof old) => saved?.text === input.text && (saved.questionId || "") === (input.questionId || "") && Boolean(saved.useJudgment) === Boolean(input.useJudgment);
+  const matches = (saved: typeof old) => saved?.text === input.text && (saved.questionId || "") === (input.questionId || "") && Boolean(saved.useJudgment) === Boolean(input.useJudgment) && Boolean(saved.autoAnswerAll) === Boolean(input.autoAnswerAll);
   if (old) { if (!matches(old)) throw new Error("SUBMISSION_CONFLICT"); return run; }
   if (input.questionId && !run.agent.conversation.questions.some(q => q.id === input.questionId)) throw new Error("INVALID_QUESTION");
   const key = input.questionId || `context-${input.id}`, now = new Date().toISOString();
@@ -52,20 +52,40 @@ export async function appendAgentMessage(id: string, owner: string, input: Agent
           '{answers}',coalesce(brief->'answers','{}'::jsonb)||jsonb_build_object(${key}::text,${input.text.slice(0, 500)}::text)) else brief end as next_brief,
       brief_revision+case when locked_revision is null and status in ('queued','running') and not ${Boolean(input.useJudgment)} then 1 else 0 end as next_revision
     from current
-  ) update runs r set conversation=jsonb_set(jsonb_set(jsonb_set(r.conversation,'{messages}',r.conversation->'messages'||jsonb_build_array(
+  ), answered as (
+    select revised.*,jsonb_set(jsonb_set(jsonb_set(conversation,'{messages}',conversation->'messages'||jsonb_build_array(
     jsonb_build_object('id',${input.id}::text,'role','user','text',${input.text}::text,'createdAt',${now}::text,
       'questionId',${input.questionId || ""}::text,'useJudgment',${Boolean(input.useJudgment)}::boolean,
-      'followUp',r.locked_revision is not null or r.status in ('complete','failed')))), '{questions}',
-    case when r.locked_revision is null and r.status in ('queued','running') then
-      (select coalesce(jsonb_agg(case when q->>'id'=${input.questionId || ""} then q||jsonb_build_object('answer',${input.text}::text) else q end),'[]'::jsonb) from jsonb_array_elements(r.conversation->'questions') q)
-      else r.conversation->'questions' end), '{briefRevisions}',
-    case when c.next_revision>r.brief_revision then coalesce(r.conversation->'briefRevisions','[]'::jsonb)||jsonb_build_array(
-      jsonb_build_object('revision',c.next_revision,'brief',c.next_brief,'createdAt',${now}::text))
-      else coalesce(r.conversation->'briefRevisions','[]'::jsonb) end),
-    brief=c.next_brief,brief_revision=c.next_revision
-    from revised c where r.id=c.id and r.owner_id=${owner}
+      'autoAnswerAll',${Boolean(input.autoAnswerAll)}::boolean,
+      'followUp',locked_revision is not null or status in ('complete','failed')))), '{questions}',
+    case when locked_revision is null and status in ('queued','running') then
+      (select coalesce(jsonb_agg(case when q->>'id'=${input.questionId || ""} or (${Boolean(input.autoAnswerAll)} and coalesce(q->>'answer','')='') then q||jsonb_build_object('answer',${input.text}::text) else q end order by ord),'[]'::jsonb) from jsonb_array_elements(conversation->'questions') with ordinality as questions(q,ord))
+      else conversation->'questions' end), '{briefRevisions}',
+    case when next_revision>brief_revision then coalesce(conversation->'briefRevisions','[]'::jsonb)||jsonb_build_array(
+      jsonb_build_object('revision',next_revision,'brief',next_brief,'createdAt',${now}::text))
+      else coalesce(conversation->'briefRevisions','[]'::jsonb) end) as next_conversation from revised
+  ), prepared as (
+    select answered.*,conversation->'clarification'->>'state'='waiting'
+      and locked_revision is null and status in ('queued','running')
+      and not exists(select 1 from jsonb_array_elements(next_conversation->'questions') q where coalesce(q->>'answer','')='') as resumes
+    from answered
+  ), updated as (
+    update runs r set conversation=case when c.resumes then
+      jsonb_set(jsonb_set(c.next_conversation,'{clarification}',c.next_conversation->'clarification'||jsonb_build_object('state','ready','completedAt',${now}::text)),
+        '{activity}',c.next_conversation->'activity'||${JSON.stringify([{id:"clarified",text:"Thanks. I’m researching your idea with that context.",createdAt:now}])}::jsonb)
+      else c.next_conversation end,
+    brief=c.next_brief,brief_revision=c.next_revision,
+    deadline_at=case when c.resumes then now()+interval '20 minutes' else r.deadline_at end,
+    next_attempt_at=case when c.resumes then now() else r.next_attempt_at end,
+    wake_sequence=r.wake_sequence+case when c.resumes then 1 else 0 end
+    from prepared c where r.id=c.id and r.owner_id=${owner}
       and jsonb_array_length(r.conversation->'messages')<50
-      and not exists(select 1 from jsonb_array_elements(r.conversation->'messages') m where m->>'id'=${input.id}) returning r.id`;
+      and not exists(select 1 from jsonb_array_elements(r.conversation->'messages') m where m->>'id'=${input.id}) returning r.*
+  ), dispatched as (
+    insert into agent_outbox(id,run_id,owner_id,available_at)
+    select 'agent-'||u.id||'-'||u.wake_sequence,u.id,u.owner_id,u.next_attempt_at from updated u join prepared c on c.id=u.id
+    where c.resumes returning id
+  ) select id from updated`;
   if (!rows.length) {
     const saved = await ownedRun(id, owner);
     const duplicate=saved?.agent?.conversation.messages.find(m => m.id === input.id);
@@ -80,6 +100,7 @@ export async function acquireAgentLease(id: string, owner: string) {
   const lease = randomUUID();
   const rows = await db()`update runs set lease_token=${lease},lease_until=now()+interval '90 seconds',status='running'
     where id=${id} and owner_id=${owner} and mode='autonomous' and status in ('queued','running')
+      and coalesce(conversation->'clarification'->>'state','ready')<>'waiting'
       and next_attempt_at<=now() and (lease_until is null or lease_until<now()) returning id`;
   return rows.length ? lease : null;
 }
@@ -122,6 +143,11 @@ export async function acknowledgeWake(wake: Wake) {
   await db()`with acknowledged as (update agent_outbox set sent_at=now() where id=${wake.id} and run_id=${wake.runId} and owner_id=${wake.ownerId} returning run_id)
     update runs set dispatched=true where id in (select run_id from acknowledged) and owner_id=${wake.ownerId}`;
 }
+export async function pendingAgentWake(id: string, owner: string): Promise<Wake | null> {
+  const rows = await db()`select id,available_at from agent_outbox where run_id=${id} and owner_id=${owner}
+    and sent_at is null and available_at<=now() order by available_at desc limit 1`;
+  return rows[0] ? { id: String(rows[0].id), runId: id, ownerId: owner, availableAt: new Date(String(rows[0].available_at)).toISOString() } : null;
+}
 /** The dispatcher scans identifiers only. All private reads and processing use the returned owner. */
 export async function pendingAgentWakes(): Promise<Wake[]> {
   const rows = await db()`select id,run_id,owner_id,available_at from agent_outbox where sent_at is null and available_at<=now() order by available_at limit 50`;
@@ -129,6 +155,7 @@ export async function pendingAgentWakes(): Promise<Wake[]> {
 }
 export async function stalledAgentPointers(): Promise<{ id: string; owner: string }[]> {
   const rows = await db()`select id,owner_id from runs where mode='autonomous' and status in ('queued','running') and next_attempt_at<now()-interval '90 seconds'
+    and coalesce(conversation->'clarification'->>'state','ready')<>'waiting'
     and (lease_until is null or lease_until<now()) limit 50`;
   return rows.map(r => ({ id: String(r.id), owner: String(r.owner_id) }));
 }

@@ -1,0 +1,70 @@
+/* Route-independent geometry. Page CSS owns content, never the navigation shell. */
+:root {
+  --page-width: 1280px;
+  --page-gutter: clamp(24px, 4vw, 40px);
+  --header-height: 76px;
+}
+
+html { scrollbar-gutter: stable; }
+
+main.page-container, .app-header-inner, .footer-container {
+  width: 100%;
+  max-width: var(--page-width);
+  min-width: 0;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+.app-header {
+  flex-shrink: 0;
+  background: var(--canvas);
+  font-family: var(--font-studio), sans-serif;
+  color: #23332e;
+  border-bottom: 1px solid transparent;
+}
+.app-header-chat { background: #fff; border-bottom-color: #e3e7e1; }
+.app-header-inner { height: var(--header-height); display: flex; align-items: center; gap: 32px; }
+.app-header .brand { flex-shrink: 0; gap: 10px; font-size: 25px; font-weight: 800; letter-spacing: -.04em; }
+.app-header .brand > svg { width: 30px; height: 30px; }
+.app-desktop-nav, .app-auth-nav { display: flex; align-items: center; gap: 28px; margin-left: auto; font-size: 13px; }
+.app-header nav a { min-height: 44px; display: flex; align-items: center; color: #5d6c63; }
+.app-header nav a:hover, .app-header nav a[aria-current="page"] { color: #175d50; }
+.app-header nav a[aria-current="page"] { font-weight: 700; }
+.app-header-actions { display: flex; align-items: center; gap: 12px; }
+.app-account { width: 64px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; }
+.app-account-loading { display: block; width: 44px; height: 44px; }
+.app-header .nav-signin { min-height: 44px; font-size: 13px; white-space: nowrap; }
+.app-mobile-menu { display: none; position: relative; }
+.app-mobile-menu summary { list-style: none; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.app-mobile-menu summary::-webkit-details-marker { display: none; }
+.app-mobile-menu nav { position: absolute; right: 0; top: 50px; z-index: 30; width: min(220px, calc(100vw - 2 * var(--page-gutter))); padding: 8px; background: #fff; border: 1px solid #d7dfd4; border-radius: 12px; box-shadow: 0 12px 30px #23332e15; }
+.app-mobile-menu nav a { padding: 10px 12px; border-radius: 6px; font-size: 13px; }
+.app-header :is(a, button, summary):focus-visible { outline: 3px solid #175d50; outline-offset: 4px; }
+
+/* Focused forms remain readable inside the common page column. */
+.narrow-page > .refine-form { max-width: 760px; margin-inline: auto; }
+main.not-found-page { border: 0; background: transparent; margin-block: 32px; }
+main.page-container :is(.report-header, .library-heading) > div { min-width: 0; }
+main.page-container :is(h1, h2, h3, p, .source-list li > div) { overflow-wrap: anywhere; }
+.library-grid, .overview-layout, .angle-grid, .finance-layout, .auth-frame { min-width: 0; }
+.library-grid > *, .overview-layout > *, .angle-grid > *, .finance-layout > *, .auth-frame > * { min-width: 0; }
+
+@media (max-width: 760px) {
+  :root { --page-gutter: 20px; --header-height: 68px; }
+  .app-header-inner { gap: 12px; }
+  .app-header .brand { font-size: 21px; gap: 8px; }
+  .app-header .brand > svg { width: 27px; height: 27px; }
+  .app-desktop-nav { display: none; }
+  .app-header-actions { margin-left: auto; gap: 8px; }
+  .app-mobile-menu { display: block; }
+  .app-auth-nav { font-size: 11px; }
+  .library-heading { flex-wrap: wrap; }
+  .library-heading > div { flex: 1 1 320px; }
+}
+@media (max-width: 360px) {
+  :root { --page-gutter: 16px; }
+  .app-header-inner { gap: 8px; }
+  .app-header .brand { font-size: 20px; }
+  .app-header-actions { gap: 4px; }
+  .library-heading { flex-wrap: wrap; }
+}

@@ -3,36 +3,40 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
-import { ArrowUpRight, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { LaneMark } from "./brand";
-import { AuthActions } from "./auth-actions";
+import { AuthActions, MyIdeasLink } from "./auth-actions";
 
 export function HeaderNavigation({ authConfigured }: { authConfigured: boolean }) {
   const pathname = usePathname();
   const menu = useRef<HTMLDetailsElement>(null);
-  const account = authConfigured ? <AuthActions largeTarget={pathname === "/home" || pathname === "/new"}/> : <Link href="/sign-in" className="nav-signin">Sign in <ArrowUpRight size={16}/></Link>;
-
-  if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname === "/sso-callback") return <header className="auth-header"><div className="auth-header-inner"><Link className="brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav aria-label="Main navigation"><Link href="/sample">Take a look around <ArrowUpRight size={15}/></Link></nav></div></header>;
-
-  if (pathname === "/home" || pathname === "/dev/home-preview" || pathname === "/new" || pathname === "/dev/idea-preview" || pathname.startsWith("/research/") || pathname === "/dev/research-preview") return <header className="desk-header"><div className="desk-header-inner"><Link className="brand" href="/home" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav className="desk-nav" aria-label="Main navigation"><Link href="/home" aria-current={pathname === "/home" ? "page" : undefined}>Home</Link><Link href="/library">My ideas</Link><Link href="/sample">Sample report</Link></nav><div className="desk-account">{account}<details className="desk-menu" ref={menu} onKeyDown={event => { if (event.key === "Escape") { closeMenu(); menu.current?.querySelector("summary")?.focus(); } }}><summary aria-label="Navigation menu"><Menu size={20}/></summary><nav aria-label="Mobile navigation"><Link href="/home" onClick={closeMenu}>Home</Link><Link href="/library" onClick={closeMenu}>My ideas</Link><Link href="/sample" onClick={closeMenu}>Sample report</Link></nav></details></div></div></header>;
-
-  if (pathname !== "/") return <header className="site-header"><div className="header-inner"><Link className="brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link><nav aria-label="Main navigation"><Link href="/sample">Sample report</Link><Link href="/library">My ideas</Link>{account}</nav></div></header>;
+  const landing = pathname === "/";
+  const authentication = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname === "/sso-callback";
+  const chat = pathname === "/new" || pathname.startsWith("/research/") || pathname === "/dev/agent-preview" || pathname === "/dev/research-preview";
 
   function closeMenu() { if (menu.current) menu.current.open = false; }
 
-  return <header className="studio-header">
-    <div className="studio-header-inner">
-      <Link className="brand studio-brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link>
-      <nav className="studio-desktop-nav" aria-label="Main navigation"><Link href="#how-it-works">How it works</Link><Link href="/sample">Sample report</Link></nav>
-      <div className="studio-header-actions">
-        {account}
-        <details className="studio-mobile-menu" ref={menu} onKeyDown={event => {
-          if (event.key === "Escape") { closeMenu(); menu.current?.querySelector("summary")?.focus(); }
-        }}>
-          <summary aria-label="Navigation menu"><Menu size={20}/></summary>
-          <nav aria-label="Mobile navigation"><Link href="#how-it-works" onClick={closeMenu}>How it works</Link><Link href="/sample" onClick={closeMenu}>Sample report</Link><Link href="/library" onClick={closeMenu}>My ideas</Link></nav>
-        </details>
-      </div>
+  const links = <>
+    {landing ? <Link href="/#how-it-works" onClick={closeMenu}>How it works</Link> : <Link href="/home" aria-current={pathname === "/home" ? "page" : undefined} onClick={closeMenu}>Home</Link>}
+    {authConfigured && <MyIdeasLink onClick={closeMenu}/>}
+    <Link href="/sample" aria-current={pathname === "/sample" ? "page" : undefined} onClick={closeMenu}>Sample report</Link>
+  </>;
+
+  return <header className={`app-header${chat ? " app-header-chat" : ""}`}>
+    <div className="app-header-inner">
+      <Link className="brand" href="/" aria-label="Hunchlane home"><LaneMark/><span>hunchlane<span className="brand-dot">.</span></span></Link>
+      {authentication ? <nav className="app-auth-nav" aria-label="Main navigation"><Link href="/sample">Take a look around</Link></nav> : <>
+        <nav className="app-desktop-nav" aria-label="Main navigation">{links}</nav>
+        <div className="app-header-actions">
+          <div className="app-account">{authConfigured ? <AuthActions largeTarget/> : <Link href="/sign-in" className="nav-signin">Sign in</Link>}</div>
+          <details className="app-mobile-menu" ref={menu} key={pathname} onKeyDown={event => {
+            if (event.key === "Escape") { closeMenu(); menu.current?.querySelector("summary")?.focus(); }
+          }}>
+            <summary aria-label="Navigation menu"><Menu size={20}/></summary>
+            <nav aria-label="Mobile navigation">{links}</nav>
+          </details>
+        </div>
+      </>}
     </div>
   </header>;
 }

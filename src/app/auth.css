@@ -1,11 +1,7 @@
-.auth-header{background:#f5f6f4;font-family:var(--font-studio),sans-serif}
-.auth-header-inner{max-width:1280px;margin:auto;padding:0 40px;min-height:84px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.auth-header .brand{font-size:24px;letter-spacing:-1px}
-.auth-header nav a{min-height:44px;display:flex;align-items:center;gap:9px;font-size:12px;color:#52665b}
-.auth-header nav a:hover{color:#175d50}
+
 body:has(.auth-studio){background:#f5f6f4}
 body:has(.auth-studio)>.site-footer{display:none}
-.auth-studio{max-width:1280px;margin:auto;padding:12px 40px 40px;font-family:var(--font-studio),sans-serif;--paper:#fff;--teal:#175d50}
+.auth-studio{margin:auto;padding:12px 40px 40px;font-family:var(--font-studio),sans-serif;--paper:#fff;--teal:#175d50}
 .auth-frame{display:grid;grid-template-columns:1fr 1fr;min-height:max(660px,calc(100svh - 136px));border:1px solid #e0e7e0;border-radius:28px;overflow:hidden;background:white;box-shadow:0 18px 64px -36px #2f594c38}
 .auth-story{position:relative;display:flex;flex-direction:column;padding:38px 48px 32px;background:#e8f1eb;isolation:isolate;overflow:hidden}
 .auth-story::before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(#a4b5a5 0.6px,transparent 0.6px);background-size:7px 7px;opacity:.22;mask-image:linear-gradient(transparent,#000 40%,transparent)}
@@ -50,6 +46,6 @@ body:has(.auth-studio)>.site-footer{display:none}
 .auth-verification .cl-rootBox,.auth-verification .cl-cardBox{max-width:100%;width:100%}
 .auth-verification .cl-cardBox{box-shadow:none}
 @media(max-width:1000px){.auth-story{padding-left:30px;padding-right:30px}.auth-panel{padding:42px 32px}.auth-note{max-width:330px}.auth-mini-angle{right:5px}.auth-mini-evidence{left:5px}.auth-orbit-two{width:330px;height:330px}}
-@media(max-width:760px){.auth-header-inner{padding:0 24px;min-height:72px}.auth-header .brand{font-size:22px}.auth-header nav a{font-size:11px;gap:5px}.auth-studio{padding:4px 20px 24px;max-width:520px}.auth-frame{grid-template-columns:1fr;min-height:0;border-radius:24px}.auth-story{min-height:172px;padding:30px 26px;justify-content:center}.auth-kicker,.auth-mini,.auth-orbit,.auth-story-foot{display:none}.auth-art{position:absolute;width:170px;right:-10px;top:0;bottom:0;margin:0;min-height:0;opacity:.8}.auth-note{width:170px;transform:rotate(4deg)}.auth-story-copy{margin:0;max-width:70%}.auth-story-copy h2{font-size:27px;letter-spacing:-.9px;line-height:1.15}.auth-story-copy p{display:none}.auth-panel{padding:34px 26px 26px}.auth-content h1{font-size:33px;letter-spacing:-1.2px}.auth-overline{margin-bottom:14px}.auth-description{font-size:13px;margin:14px 0 26px}.auth-switch{margin-top:22px}.auth-reassurance{font-size:11px;margin-left:0;margin-right:0}}
-@media(max-width:360px){.auth-header-inner{padding:0 18px}.auth-header .brand{font-size:20px}.auth-header nav a{font-size:10px}.auth-header nav svg{display:none}.auth-studio{padding-left:12px;padding-right:12px}.auth-panel{padding:30px 22px 22px}.auth-story{padding:28px 22px;min-height:150px}.auth-art{width:135px;right:-12px}.auth-note{width:135px}.auth-story-copy h2{font-size:25px}.auth-content h1{font-size:31px}.google-button{font-size:14px}}
+@media(max-width:760px){.auth-studio{padding:4px 20px 24px;}.auth-frame{grid-template-columns:1fr;min-height:0;border-radius:24px}.auth-story{min-height:172px;padding:30px 26px;justify-content:center}.auth-kicker,.auth-mini,.auth-orbit,.auth-story-foot{display:none}.auth-art{position:absolute;width:170px;right:-10px;top:0;bottom:0;margin:0;min-height:0;opacity:.8}.auth-note{width:170px;transform:rotate(4deg)}.auth-story-copy{margin:0;max-width:70%}.auth-story-copy h2{font-size:27px;letter-spacing:-.9px;line-height:1.15}.auth-story-copy p{display:none}.auth-panel{padding:34px 26px 26px}.auth-content h1{font-size:33px;letter-spacing:-1.2px}.auth-overline{margin-bottom:14px}.auth-description{font-size:13px;margin:14px 0 26px}.auth-switch{margin-top:22px}.auth-reassurance{font-size:11px;margin-left:0;margin-right:0}}
+@media(max-width:360px){.auth-studio{padding-left:12px;padding-right:12px}.auth-panel{padding:30px 22px 22px}.auth-story{padding:28px 22px;min-height:150px}.auth-art{width:135px;right:-12px}.auth-note{width:135px}.auth-story-copy h2{font-size:25px}.auth-content h1{font-size:31px}.google-button{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.google-button:active:not(:disabled){transform:none}}

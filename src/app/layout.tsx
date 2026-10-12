@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import localFont from "next/font/local";
 import { Header } from "@/components/header";
 import "./globals.css";
+import "./site-layout.css";
 const studioFont = localFont({
   src: "./fonts/Manrope.ttf",
   variable: "--font-studio",

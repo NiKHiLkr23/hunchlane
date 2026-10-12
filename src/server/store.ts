@@ -74,7 +74,8 @@ export async function listHomeRuns(owner: string): Promise<HomeRun[]> {
   if (!owner) throw new Error("UNAUTHENTICATED");
   const rows =
     await db()`select id, brief->>'idea' as idea, brief->>'category' as category,
-    status, stage, created_at, parent_id, mode, recovery, report->>'title' as title, (report is not null) as has_report
+    status, stage, created_at, parent_id, mode, recovery, report->>'title' as title, (report is not null) as has_report,
+    coalesce(conversation->'clarification'->>'state'='waiting',false) as awaiting_answers
     from runs where owner_id=${owner} order by created_at desc limit 50`;
   return rows.map((row) => ({
     id: String(row.id),
@@ -88,6 +89,7 @@ export async function listHomeRuns(owner: string): Promise<HomeRun[]> {
     hasReport: Boolean(row.has_report),
     mode: row.mode === "autonomous" ? "autonomous" : "legacy",
     recovery: row.recovery as "working" | "recovering" | "reconciling",
+    awaitingAnswers: Boolean(row.awaiting_answers),
   }));
 }
 export async function createRun(

@@ -72,7 +72,9 @@ export function HomeDashboard({
       : "A sentence is enough.";
   const description =
     next.kind === "active"
-      ? "Your research continues in the background. Open the conversation for the latest update."
+      ? next.run.awaitingAnswers
+        ? "Answer the clarification questions in your conversation. Research will continue automatically afterward."
+        : "Your research continues in the background. Open the conversation for the latest update."
       : next.kind === "draft"
       ? "Pick up where you left off. Add a little context, then choose when to start research."
       : next.kind === "report"
@@ -82,7 +84,7 @@ export function HomeDashboard({
       : "An app, a product, a service. Start with something you wish existed, or a problem you’d like to solve.";
   const label =
     next.kind === "active"
-      ? "Research in progress"
+      ? next.run.awaitingAnswers ? "Waiting for answers" : "Research in progress"
       : next.kind === "draft"
       ? "Saved on this device"
       : next.kind === "report"
@@ -93,7 +95,9 @@ export function HomeDashboard({
         : "Research paused"
       : "Your first idea";
   const action =
-    next.kind === "active" || next.kind === "paused"
+    next.kind === "active" && next.run.awaitingAnswers
+      ? "Answer questions"
+      : next.kind === "active" || next.kind === "paused"
       ? "View progress"
       : next.kind === "draft"
       ? "Continue draft"
@@ -107,7 +111,7 @@ export function HomeDashboard({
     : "/new?fresh=1";
 
   return (
-    <main id="main" className="idea-desk">
+    <main id="main" className="idea-desk page-container">
       <div className="desk-intro">
         <div>
           <h1>
@@ -181,7 +185,7 @@ export function HomeDashboard({
               {next.kind === "active" && (
                 <div className="desk-stage">
                   <span aria-hidden="true" />
-                  {homeStages[next.run.stage]}
+                  {next.run.awaitingAnswers ? "Clarifying your idea" : homeStages[next.run.stage]}
                   <small>
                     Last saved update · open progress for the latest
                   </small>
@@ -316,7 +320,7 @@ export function HomeDashboard({
                         ? "Research ended"
                         : "Research paused"
                       : run.status === "queued"
-                      ? "Queued"
+                      ? run.awaitingAnswers ? "Waiting for answers" : "Queued"
                       : "Researching"}
                   </span>
                   <ArrowUpRight className="desk-row-arrow" size={18} />

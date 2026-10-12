@@ -53,6 +53,7 @@ export function IdeaComposer() {
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
   const ideaInput = useRef<HTMLTextAreaElement>(null);
+  const canSubmit = ready && IdeaBriefSchema.safeParse(brief).success;
 
   useEffect(() => {
     const saved = readIdeaDraft();
@@ -64,11 +65,7 @@ export function IdeaComposer() {
   function describe(event: React.FormEvent) {
     event.preventDefault();
     const parsed = IdeaBriefSchema.safeParse(brief);
-    if (!parsed.success) {
-      setError(parsed.error.issues[0].message);
-      ideaInput.current?.focus();
-      return;
-    }
+    if (!ready || !parsed.success) return;
     if (!saveIdeaDraft({
       ...newDraft(),
       brief: parsed.data,
@@ -108,11 +105,10 @@ export function IdeaComposer() {
             maxLength={3000}
             placeholder={"An app, a product, a service…\nWhat would you like to explore?"}
             rows={4}
-            aria-invalid={Boolean(error)}
             aria-describedby={`idea-hint${error ? " idea-error" : ""}`}
           />
           <div className="composer-action">
-            <Button type="submit" className="composer-send" aria-label="Explore my idea" disabled={!ready}>
+            <Button type="submit" className="composer-send" aria-label="Explore my idea" disabled={!canSubmit}>
               <ArrowUp size={18} />
             </Button>
           </div>

@@ -4,7 +4,7 @@ import "@/app/auth.css";
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <main id="main" className="auth-studio">
+    <main id="main" className="auth-studio page-container">
       <div className="auth-frame">
         <aside className="auth-story" aria-label="A place for your next idea">
           <div className="auth-art" aria-hidden="true">
