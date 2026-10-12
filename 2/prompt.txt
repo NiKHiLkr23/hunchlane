@@ -1,0 +1,1 @@
+I'm building hunchlane for the neatlogs hackathon, I just realized the goal was to build a ai agent or a bunch of agents, do we even qualify for that ?
