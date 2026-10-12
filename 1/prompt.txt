@@ -1,0 +1,9 @@
+currently for the sample report on the sample page and for illustrative sample we are using an example which is not very good..
+lets curate our own example.. 
+lets use hunchlane as an example get all the data required and show all the details of generated report and why hunclane will work and other wont.
+my plan is to build this product where users can validate the idea ,get insights and then create an app or website or product with hunchlane itself instead of going to claude or codex or lovaable after this
+they would be able to deploy their product and manage it from hunclane and we can add more and more features on top of it
+
+---
+
+don't make any change sto the repo. first confirm here
