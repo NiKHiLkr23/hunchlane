@@ -23,7 +23,7 @@ test("copies and downloads the whole saved report regardless of the active tab",
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download Markdown", exact: true }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("find-a-time-keep-the-friendship-v1.md");
+  expect(download.suggestedFilename()).toBe("hunchlane-from-idea-to-working-product-v1.md");
   expect(await readFile((await download.path())!, "utf8")).toBe(expected);
   expect(researchCalls).toEqual([]);
   await page.getByRole("button", { name: "Download Markdown", exact: true }).focus();

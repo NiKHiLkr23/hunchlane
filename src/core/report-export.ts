@@ -1,5 +1,6 @@
 import { safeWebUrl } from "./evidence";
 import type { ResearchContent, ResearchReport } from "./types";
+import { isCuratedSample, sampleCostModel, sampleStudy } from "./sample-study";
 
 // Export only the saved report, never run identities, operation receipts, or local explorer state.
 function text(value: string) {
@@ -20,6 +21,7 @@ export function reportMarkdown(
   sample = false,
   shared = false
 ) {
+  const curated = sample && isCuratedSample(report);
   const claim = (value: ResearchContent["summary"]) => {
     const references = value.sourceIds.flatMap((id) => {
       const index = report.sources.findIndex((source) => source.id === id);
@@ -49,7 +51,7 @@ export function reportMarkdown(
     )}`,
     ...(sample
       ? [
-          "**Illustrative sample — not live research. Source links are sample references, not retrieved evidence.**",
+          curated ? "**Curated Hunchlane sample — official pages reviewed October 12, 2026; not a Hunchlane live research run. Vendor claims are not independently tested. Planned features, hypotheses, and illustrative assumptions are not validated outcomes.**" : "**Illustrative sample — not live research. Source links are sample references, not retrieved evidence.**",
         ]
       : []),
     ...(shared ? ["Shared saved report snapshot."] : []),
@@ -112,6 +114,16 @@ export function reportMarkdown(
         : "Unavailable"
     }**\n\n${text(report.finance.message)}`,
   ];
+  if (curated) {
+    const model = sampleCostModel();
+    const finance = sampleStudy.financial;
+    sections.push(
+      `## The product vision\n\n${text(sampleStudy.positioning)}\n\n${text(sampleStudy.audience)}\n\n${sampleStudy.journey.map(step => `### ${text(step.title)} · ${text(step.status)}\n\n${text(step.detail)}`).join("\n\n")}`,
+      ...([["Reasons it could work", sampleStudy.advantages], ["Reasons it could fail", sampleStudy.risks]] as const).map(([title, items]) => `## ${title} · hypotheses\n\n${items.map(item => `### ${text(item.title)}\n\n${text(item.detail)}`).join("\n\n")}`),
+      `## Proposed next decision\n\n${text(sampleStudy.decision)}`,
+      `## Illustrative monthly costs · ${finance.currency}\n\n${text(finance.note)}\n\n- Price per customer: ${finance.monthlyPrice}\n${finance.costs.map(cost => `- ${text(cost.label)}: ${cost.amount}`).join("\n")}\n- Variable cost per customer: ${model.variableCost}\n- Monthly fixed costs: ${finance.fixedCost}\n- Contribution per customer: ${model.contribution}\n- Customers to cover entered costs: ${model.breakEvenCustomers}\n\n| Customers | Revenue | Costs | Result |\n| --- | --- | --- | --- |\n${model.scenarios.map(row => `| ${row.customers} | ${row.revenue} | ${row.cost} | ${row.result} |`).join("\n")}\n\nLocal arithmetic, not a forecast or a CFO.ai model. This does not establish full business break-even.`,
+    );
+  }
   if (report.finance.status === "verified") {
     if (report.finance.modelUrl)
       sections.push(link("Open saved model", report.finance.modelUrl));
@@ -154,7 +166,7 @@ export function reportMarkdown(
       );
   }
   sections.push(
-    "The interactive assumption explorer uses editable, unsourced inputs. Its temporary calculations are not part of this saved report."
+    curated ? "The sample cost example uses chosen assumptions; no customer or financial results have been collected." : "The interactive assumption explorer uses editable, unsourced inputs. Its temporary calculations are not part of this saved report."
   );
   if (report.changes.length)
     sections.push(
@@ -173,11 +185,11 @@ export function reportMarkdown(
                   source.title,
                   source.url
                 )}\n\n- Type: ${text(source.kind)}\n- ${
-                  sample ? "Sample reference date" : "Retrieved"
+                  curated ? "Editorial review date" : sample ? "Sample reference date" : "Retrieved"
                 }: ${text(source.retrievedAt)}\n- Evidence: ${
-                  sample
-                    ? "Illustrative reference"
-                    : source.evidenceLevel === "page_text"
+                  curated
+                    ? "Reviewed official page summary; vendor claims not independently tested"
+                    : sample ? "Illustrative reference" : source.evidenceLevel === "page_text"
                     ? "Fetched page text"
                     : source.evidenceLevel === "search_preview"
                     ? "Search preview only"

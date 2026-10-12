@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("Numbers shows a readable coming-soon placeholder without controls or financial requests", async ({ page }) => {
+test("Sample shows chosen cost assumptions alongside coming-soon numbers without financial requests", async ({ page }) => {
   const writes: string[] = [];
   page.on("request", request => {
     if (request.method() !== "GET" && request.method() !== "HEAD") writes.push(request.url());
@@ -10,6 +10,10 @@ test("Numbers shows a readable coming-soon placeholder without controls or finan
   const panel = page.getByRole("tabpanel", { name: "The numbers", exact: true });
   await expect(panel.getByRole("heading", { name: "Numbers coming soon", exact: true })).toBeVisible();
   await expect(panel).toContainText("Explore pricing, costs, and break-even for your idea.");
+  await expect(panel.getByRole("heading", { name: "What would sustainable delivery cost?" })).toBeVisible();
+  await expect(panel).toContainText("not Hunchlane pricing or provider quotes");
+  await expect(panel).toContainText("No CFO.ai model was created");
+  await expect(panel.getByRole("row", { name: "25 $1,225 $1,125 $100" })).toBeVisible();
   await expect(panel.getByRole("spinbutton")).toHaveCount(0);
   await expect(panel.getByRole("slider")).toHaveCount(0);
   await expect(panel.getByRole("button")).toHaveCount(0);

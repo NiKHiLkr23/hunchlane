@@ -230,3 +230,11 @@
   .report-preview-footer button { transition: none; }
   .report-preview-footer button:active:not(:disabled) { transform: none; }
 }
+
+.report-curation-note { margin: 0; padding: 16px 28px 0; color: var(--studio-muted); font-size: 11px; line-height: 1.7; }
+.report-book .report-preview-footer { flex-wrap: wrap; }
+.report-book .report-preview-footer nav { margin-left: auto; }
+@media (max-width: 600px) {
+  .report-curation-note { padding: 14px 20px 0; }
+  .report-book .report-preview-footer > [role="status"] { flex-basis: 100%; }
+}

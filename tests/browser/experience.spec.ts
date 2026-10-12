@@ -70,47 +70,46 @@ test("hero motion can be interrupted without losing an editable idea",async({pag
   await expect(idea).toHaveValue(/repairs everyday/);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
 });
-test("the unfolding sample remains readable with accessible sources and live reduced motion",async({page})=>{
-  const paidRequests:string[]=[];
-  page.on("request",request=>{if(request.url().endsWith("/api/runs")&&request.method()==="POST")paidRequests.push(request.url());});
-  await page.emulateMedia({reducedMotion:"no-preference"});
+test("the curated preview turns pages, respects reduced motion, and opens the full sample", async ({ page }) => {
+  const paidRequests: string[] = [];
+  page.on("request", request => { if (request.url().endsWith("/api/runs") && request.method() === "POST") paidRequests.push(request.url()); });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  const preview=page.getByRole("article",{name:"Find a time. Keep the friendship."});
+  const preview = page.getByRole("article", { name: "Hunchlane sample report preview" });
   await preview.scrollIntoViewIfNeeded();
-  await expect(preview.getByText("Illustrative sample",{exact:true})).toBeVisible();
-  await expect(preview.getByText(/It is not live research/)).toBeVisible();
-  const source=preview.getByRole("link",{name:"Doodle — official website, opens a new tab",exact:true});
-  await expect(source).toHaveAttribute("href","https://doodle.com/");
+  await expect(preview.getByText("Illustrative sample", { exact: true })).toBeVisible();
+  await expect(preview.getByText(/Curated from official sources/)).toBeVisible();
+  const source = preview.getByRole("link", { name: /Lovable Official website/ });
+  await expect(source).toHaveAttribute("href", "https://lovable.dev/");
   await source.focus();
   await expect(source).toBeFocused();
-  expect(await source.evaluate(element=>getComputedStyle(element).outlineStyle)).not.toBe("none");
-  await page.emulateMedia({reducedMotion:"reduce"});
-  await expect(source).toBeFocused();
-  await expect.poll(() => preview.locator(".report-panel").evaluateAll(elements=>elements.every(element=>getComputedStyle(element).opacity==="1"&&getComputedStyle(element).transform==="none")), { timeout: 1000 }).toBe(true);
-  await expect(preview.getByRole("heading",{name:"Keep the questions open"})).toBeVisible();
-  await expect(preview.getByRole("heading",{name:"Try a small experiment"})).toBeVisible();
-  await page.emulateMedia({reducedMotion:"no-preference"});
-  await expect(source).toBeFocused();
-  await preview.getByRole("link",{name:"Open the sample report"}).click();
+  expect(await source.evaluate(element => getComputedStyle(element).outlineStyle)).not.toBe("none");
+  const initialHeight = (await preview.boundingBox())!.height;
+  await preview.getByRole("button", { name: "Next report page" }).click();
+  await expect(preview.getByRole("heading", { name: "Keep the evidence in the build" })).toBeVisible();
+  await expect(preview.getByRole("link", { name: /Lovable Official website/ })).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await preview.getByRole("button", { name: "Next report page" }).click();
+  await expect(preview.getByRole("heading", { name: "Help ten founders take the next step" })).toBeVisible();
+  expect((await preview.boundingBox())!.height).toBeCloseTo(initialHeight, 0);
+  await page.screenshot({ path: `artifacts/hunchlane-preview-test-${test.info().project.name}.png`, animations: "disabled" });
+  await preview.getByRole("button", { name: "Return to first report page" }).click();
+  await expect(source).toBeVisible();
+  await expect(preview.getByRole("button", { name: "Previous report page" })).toBeDisabled();
+  await preview.getByRole("link", { name: "Full sample report" }).click();
   await expect(page).toHaveURL(/\/sample$/);
+  await expect(page.getByRole("heading", { name: "Hunchlane: from idea to working product" })).toBeVisible();
   expect(paidRequests).toEqual([]);
-  await expect(page.getByRole("heading", { name: "Find a time. Keep the friendship." })).toBeVisible();
-  await page.getByRole("link", { name: "← Back to Hunchlane", exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await page.setViewportSize({width:320,height:800});
-  await page.locator(".landing-closing").scrollIntoViewIfNeeded();
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
-  await page.screenshot({path:`artifacts/teal-landing-complete-narrow-${test.info().project.name}.png`,fullPage:true,animations:"disabled"});
 });
-test("the report preview is complete when enhancement scripts are unavailable",async({browser})=>{
-  const context=await browser.newContext({javaScriptEnabled:false,reducedMotion:"reduce"});
-  const page=await context.newPage();
+test("the curated preview has readable sources and a report link without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, reducedMotion: "reduce" });
+  const page = await context.newPage();
   await page.goto("http://localhost:3110/");
-  const preview=page.getByRole("article",{name:"Find a time. Keep the friendship."});
-  await expect(preview.getByRole("heading",{name:"Learn from what exists"})).toBeVisible();
-  await expect(preview.getByRole("heading",{name:"Keep the questions open"})).toBeVisible();
-  await expect(preview.getByRole("heading",{name:"Try a small experiment"})).toBeVisible();
-  await expect(preview.getByRole("link",{name:"Open the sample report"})).toHaveAttribute("href","/sample");
+  const preview = page.getByRole("article", { name: "Hunchlane sample report preview" });
+  await expect(preview.getByRole("heading", { name: "Hunchlane has company." })).toBeVisible();
+  await expect(preview.getByRole("link", { name: /Lovable Official website/ })).toBeVisible();
+  await expect(preview.getByRole("link", { name: "Full sample report" })).toHaveAttribute("href", "/sample");
+  await expect(preview.getByRole("button", { name: "Next report page" })).toBeDisabled();
   await context.close();
 });
 test("an idea survives navigation and missing account setup",async({page})=>{
@@ -118,11 +117,39 @@ test("an idea survives navigation and missing account setup",async({page})=>{
   await expect(page.getByRole("region",{name:"Idea conversation"})).toContainText("meal kit");await page.getByRole("radio",{name:"Physical product"}).check();await page.getByRole("textbox",{name:"Your answer"}).fill("Delivered locally for people living alone");await page.getByRole("button",{name:"Review with what I have"}).click();
   await expect(page.getByRole("region",{name:"Research brief"})).toContainText("Delivered locally");await page.getByRole("button",{name:"Sign in to research"}).click();await expect(page.locator("main").getByRole("alert")).toContainText("Sign-in is being connected");await page.reload();await expect(page.getByRole("region",{name:"Research brief"})).toContainText("meal kit");
 });
-test("report sections expose citations and coming-soon numbers",async({page})=>{
-  await page.goto("/sample");await expect(page.getByText("Illustrative content, not live research.",{exact:false})).toBeVisible();await page.getByRole("tab",{name:/What exists/}).click();await expect(page.getByRole("heading",{name:"Doodle"})).toBeVisible();await expect(page.getByRole("link",{name:"Source 1: Doodle, official website"}).first()).toHaveAttribute("href","https://doodle.com/");await page.getByRole("tab",{name:"Your angle"}).click();await expect(page.getByRole("heading",{name:"Help the plan actually happen"})).toBeVisible();await page.getByRole("tab",{name:"The numbers"}).click();await expect(page.getByRole("heading",{name:"Numbers coming soon",exact:true})).toBeVisible();await expect(page.getByRole("spinbutton")).toHaveCount(0);await page.getByRole("tab",{name:"Sources",exact:true}).click();await expect(page.getByText("Illustrative links for this sample. They were not retrieved by a live research run.",{exact:false})).toBeVisible();
+test("curated report distinguishes reviewed claims, planned capabilities, and hypotheses", async ({ page }) => {
+  await page.goto("/sample");
+  await expect(page.getByText(/Curated research, reviewed October 12, 2026/)).toBeVisible();
+  const journey = page.getByRole("list").filter({ has: page.getByRole("heading", { name: "Build", exact: true }) });
+  await expect(journey).toContainText("Planned");
+  await expect(page.getByRole("heading", { name: "Help ten founders take the next step" })).toBeVisible();
+  await page.screenshot({ path: `artifacts/hunchlane-overview-${test.info().project.name}.png`, fullPage: true, animations: "disabled" });
+  await page.getByRole("tab", { name: /What exists/ }).click();
+  await expect(page.getByRole("heading", { name: "Lovable", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Source 1: Lovable · official product overview" }).first()).toHaveAttribute("href", "https://lovable.dev/");
+  await page.getByRole("tab", { name: "Your angle" }).click();
+  await expect(page.getByRole("heading", { name: "Keep the evidence in the build" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Reasons it could fail" })).toBeVisible();
+  await page.screenshot({ path: `artifacts/hunchlane-strategy-${test.info().project.name}.png`, fullPage: true, animations: "disabled" });
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await expect(page.getByText(/Official pages reviewed for this curated sample/)).toBeVisible();
+  await expect(page.getByText(/No customer interviews, payment evidence/)).toBeVisible();
+  await expect(page.locator(".source-list li")).toHaveCount(5);
 });
-test("keyboard tabs, narrow layout and reduced motion stay usable",async({page})=>{
-  await page.goto("/sample");await page.getByRole("tab",{name:"The big picture"}).focus();await page.keyboard.press("ArrowRight");await expect(page.getByRole("tab",{name:/What exists/})).toBeFocused();await page.keyboard.press("Enter");await expect(page.getByRole("heading",{name:"Doodle"})).toBeVisible();await page.emulateMedia({reducedMotion:"reduce"});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);await page.screenshot({path:`artifacts/report-${test.info().project.name}.png`,fullPage:true});await page.goto("/");expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);await page.screenshot({path:`artifacts/home-${test.info().project.name}.png`,fullPage:true});
+test("keyboard tabs and narrow report sections remain usable", async ({ page }) => {
+  await page.goto("/sample");
+  await page.getByRole("tab", { name: "The big picture" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: /What exists/ })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { name: "Lovable", exact: true })).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 320, height: 800 });
+  for (const name of ["The big picture", "What exists", "Your angle", "The numbers", "Sources"]) {
+    await page.getByRole("tab", { name: name === "What exists" ? /What exists/ : name, exact: name !== "What exists" }).click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+  await page.screenshot({ path: `artifacts/hunchlane-sources-narrow-${test.info().project.name}.png`, fullPage: true });
 });
 test("unsigned users cannot read or create private research",async({request,page})=>{
   const read=await request.get("/api/runs/does-not-belong-to-you");expect([401,503]).toContain(read.status());const write=await request.post("/api/runs",{data:{},headers:{Origin:"https://other.example"}});expect(write.status()).toBe(403);await page.goto("/library");await expect(page.getByRole("heading",{name:"Keep your hunches together."})).toBeVisible();await page.goto("/share/revoked-or-missing");await expect(page.getByRole("heading",{name:"This report isn’t here."})).toBeVisible();

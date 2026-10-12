@@ -40,7 +40,8 @@ beforeEach(async () => {
   harness.fetch.mockResolvedValue([]);
   harness.composition.mockImplementation(async (runId: string, ...args: unknown[]) => {
     const phase = args[0] === "sponsored-repair" ? "sponsored-repair" : "sponsored-composition";
-    if (await claimOperation(runId, phase)) await saveOperation(runId, phase, structuredClone(sampleReport));
+    // Leave room for unresolved intake questions; editorial sample copy is not this fixture's contract.
+    if (await claimOperation(runId, phase)) await saveOperation(runId, phase, { ...structuredClone(sampleReport), unknowns: ["Fixture question about customer demand"] });
   });
 });
 afterEach(() => vi.unstubAllEnvs()); afterAll(() => engine.close());

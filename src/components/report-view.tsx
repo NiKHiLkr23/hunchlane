@@ -19,6 +19,8 @@ import type {
 } from "@/core/types";
 import { ReportExport } from "./report-export";
 import { NumbersComingSoon } from "./numbers-coming-soon";
+import { SampleOverview, SampleStrategy, SampleNumbers } from "./sample-study";
+import { isCuratedSample } from "@/core/sample-study";
 import { Button } from "./ui/button";
 type Claim = ResearchContent["summary"];
 function Citation({ id, sources }: { id: string; sources: EvidenceSource[] }) {
@@ -71,6 +73,7 @@ export function ReportView({
   embedded?: boolean;
 }) {
   const Container = embedded ? "section" : "main";
+  const curated = sample && isCuratedSample(report);
   return (
     <Container
       id={embedded ? undefined : "main"}
@@ -91,8 +94,8 @@ export function ReportView({
         <div className="sample-banner">
           <BookOpen size={16} />
           <span>
-            <strong>A sample, so you know what to expect.</strong> Illustrative
-            content, not live research.
+            {curated ? <><strong>We put our own idea under the lens.</strong> Curated research,
+            reviewed October 12, 2026. Planned features and assumptions are labeled.</> : <><strong>A sample, so you know what to expect.</strong> Illustrative content, not live research.</>}
           </span>
           <Link href="/new">
             Try your own idea <ArrowRight size={14} />
@@ -182,6 +185,7 @@ export function ReportView({
               </span>
             </aside>
           </div>
+          {curated && <SampleOverview />}
           <section className="experiment-card">
             <div className="experiment-heading">
               <span className="note-icon">
@@ -299,17 +303,19 @@ export function ReportView({
               </article>
             ))}
           </div>
+          {curated && <SampleStrategy />}
         </Tabs.Content>
         <Tabs.Content value="numbers" className="tab-content">
+          {curated && <SampleNumbers />}
           <NumbersComingSoon />
         </Tabs.Content>
         <Tabs.Content value="sources" className="tab-content">
           <div className="section-intro">
             <h2>Keep the evidence within reach.</h2>
             <p>
-              {sample
-                ? "Illustrative links for this sample. They were not retrieved by a live research run."
-                : "Sources returned by the research provider, with retained passages or research summaries. Open the original page to check the context."}
+              {curated
+                ? "Official pages reviewed for this curated sample. Summaries describe vendor claims, not independently tested capabilities. This was not a Hunchlane live research run."
+                : sample ? "Illustrative links for this sample. They were not retrieved by a live research run." : "Sources returned by the research provider, with retained passages or research summaries. Open the original page to check the context."}
             </p>
           </div>
           <ol className="source-list">
@@ -323,9 +329,9 @@ export function ReportView({
                   </a>
                   <span className="source-host">
                     {new URL(s.url).hostname} ·{" "}
-                    {sample
-                      ? "Sample reference"
-                      : `Retrieved ${new Date(s.retrievedAt).toLocaleDateString(
+                    {curated
+                      ? "Reviewed Oct 12, 2026 · official page summary"
+                      : sample ? "Sample reference" : `Retrieved ${new Date(s.retrievedAt).toLocaleDateString(
                           "en",
                           { month: "short", day: "numeric", year: "numeric" }
                         )}`}
@@ -335,16 +341,14 @@ export function ReportView({
               </li>
             ))}
           </ol>
-          {!sample && (
-            <section className="coverage-note">
+          {(!sample || curated) && <section className="coverage-note">
               <h3>What this search covers</h3>
               <ul>
                 {report.searchNotes.map((n) => (
                   <li key={n}>{n}</li>
                 ))}
               </ul>
-            </section>
-          )}
+          </section>}
         </Tabs.Content>
       </Tabs.Root>
       <div className="report-bottom" hidden={embedded}>

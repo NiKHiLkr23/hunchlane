@@ -75,8 +75,8 @@ export default async function Home() {
               <br />A more useful next move.
             </h2>
             <p>
-              See how one idea becomes alternatives, open questions, and
-              something small to try.
+              We researched Hunchlane itself. Explore the alternatives, our
+              possible advantage, and the test that could change our minds.
             </p>
           </div>
           <LandingReportPreview />

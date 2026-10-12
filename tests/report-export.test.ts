@@ -11,15 +11,27 @@ describe("portable saved report", () => {
     const markdown = reportMarkdown(report);
     for (const value of [report.title, report.brief.idea, report.experiment.title, report.experiment.successSignal,
       report.unknowns[0], report.searchNotes[0], report.changes[0], report.finance.message]) expect(markdown).toContain(value);
-    expect(markdown).toContain("[1](<https://doodle.com/>)");
+    expect(markdown).toContain("[1](<https://lovable.dev/>)");
     expect(markdown).toContain("**Hypothesis:**");
     expect(markdown).toContain("**Observation:**");
     expect(markdown).toContain("Search preview only");
     expect(markdown).toContain("**CFO.ai: Unavailable**");
     expect(markdown).not.toContain("Verified saved model");
-    expect(reportMarkdown(report, true)).toContain("Illustrative sample — not live research");
-    expect(reportMarkdown(report, true)).toContain("Evidence: Illustrative reference");
+    expect(reportMarkdown(report, true)).toContain("Curated Hunchlane sample");
+    expect(reportMarkdown(report, true)).toContain("Evidence: Reviewed official page summary");
+    expect(reportMarkdown(report, true)).toContain("Reasons it could fail");
+    expect(reportMarkdown(report, true)).toContain("Build · Planned");
+    expect(reportMarkdown(report, true)).toContain("| 25 | 1225 | 1125 | 100 |");
+    expect(markdown).not.toContain("## The product vision");
     expect(reportMarkdown(report, false, true)).toContain("Shared saved report snapshot");
+  });
+  it("keeps Hunchlane editorial sections out of other illustrative reports", () => {
+    const report = structuredClone(sampleReport);
+    report.brief.idea = "A meal kit for people cooking for one";
+    const markdown = reportMarkdown(report, true);
+    expect(markdown).toContain("Illustrative sample — not live research");
+    expect(markdown).not.toContain("## The product vision");
+    expect(markdown).not.toContain("## Illustrative monthly costs");
   });
   it("exports verified financial assumptions and scenarios, excluding internal receipts", () => {
     const report = structuredClone(sampleReport);
