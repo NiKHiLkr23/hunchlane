@@ -1,0 +1,57 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4Q1A881E6R38VGC09N4QBKB",
+  "session_id": "01a12ba2-e429-7b72-9f6d-cddb475a5c5e",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-12T03:08:33.192402Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 3,
+  "files_touched": [
+    "src/components/agent-question-card.tsx",
+    "src/components/auth-content.tsx"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "16966e81c35c",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 3306325,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 107325312,
+    "output_tokens": 353295,
+    "api_call_count": 477,
+    "subagent_tokens_complete": false
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-12T03:08:32.57041Z",
+    "agent_lines": 8,
+    "agent_removed": 6,
+    "human_added": 130,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 138,
+    "total_lines_changed": 171,
+    "agent_percentage": 8.187134502923977,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

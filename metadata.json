@@ -1,0 +1,28 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4Q1A881E6R38VGC09N4QBKB",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "src/components/agent-question-card.tsx",
+    "src/components/auth-content.tsx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3306325,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 107325312,
+    "output_tokens": 353295,
+    "api_call_count": 477,
+    "subagent_tokens_complete": false
+  }
+}
