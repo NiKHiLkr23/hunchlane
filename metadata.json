@@ -3,7 +3,7 @@
   "checkpoint_id": "01M4PT50DD8VXE9NQ42X18E2PV",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 20,
+  "checkpoints_count": 24,
   "files_touched": [
     "DESIGN.md",
     "docs/CONTINUOUS_AGENT.md",
@@ -65,14 +65,21 @@
       "compact_transcript": "/2/transcript.jsonl",
       "content_hash": "/2/content_hash.txt",
       "prompt": "/2/prompt.txt"
+    },
+    {
+      "metadata": "/3/metadata.json",
+      "transcript": "/3/full.jsonl",
+      "compact_transcript": "/3/transcript.jsonl",
+      "content_hash": "/3/content_hash.txt",
+      "prompt": "/3/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1511508,
+    "input_tokens": 1577534,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 52699264,
-    "output_tokens": 142714,
-    "api_call_count": 318,
+    "cache_read_tokens": 53694080,
+    "output_tokens": 146876,
+    "api_call_count": 335,
     "subagent_tokens_complete": true
   }
 }

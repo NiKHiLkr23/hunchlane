@@ -1,0 +1,14 @@
+get the analytics on out usage for api calls, neatlogs, crustdata, inngest and give me a numberon how many users can we have before we run out of our limits ?
+currently each user can create 5 reports
+
+---
+
+what is app budget ?
+
+---
+
+why do we have that ?
+
+---
+
+if we remove the app budget.. what will exhaust first and what will happen ?
