@@ -3,12 +3,14 @@
   "checkpoint_id": "01M4PT50DD8VXE9NQ42X18E2PV",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 18,
+  "checkpoints_count": 20,
   "files_touched": [
     "DESIGN.md",
     "docs/CONTINUOUS_AGENT.md",
     "docs/DEFERRED_UI_FEATURES.md",
     "docs/UI_LAYOUT.md",
+    "public/brand/hunchlane-icon.png",
+    "public/brand/hunchlane-logo.png",
     "src/app/api/runs/[id]/messages/route.ts",
     "src/app/auth.css",
     "src/app/dev/agent-preview/api/route.ts",
@@ -56,14 +58,21 @@
       "compact_transcript": "/1/transcript.jsonl",
       "content_hash": "/1/content_hash.txt",
       "prompt": "/1/prompt.txt"
+    },
+    {
+      "metadata": "/2/metadata.json",
+      "transcript": "/2/full.jsonl",
+      "compact_transcript": "/2/transcript.jsonl",
+      "content_hash": "/2/content_hash.txt",
+      "prompt": "/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1475057,
+    "input_tokens": 1511508,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 52151808,
-    "output_tokens": 140152,
-    "api_call_count": 306,
+    "cache_read_tokens": 52699264,
+    "output_tokens": 142714,
+    "api_call_count": 318,
     "subagent_tokens_complete": true
   }
 }
