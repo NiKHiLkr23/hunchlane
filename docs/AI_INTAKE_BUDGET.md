@@ -4,9 +4,9 @@ On October 11, 2026 the operator authorized using the existing sponsor key witho
 
 ## Setup
 
-Run `pnpm intake:setup` to apply the separate intake session and operation tables. It does not reset or increase any existing budget, reservation or Crustdata allowance. Intake is available automatically when the database, sponsored key and Neatlogs key are configured; no enable flag is required. `.env.local` remains intact. Intake uses the same server-only `LITELLM_API_KEY` as research. No `AI_INTAKE_API_KEY` or pricing-confirmation flag is needed.
+Run `pnpm intake:setup` to apply the separate intake session and operation tables. It does not reset existing reservations or the Crustdata allowance. Intake is available automatically when the database, sponsored key and Neatlogs key are configured; no enable flag is required. `.env.local` remains intact. Intake uses the same server-only `LITELLM_API_KEY` as research. No `AI_INTAKE_API_KEY` or pricing-confirmation flag is needed.
 
-Each new conversation reserves 30 cents from the existing shared `budgets.id='research'` allowance. This is the existing app accounting mechanism, not an additional pilot cap or a provider invoice guarantee. Research keeps its own run reservations and journals. Intake consumes no Crustdata credits. The provider's existing $20 key budget remains unchanged.
+Each new conversation records a 30-cent reservation in the shared `budgets.id='research'` ledger. As of October 12, intake and reports no longer enforce an app-wide dollar cap. This is the existing app accounting mechanism, not an additional pilot cap or a provider invoice guarantee. Research keeps its own run reservations and journals. Intake consumes no Crustdata credits. The provider's existing $20 key budget remains unchanged.
 
 ## Conversation and recovery
 

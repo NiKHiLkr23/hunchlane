@@ -33,7 +33,7 @@ export async function intakeTurn(owner: string, input: IntakeRequest) {
   const session = await sql`select id,next_turn from idea_intakes where id=${input.id} and owner_id=${owner}`;
   if (!session[0]) {
     if (input.turn !== 0) throw Error('INTAKE_CONFLICT');
-    const rows = await sql`with reserve as (update budgets set allocated_cents=allocated_cents+30 where id='research' and allocated_cents+30<=limit_cents returning id)
+    const rows = await sql`with reserve as (update budgets set allocated_cents=allocated_cents+30 where id='research' returning id)
     insert into idea_intakes(id,owner_id) select ${input.id},${owner} from reserve returning id`;
     if (!rows[0]) throw Error('INTAKE_BUDGET_EXHAUSTED');
   }

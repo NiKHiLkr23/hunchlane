@@ -114,7 +114,7 @@ export async function createRun(
   const rows = await sql`
     with reserve as (
       update budgets set allocated_cents=allocated_cents+${reservation},credit_allocated_milli=credit_allocated_milli+${credits}
-      where id='research' and allocated_cents+${reservation}<=limit_cents and credit_allocated_milli+${credits}<=credit_limit_milli returning id
+      where id='research' and credit_allocated_milli+${credits}<=credit_limit_milli returning id
     ) insert into runs (id,owner_id,kind,brief,parent_id,reservation_cents,provider,credit_reservation_milli)
       select ${id},${owner},${kind},${JSON.stringify(
     brief
@@ -290,8 +290,7 @@ export async function saveOperation(
     result
   )}::jsonb,cost_cents=${cost},credit_milli=${credits} where run_id=${id} and phase=${phase} and state!='complete' returning cost_cents,credit_milli)
   update runs set actual_cents=actual_cents+coalesce((select cost_cents from updated),0),credit_actual_milli=credit_actual_milli+coalesce((select credit_milli from updated),0) where id=${id}`;
-  // Any cost above its reservation freezes future allocation rather than hiding an overrun.
-  await sql`update budgets set limit_cents=allocated_cents where id='research' and exists(select 1 from runs where id=${id} and actual_cents>reservation_cents)`;
+  // Credit usage above its reservation freezes future credit allocation.
   await sql`update budgets set credit_limit_milli=credit_allocated_milli where id='research' and exists(select 1 from runs where id=${id} and credit_actual_milli>credit_reservation_milli)`;
 }
 export async function createShare(id: string, owner: string) {

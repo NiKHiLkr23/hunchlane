@@ -43,6 +43,13 @@
       "when": 1791744258241,
       "tag": "0005_account_allowances",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791768000000,
+      "tag": "0006_two_reports",
+      "breakpoints": true
     }
   ]
 }

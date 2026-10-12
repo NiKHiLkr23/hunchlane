@@ -24,7 +24,7 @@ export async function createAgentRun(id: string, owner: string, brief: IdeaBrief
   // Admission, reservation and first dispatch intent are one transaction, including quota constraints.
   await db()`with reserve as (
     update budgets set allocated_cents=allocated_cents+${cents},credit_allocated_milli=credit_allocated_milli+${credits}
-    where id='research' and allocated_cents+${cents}<=limit_cents and credit_allocated_milli+${credits}<=credit_limit_milli returning id
+    where id='research' and credit_allocated_milli+${credits}<=credit_limit_milli returning id
   ), created as (
     insert into runs(id,owner_id,kind,brief,parent_id,reservation_cents,provider,credit_reservation_milli,mode,conversation,deadline_at,submission_hash)
     select ${id},${owner},${kind},${JSON.stringify(brief)}::jsonb,${parentId},${cents},${provider},${credits},'autonomous',${JSON.stringify(conversation)}::jsonb,

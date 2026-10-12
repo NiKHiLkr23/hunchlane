@@ -12,7 +12,7 @@ export function apiError(error: unknown) {
     RUN_NOT_FOUND:[404,"This conversation was not found."], SUBMISSION_CONFLICT:[409,"This submission already has different saved content."], CONVERSATION_LIMIT:[409,"This conversation is full. Your existing messages are saved."], INVALID_QUESTION:[400,"This question is no longer available."],
     UNAUTHENTICATED: [401,"Sign in to research and save your idea."], AUTH_NOT_CONFIGURED: [503,"Sign-in is being connected. You can explore the sample report."],
     DATABASE_NOT_CONFIGURED: [503,"Your library is being connected. Please try again later."], INVALID_ORIGIN: [403,"This request could not be verified."],
-    BUDGET_EXHAUSTED: [429,"Research is at its hackathon spending limit. Please try later."],
+    BUDGET_EXHAUSTED: [429,"The research credit allowance is exhausted. Please try later."],
     ACCOUNT_QUOTA_EXHAUSTED: [409,`Your account allows ${ACCOUNT_ALLOWANCES.full} full reports and ${ACCOUNT_ALLOWANCES.refinement} refinements.`],
     REFINEMENT_NOT_ALLOWED: [409,"This report cannot be refined again."], RECONCILIATION_REQUIRED: [409,"This run needs a provider check before it can be retried. Its progress is saved."],
     INTEGRATIONS_NOT_READY: [503,"Live research is being connected. You can explore the sample report in the meantime."],

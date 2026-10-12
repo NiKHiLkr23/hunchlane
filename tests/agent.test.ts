@@ -45,8 +45,10 @@ beforeEach(async () => {
 });
 afterEach(() => vi.unstubAllEnvs()); afterAll(() => engine.close());
 async function create(provider: "crustdata" | "openai" = "crustdata") { return createAgentRun(id, owner, { ...sampleReport.brief, audience: "" }, null, provider); }
-async function tick() { await db()`update runs set next_attempt_at=now() where id=${id} and owner_id=${owner}`; return advanceAgent(id, owner); }
-async function inLease<T>(fn: () => Promise<T>) { const lease = await acquireAgentLease(id, owner); if (!lease) throw Error("no lease"); return operationContext.run({ owner, revision: 0, lease }, fn); }
+async function tick() { await prepareLegacyWorkerFixture(); await db()`update runs set next_attempt_at=now() where id=${id} and owner_id=${owner}`; return advanceAgent(id, owner); }
+// Existing worker tests exercise compatibility with runs created before clarification gating.
+async function prepareLegacyWorkerFixture() { await db()`update runs set conversation=conversation-'clarification' where id=${id} and owner_id=${owner}`; }
+async function inLease<T>(fn: () => Promise<T>) { await prepareLegacyWorkerFixture(); const lease = await acquireAgentLease(id, owner); if (!lease) throw Error("no lease"); return operationContext.run({ owner, revision: 0, lease }, fn); }
 
 it("reserves and persists dispatch together, deduplicates admission, and keeps quotas", async () => {
   await create(); await create();
@@ -58,7 +60,7 @@ it("reserves and persists dispatch together, deduplicates admission, and keeps q
   await expect(createAgentRun(id, owner, { ...sampleReport.brief, audience: "Conflicting audience" }, null, "crustdata")).rejects.toThrow("SUBMISSION_CONFLICT");
 });
 it("rejects unfunded admission without a run or orphaned dispatch", async () => {
-  await db()`update budgets set limit_cents=0`;
+  await db()`update budgets set credit_limit_milli=0`;
   await expect(create()).rejects.toThrow("BUDGET_EXHAUSTED");
   expect(await pendingAgentWakes()).toEqual([]); expect(await ownedRun(id, owner)).toBeNull();
 });
@@ -78,7 +80,7 @@ it("use-your-judgment does not invent accepted context or spend on intake", asyn
   expect(run?.agent?.conversation.briefRevisions).toHaveLength(1);
 });
 it("locks a brief and preserves late messages without mutating the completed report", async () => {
-  await create(); const lease = await acquireAgentLease(id, owner); expect(lease).toBeTruthy();
+  await create(); await prepareLegacyWorkerFixture(); const lease = await acquireAgentLease(id, owner); expect(lease).toBeTruthy();
   await freezeAgentBrief(id, owner, lease!); await appendAgentMessage(id, owner, message("New audience"));
   expect((await ownedRun(id, owner))?.brief.audience).toBe("");
   expect((await ownedRun(id, owner))?.agent?.conversation.questions[0].answer).toBeUndefined();
@@ -88,7 +90,7 @@ it("locks a brief and preserves late messages without mutating the completed rep
   expect(run?.agent?.conversation.messages.slice(1).every(m => m.followUp)).toBe(true);
 });
 it("serializes workers, fences stale leases, and creates recoverable scheduled dispatch", async () => {
-  await create(); const leases = await Promise.all([acquireAgentLease(id, owner), acquireAgentLease(id, owner)]);
+  await create(); await prepareLegacyWorkerFixture(); const leases = await Promise.all([acquireAgentLease(id, owner), acquireAgentLease(id, owner)]);
   expect(leases.filter(Boolean)).toHaveLength(1);
   await expect(acquireAgentLease(id, "user_bob")).resolves.toBeNull();
   const wake = await scheduleAgent(id, owner, leases.find(Boolean)!, "crust-plan", "discovering"); expect(wake).toBeTruthy();
@@ -171,7 +173,7 @@ it("finishes honestly at the deadline with no evidence and never makes a new pai
 });
 it("retries retrieval of a known response after a worker restart without creating another", async () => {
   await create("openai");
-  const lease=await acquireAgentLease(id,owner);
+  await prepareLegacyWorkerFixture(); const lease=await acquireAgentLease(id,owner);
   await operationContext.run({owner,revision:0,lease:lease!},async()=>{await claimOperation(id,"discovery");await saveResponseId(id,"discovery","response-known");});
   await scheduleAgent(id,owner,lease!,"discovery-poll","discovering");
   harness.poll.mockRejectedValueOnce(Error("Temporary read failure")).mockResolvedValueOnce(null).mockResolvedValueOnce({text:"Retrieved",sources:sampleReport.sources});
@@ -197,3 +199,5 @@ it("concurrent admissions cannot reserve twice or exceed the shared allowance", 
   expect((await db()`select allocated_cents from budgets`)[0].allocated_cents).toBe(75);
   expect((await pendingAgentWakes()).filter(w=>w.runId===id)).toHaveLength(1);
 });
+
+it("admits two autonomous reports without a dollar cap and rejects the third without an outbox entry", async()=>{await db()`update budgets set limit_cents=0`;await create();await db()`update runs set status='failed' where id=${id} and owner_id=${owner}`;const second=crypto.randomUUID();await createAgentRun(second,owner,sampleReport.brief,null,"crustdata");await db()`update runs set status='failed' where id=${second} and owner_id=${owner}`;const third=crypto.randomUUID();await expect(createAgentRun(third,owner,sampleReport.brief,null,"crustdata")).rejects.toThrow("ACCOUNT_QUOTA_EXHAUSTED");expect(await ownedRun(third,owner)).toBeNull();expect((await db()`select allocated_cents,credit_allocated_milli from budgets`)[0]).toMatchObject({allocated_cents:150,credit_allocated_milli:10000});expect((await pendingAgentWakes()).some(w=>w.runId===third)).toBe(false);});
