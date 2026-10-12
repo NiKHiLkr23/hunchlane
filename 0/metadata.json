@@ -1,0 +1,121 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PWPZ524Q832YSFE1P660D5",
+  "session_id": "01a12d99-4ea2-7970-a915-cbeea619c5ec",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-12T01:47:53.525635Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    ".env.example",
+    "README.md",
+    "docs/AI_INTAKE_BUDGET.md",
+    "docs/CONTINUOUS_AGENT.md",
+    "drizzle/meta/_journal.json",
+    "scripts/configure-budget.ts",
+    "scripts/migrate.ts",
+    "src/core/budget.ts",
+    "src/server/agent-journal.ts",
+    "src/server/agent-store.ts",
+    "src/server/auth.ts",
+    "src/server/intake.ts",
+    "src/server/store.ts",
+    "tests/agent.test.ts",
+    "tests/intake.test.ts",
+    "tests/store.test.ts"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "ba1a56b32a5e",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 445426,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6673920,
+    "output_tokens": 17898,
+    "api_call_count": 65,
+    "subagent_tokens_complete": true
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-12T01:47:53.49094Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 836,
+    "human_modified": 536,
+    "human_removed": 0,
+    "total_committed": 836,
+    "total_lines_changed": 1372,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 781,
+      "user_lines_removed": 40,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".capacity-playwright.config.ts": 6,
+        ".env.example": 1,
+        "README.md": 1,
+        "docs/AI_INTAKE_BUDGET.md": 2,
+        "docs/CONTINUOUS_AGENT.md": 1,
+        "drizzle/0006_two_reports.sql": 19,
+        "drizzle/meta/0006_snapshot.json": 708,
+        "drizzle/meta/_journal.json": 7,
+        "scripts/configure-budget.ts": 3,
+        "scripts/migrate.ts": 2,
+        "src/core/budget.ts": 2,
+        "src/server/agent-journal.ts": 3,
+        "src/server/agent-store.ts": 1,
+        "src/server/auth.ts": 1,
+        "src/server/intake.ts": 1,
+        "src/server/store.ts": 2,
+        "tests/agent.test.ts": 10,
+        "tests/intake.test.ts": 8,
+        "tests/store.test.ts": 3
+      },
+      "user_removed_per_file": {
+        ".env.example": 2,
+        "README.md": 1,
+        "docs/AI_INTAKE_BUDGET.md": 2,
+        "docs/CONTINUOUS_AGENT.md": 1,
+        "scripts/configure-budget.ts": 4,
+        "scripts/migrate.ts": 4,
+        "src/core/budget.ts": 2,
+        "src/server/agent-journal.ts": 3,
+        "src/server/agent-store.ts": 1,
+        "src/server/auth.ts": 1,
+        "src/server/intake.ts": 1,
+        "src/server/store.ts": 3,
+        "tests/agent.test.ts": 6,
+        "tests/intake.test.ts": 7,
+        "tests/store.test.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 686,
+      "user_lines_removed": 248,
+      "agent_lines_added": 800,
+      "agent_lines_removed": 40,
+      "user_added_per_file": {
+        "scripts/configure-budget.ts": 16,
+        "src/server/agent-journal.ts": 63,
+        "tests/intake.test.ts": 188,
+        "tests/store.test.ts": 419
+      },
+      "user_removed_per_file": {
+        "scripts/configure-budget.ts": 7,
+        "src/server/agent-journal.ts": 14,
+        "tests/intake.test.ts": 119,
+        "tests/store.test.ts": 108
+      }
+    }
+  ]
+}
