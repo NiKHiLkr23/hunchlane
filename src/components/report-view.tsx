@@ -18,7 +18,7 @@ import type {
   ResearchContent,
 } from "@/core/types";
 import { ReportExport } from "./report-export";
-import { FinanceExplorer } from "./finance-explorer";
+import { NumbersComingSoon } from "./numbers-coming-soon";
 import { Button } from "./ui/button";
 type Claim = ResearchContent["summary"];
 function Citation({ id, sources }: { id: string; sources: EvidenceSource[] }) {
@@ -301,10 +301,7 @@ export function ReportView({
           </div>
         </Tabs.Content>
         <Tabs.Content value="numbers" className="tab-content">
-          <FinanceExplorer
-            finance={report.finance}
-            category={report.brief.category}
-          />
+          <NumbersComingSoon />
         </Tabs.Content>
         <Tabs.Content value="sources" className="tab-content">
           <div className="section-intro">

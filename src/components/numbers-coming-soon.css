@@ -1,0 +1,19 @@
+.numbers-coming-soon { position: relative; isolation: isolate; overflow: hidden; min-height: 380px; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); }
+.numbers-placeholder { display: grid; grid-template-columns: 1fr 1.4fr; gap: 48px; padding: 36px; filter: blur(7px); opacity: .38; pointer-events: none; user-select: none; }
+.numbers-placeholder-inputs, .numbers-placeholder-output { display: grid; gap: 20px; align-content: start; }
+.numbers-placeholder-line { width: 65%; height: 12px; border-radius: 6px; background: #a8b8ad; }
+.numbers-placeholder-field { height: 42px; border: 1px solid #b3c3b8; border-radius: 8px; background: #eaf1eb; }
+.numbers-placeholder-metrics { display: flex; gap: 24px; }
+.numbers-placeholder-metrics span { width: 40%; height: 48px; border-radius: 8px; background: #cfddd3; }
+.numbers-placeholder-chart { display: flex; gap: 12px; align-items: end; height: 180px; border-bottom: 1px solid #b3c3b8; }
+.numbers-placeholder-chart span { flex: 1; border-radius: 5px 5px 0 0; background: #87ae9e; }
+.numbers-coming-soon-copy { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 36px 24px; text-align: center; background: #f5f6f466; }
+.numbers-coming-soon-icon { display: grid; place-items: center; width: 56px; height: 56px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); color: var(--teal); box-shadow: 0 4px 16px #23332e08; }
+.numbers-coming-soon-copy h2 { font-size: clamp(27px, 4vw, 36px); letter-spacing: -.6px; }
+.numbers-coming-soon-copy p { max-width: 340px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+@media(max-width: 600px) {
+  .numbers-coming-soon { min-height: 340px; }
+  .numbers-placeholder { grid-template-columns: 1fr; padding: 26px; gap: 28px; }
+  .numbers-placeholder-inputs { display: none; }
+  .numbers-placeholder-chart { gap: 8px; height: 190px; }
+}

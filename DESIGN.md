@@ -86,3 +86,7 @@ The continuous conversation is the only `/new` interface. The old intake/review 
 ## Report portability
 
 Completed standalone reports place compact secondary Copy report and Download Markdown buttons to the right of the section tabs. Narrow screens put them on a separate row below the tabs with 44px touch targets. Completed chat results expose the same actions beside the saved result. Both export the saved report, including source links, evidence levels, hypotheses, unknowns, and experiments. Sample exports remain explicitly illustrative; public exports use the existing immutable snapshot. Exporting does not create a share link or send data to a provider. Preserve saved financial status and exclude temporary assumption-explorer calculations and provider receipts. Show inline copy/download feedback, with selectable Markdown when clipboard access fails. Buttons wrap on narrow screens and retain the shared focus and reduced-motion behavior.
+
+## Numbers tab — coming soon
+
+The Numbers tab remains visible on all reports and shows a static blurred financial-layout placeholder with “Numbers coming soon” and “Explore pricing, costs, and break-even for your idea.” Background shapes contain no figures or controls and are hidden from assistive technology. The message stays sharp and readable on desktop and mobile. The local calculator and per-user CFO.ai UI are deferred; existing report data, exports and provider logic are unchanged.
