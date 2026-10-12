@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PX66SR7V9V58NXGVAWPYAP",
+  "session_id": "01a12ba2-e429-7b72-9f6d-cddb475a5c5e",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-12T01:56:25.600094Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "DESIGN.md",
+    "src/components/agent-conversation.tsx"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "afbd1a851fa7",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 2933477,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 94255616,
+    "output_tokens": 299556,
+    "api_call_count": 411
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-12T01:56:25.035862Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 202,
+    "total_committed": 0,
+    "total_lines_changed": 221,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1263,
+      "user_lines_removed": 202,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "DESIGN.md": 4,
+        "src/components/agent-conversation.tsx": 386,
+        "src/components/report-export.css": 55,
+        "src/components/report-export.tsx": 119,
+        "src/components/report-view.tsx": 365,
+        "src/core/report-export.ts": 211,
+        "tests/browser/report-export.spec.ts": 72,
+        "tests/report-export.test.ts": 51
+      },
+      "user_removed_per_file": {
+        "src/components/agent-conversation.tsx": 183,
+        "src/components/report-view.tsx": 19
+      }
+    }
+  ]
+}
