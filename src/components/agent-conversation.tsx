@@ -59,7 +59,6 @@ export function AgentConversation({
     [buffer, setBuffer] = useState(""),
     [loaded, setLoaded] = useState(Boolean(initial)),
     [started, setStarted] = useState(Boolean(initial)),
-    [headingDismissed, setHeadingDismissed] = useState(Boolean(initial)),
     [optimisticMessage, setOptimisticMessage] = useState<AgentMessage | null>(
       null
     ),
@@ -92,7 +91,6 @@ export function AgentConversation({
   );
   const change = useCallback(
     (text: string) => {
-      if (text.trim()) setHeadingDismissed(true);
       bufferRef.current = text;
       setBuffer(text);
       try {
@@ -231,7 +229,6 @@ export function AgentConversation({
         if (bufferRef.current.trim() === intent.brief.idea) change("");
       }
       setStarted(true);
-      setHeadingDismissed(true);
       setOptimisticMessage({
         id: "opening",
         role: "user",
@@ -679,15 +676,7 @@ export function AgentConversation({
         }}
       >
         <div className="agent-content page-container">
-          <div
-            className={`agent-intro-heading${
-              headingDismissed || started || run
-                ? " agent-intro-heading-hidden"
-                : ""
-            }`}
-            aria-hidden={headingDismissed || started || Boolean(run)}
-            inert={headingDismissed || started || Boolean(run)}
-          >
+          {!started && !run && <div className="agent-intro-heading">
             <div className="chat-heading">
               <span className="chat-kicker">FOLLOW YOUR HUNCH</span>
               <h1>What’s your hunch?</h1>
@@ -696,7 +685,7 @@ export function AgentConversation({
                 mind.
               </p>
             </div>
-          </div>
+          </div>}
           {!loaded ? (
             <p role="status">Opening your idea…</p>
           ) : (

@@ -24,14 +24,18 @@ export function GoogleButtonFace({ busy = false }: { busy?: boolean }) {
   );
 }
 
+export function GoogleLoadingButton() {
+  return <button className="google-button" disabled aria-busy="true">
+    <GoogleButtonFace busy />
+  </button>;
+}
+
 export function AuthLoading() {
   return (
     <div className="auth-content">
       <h1>Welcome back.</h1>
       <p className="auth-description">Sign in to explore your idea.</p>
-      <button className="google-button" disabled aria-busy="true">
-        <GoogleButtonFace busy />
-      </button>
+      <GoogleLoadingButton />
     </div>
   );
 }

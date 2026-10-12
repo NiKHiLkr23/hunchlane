@@ -15,9 +15,7 @@ export function AgentQuestionCard({ question, index, total, busy, onAnswer, onAu
   const [selected, setSelected] = useState<string[]>([]);
   const [custom, setCustom] = useState("");
   const [ownAnswer, setOwnAnswer] = useState(false);
-  const title = useRef<HTMLLegendElement>(null);
   const customInput = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => { title.current?.focus({preventScroll:true}); }, [question.id]);
   useEffect(() => {
     if (ownAnswer) customInput.current?.focus();
   }, [ownAnswer]);
@@ -30,7 +28,7 @@ export function AgentQuestionCard({ question, index, total, busy, onAnswer, onAu
       <div className="agent-question-card-heading"><CircleHelp size={16} />Agent has questions for you</div>
       <div className="agent-question-card-body">
         <fieldset disabled={busy}>
-          <legend ref={title} tabIndex={-1}>{question.text}</legend>
+          <legend>{question.text}</legend>
           <div className="agent-question-options">
             {question.suggestions.map(option => (
               <label className="agent-question-option" key={option}>
