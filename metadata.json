@@ -1,0 +1,62 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PT50DD8VXE9NQ42X18E2PV",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 17,
+  "files_touched": [
+    "DESIGN.md",
+    "docs/CONTINUOUS_AGENT.md",
+    "docs/DEFERRED_UI_FEATURES.md",
+    "docs/UI_LAYOUT.md",
+    "src/app/api/runs/[id]/messages/route.ts",
+    "src/app/auth.css",
+    "src/app/dev/agent-preview/api/route.ts",
+    "src/app/globals.css",
+    "src/app/hero.css",
+    "src/app/home/home.css",
+    "src/app/landing-details.css",
+    "src/app/layout.tsx",
+    "src/app/library/page.tsx",
+    "src/app/new/conversation.css",
+    "src/app/new/refine/[id]/page.tsx",
+    "src/app/not-found.tsx",
+    "src/app/page.tsx",
+    "src/app/setup/page.tsx",
+    "src/app/site-layout.css",
+    "src/app/studio.css",
+    "src/components/agent-conversation.tsx",
+    "src/components/agent-question-card.tsx",
+    "src/components/auth-actions.tsx",
+    "src/components/auth-shell.tsx",
+    "src/components/finance-explorer.tsx",
+    "src/components/footer.tsx",
+    "src/components/header-navigation.tsx",
+    "src/components/home-dashboard.tsx",
+    "src/components/idea-composer.tsx",
+    "src/components/landing-report-preview.tsx",
+    "src/components/report-view.tsx",
+    "src/components/run-progress.tsx",
+    "src/core/agent.ts",
+    "src/core/home.ts",
+    "src/server/agent-store.ts",
+    "src/server/store.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1419742,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 51806848,
+    "output_tokens": 137999,
+    "api_call_count": 298,
+    "subagent_tokens_complete": true
+  }
+}
